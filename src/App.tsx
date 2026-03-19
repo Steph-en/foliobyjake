@@ -407,7 +407,7 @@ export default function App() {
             </h2>
             <div className="space-y-6 text-lg opacity-80 max-w-lg">
               <p>
-                I am Jake Amponsah, a multi-disciplinary designer based in Accra. My work lives at the intersection of traditional graphic design and modern digital art.
+                Jake Amponsah, a multi-disciplinary designer based in Accra. My work lives at the intersection of traditional graphic design and modern digital art.
               </p>
               <p>
                 With over 5 years of experience in the creative industry, I've helped brands tell their stories through compelling visuals and immersive digital experiences. I believe in design that not only looks good but feels right.
@@ -421,7 +421,7 @@ export default function App() {
           <div className="relative order-1 lg:order-2 parallax-img-container">
             <div className="aspect-[3/4] overflow-hidden rounded-2xl">
               <img 
-                src="https://picsum.photos/seed/jake-about/800/1000" 
+                src="/src/assets/jake.jpg" 
                 alt="Jake Amponsah" 
                 className="w-full h-full object-cover grayscale"
                 referrerPolicy="no-referrer"
@@ -473,10 +473,7 @@ export default function App() {
           <div>
             <h4 className="font-mono text-xs uppercase tracking-widest mb-6 opacity-40">Social</h4>
             <ul className="space-y-4 text-sm uppercase tracking-widest">
-              <li><a href="#" className="hover:line-through">Behance</a></li>
-              <li><a href="#" className="hover:line-through">Dribbble</a></li>
               <li><a href="#" className="hover:line-through">Instagram</a></li>
-              <li><a href="#" className="hover:line-through">LinkedIn</a></li>
             </ul>
           </div>
         </div>
@@ -487,8 +484,6 @@ export default function App() {
           </div>
           <div className="flex gap-8">
             <a href="#" className="hover:opacity-60 transition-opacity"><Instagram size={20} /></a>
-            <a href="#" className="hover:opacity-60 transition-opacity"><Twitter size={20} /></a>
-            <a href="#" className="hover:opacity-60 transition-opacity"><Facebook size={20} /></a>
           </div>
           <div className="text-[10px] font-mono uppercase tracking-[0.3em] opacity-40">
             Designed in Accra, Ghana
