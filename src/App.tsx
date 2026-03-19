@@ -332,7 +332,7 @@ function Home() {
             className="fixed inset-0 z-[60] bg-white text-black p-8 flex flex-col"
           >
             <div className="flex justify-between items-center mb-16">
-              <h1 className="text-3xl font-display">DEHOOD</h1>
+              <h1 className="text-3xl font-display">PORTFOLIO</h1>
               <button onClick={() => setIsMenuOpen(false)}>
                 <X size={32} />
               </button>
@@ -384,9 +384,9 @@ function Home() {
         </div>
 
         <div className="relative z-10 w-full px-6">
-          <h1 className="hero-title text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-hidden">
+          <h1 className="hero-title font-jake text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-hidden">
             <span className="block">JAKE</span>
-            <span className="block italic font-serif lowercase tracking-normal">AMPONSAH</span>
+            <span className="block tracking-normal">AMPONSAH</span>
           </h1>
           <p className="hero-sub mt-8 text-sm md:text-lg max-w-xl mx-auto font-mono uppercase tracking-widest opacity-80">
             Graphic designer . Digital artist
@@ -567,7 +567,7 @@ function Home() {
             </h2>
             <div className="space-y-6 text-lg opacity-80 max-w-lg">
               <p>
-                I am Jake Amponsah, a multi-disciplinary designer based in Accra. My work lives at the intersection of traditional graphic design and modern digital art.
+                Jake Amponsah, a multi-disciplinary designer based in Accra. My work lives at the intersection of traditional graphic design and modern digital art.
               </p>
               <p>
                 With over 5 years of experience in the creative industry, I've helped brands tell their stories through compelling visuals and immersive digital experiences. I believe in design that not only looks good but feels right.
@@ -581,7 +581,7 @@ function Home() {
           <div className="relative order-1 lg:order-2 parallax-img-container">
             <div className="aspect-[3/4] overflow-hidden rounded-2xl">
               <img 
-                src="https://picsum.photos/seed/jake-about/800/1000" 
+                src="/src/assets/jake.jpg" 
                 alt="Jake Amponsah" 
                 className="w-full h-full object-cover grayscale"
                 referrerPolicy="no-referrer"
@@ -633,10 +633,7 @@ function Home() {
           <div>
             <h4 className="font-mono text-xs uppercase tracking-widest mb-6 opacity-40">Social</h4>
             <ul className="space-y-4 text-sm uppercase tracking-widest">
-              <li><a href="#" className="hover:line-through">Behance</a></li>
-              <li><a href="#" className="hover:line-through">Dribbble</a></li>
-              <li><a href="#" className="hover:line-through">Instagram</a></li>
-              <li><a href="#" className="hover:line-through">LinkedIn</a></li>
+              <li><a href="https://www.instagram.com/bvhiewz/" className="hover:line-through">Instagram</a></li>
             </ul>
           </div>
         </div>
@@ -646,9 +643,7 @@ function Home() {
             © 2026 JAKE AMPONSAH. All Rights Reserved.
           </div>
           <div className="flex gap-8">
-            <a href="#" className="hover:opacity-60 transition-opacity"><Instagram size={20} /></a>
-            <a href="#" className="hover:opacity-60 transition-opacity"><Twitter size={20} /></a>
-            <a href="#" className="hover:opacity-60 transition-opacity"><Facebook size={20} /></a>
+            <a href="https://www.instagram.com/bvhiewz/" className="hover:opacity-60 transition-opacity"><Instagram size={20} /></a>
           </div>
           <div className="text-[10px] font-mono uppercase tracking-[0.3em] opacity-40">
             Designed in Accra, Ghana
