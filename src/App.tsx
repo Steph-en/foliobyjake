@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { ShoppingCart, Menu, X, ArrowRight, Instagram, Twitter, Facebook, Plus, Minus, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShoppingCart, Menu, X, ArrowRight, Instagram, Twitter, Facebook, Plus, Minus, ExternalLink, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BrowserRouter, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
@@ -18,6 +18,16 @@ import { twMerge } from 'tailwind-merge';
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center w-full h-full">
+    <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+  </div>
+);
+
+const Skeleton = ({ className }: { className?: string }) => (
+  <div className={cn("animate-pulse bg-white/5 rounded-lg", className)} />
+);
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -196,7 +206,14 @@ function Home() {
   const [isIntroComplete, setIsIntroComplete] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const categories = Array.from(new Set(WORKS.map(w => w.category)));
+
+  const filteredWorks = WORKS.filter(work => 
+    !selectedCategory || work.category === selectedCategory
+  );
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -212,8 +229,24 @@ function Home() {
 
     requestAnimationFrame(raf);
 
+    // Smooth scroll for anchor links
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      if (anchor && anchor.hash && anchor.origin === window.location.origin) {
+        const targetElement = document.querySelector(anchor.hash);
+        if (targetElement instanceof HTMLElement) {
+          e.preventDefault();
+          lenis.scrollTo(targetElement);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleAnchorClick);
+
     return () => {
       lenis.destroy();
+      document.removeEventListener('click', handleAnchorClick);
     };
   }, []);
 
@@ -293,6 +326,20 @@ function Home() {
       repeat: -1,
       duration: 20,
       ease: 'none',
+    });
+
+    // Staggered Work Cards
+    gsap.from('.work-card', {
+      scrollTrigger: {
+        trigger: '.work-grid',
+        start: 'top 80%',
+        toggleActions: 'play none none reverse',
+      },
+      y: 60,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.1,
+      ease: 'power3.out',
     });
 
   }, { scope: containerRef });
@@ -438,23 +485,51 @@ function Home() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-          {(isExpanded ? WORKS : WORKS.slice(0, 6)).map((work) => (
+        {/* Filtering */}
+        <div className="flex flex-wrap items-center justify-center gap-6 mb-12 reveal-up">
+          <div className="flex flex-wrap gap-3">
+            <button 
+              onClick={() => setSelectedCategory(null)}
+              className={cn(
+                "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border",
+                !selectedCategory ? "bg-white text-black border-white" : "bg-transparent text-white border-white/20 hover:border-white"
+              )}
+            >
+              All
+            </button>
+            {categories.map(cat => (
+              <button 
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={cn(
+                  "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border",
+                  selectedCategory === cat ? "bg-white text-black border-white" : "bg-transparent text-white border-white/20 hover:border-white"
+                )}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 work-grid">
+          {(isExpanded ? filteredWorks : filteredWorks.slice(0, 6)).map((work) => (
             <div 
               key={work.id} 
-              className="reveal-up group cursor-pointer"
+              className="work-card group cursor-pointer"
               onClick={() => setSelectedWork(work)}
             >
               <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 parallax-img-container">
                 <img 
                   src={work.image} 
                   alt={work.name}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out"
                   referrerPolicy="no-referrer"
+                  loading="lazy"
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                  <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <span className="px-8 py-3 bg-white text-black font-bold uppercase text-xs tracking-widest">
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                  <div className="translate-y-4 group-hover:translate-y-0 transition-all duration-500 text-center px-6">
+                    <span className="block px-8 py-3 bg-white text-black font-bold uppercase text-xs tracking-widest active:scale-95 transition-transform">
                       View Work
                     </span>
                   </div>
@@ -462,7 +537,7 @@ function Home() {
               </div>
               <div className="mt-6 flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl tracking-tight uppercase">{work.name}</h3>
+                  <h3 className="text-xl tracking-tight uppercase group-hover:text-zinc-400 transition-colors">{work.name}</h3>
                   <p className="text-xs font-mono opacity-60 mt-1 uppercase">{work.category}</p>
                 </div>
               </div>
@@ -509,14 +584,7 @@ function Home() {
                 <X size={24} />
               </button>
               
-              <div className="aspect-[4/5] lg:aspect-auto overflow-hidden bg-zinc-900">
-                <img 
-                  src={selectedWork.image} 
-                  alt={selectedWork.name} 
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
+              <ModalCarousel images={selectedWork.gallery.length > 0 ? selectedWork.gallery : [selectedWork.image]} name={selectedWork.name} />
               
               <div className="p-8 md:p-16 flex flex-col justify-center">
                 <div className="mb-8">
@@ -604,9 +672,9 @@ function Home() {
             <input 
               type="email" 
               placeholder="YOUR EMAIL ADDRESS" 
-              className="flex-1 bg-transparent border-b border-white/30 py-4 px-2 focus:border-white outline-none transition-colors font-mono text-sm"
+              className="reveal-up flex-1 bg-transparent border-b border-white/30 py-4 px-2 focus:border-white outline-none transition-colors font-mono text-sm"
             />
-            <button className="px-12 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors">
+            <button className="reveal-up px-12 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors cursor-pointer active:scale-95">
               Get in Touch
             </button>
           </form>
@@ -625,15 +693,15 @@ function Home() {
           <div>
             <h4 className="font-mono text-xs uppercase tracking-widest mb-6 opacity-40">Navigation</h4>
             <ul className="space-y-4 text-sm uppercase tracking-widest">
-              <li><a href="#works" className="hover:line-through">Works</a></li>
-              <li><a href="#about" className="hover:line-through">About</a></li>
-              <li><a href="#contact" className="hover:line-through">Contact</a></li>
+              <li><a href="#works" className="hover:line-through transition-all">Works</a></li>
+              <li><a href="#about" className="hover:line-through transition-all">About</a></li>
+              <li><a href="#contact" className="hover:line-through transition-all">Contact</a></li>
             </ul>
           </div>
           <div>
             <h4 className="font-mono text-xs uppercase tracking-widest mb-6 opacity-40">Social</h4>
             <ul className="space-y-4 text-sm uppercase tracking-widest">
-              <li><a href="https://www.instagram.com/bvhiewz/" className="hover:line-through">Instagram</a></li>
+              <li><a href="https://www.instagram.com/bvhiewz/" className="hover:line-through transition-all">Instagram</a></li>
             </ul>
           </div>
         </div>
@@ -650,7 +718,92 @@ function Home() {
           </div>
         </div>
       </footer>
+
+      <BackToTop />
     </div>
+  );
+}
+
+function ModalCarousel({ images, name }: { images: string[], name: string }) {
+  return (
+    <div className="relative aspect-[4/5] lg:aspect-auto overflow-hidden bg-zinc-900">
+      <div className="flex h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+        {images.map((img, i) => (
+          <div 
+            key={i} 
+            className="w-full h-full shrink-0 snap-center"
+          >
+            <ImageWithLoader 
+              src={img} 
+              alt={`${name} slide ${i + 1}`} 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ImageWithLoader({ src, alt, className, priority = false }: { src: string, alt: string, className?: string, priority?: boolean }) {
+  const [isLoading, setIsLoading] = useState(true);
+  return (
+    <div className={cn("relative w-full h-full", className)}>
+      {isLoading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-900">
+          <LoadingSpinner />
+        </div>
+      )}
+      <img 
+        src={src} 
+        alt={alt} 
+        className={cn("w-full h-full object-cover transition-opacity duration-500", isLoading ? "opacity-0" : "opacity-100")}
+        onLoad={() => setIsLoading(false)}
+        referrerPolicy="no-referrer"
+        loading={priority ? "eager" : "lazy"}
+      />
+    </div>
+  );
+}
+
+function BackToTop() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.pageYOffset > 500) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-[60] p-4 bg-white text-black rounded-full shadow-2xl hover:bg-zinc-200 transition-colors active:scale-95"
+          aria-label="Back to top"
+        >
+          <ArrowUp size={24} />
+        </motion.button>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -659,6 +812,13 @@ function WorkDetail() {
   const navigate = useNavigate();
   const work = WORKS.find(w => w.id === Number(id));
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate page data loading
+    const timer = setTimeout(() => setIsPageLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, [id]);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -674,8 +834,24 @@ function WorkDetail() {
 
     requestAnimationFrame(raf);
 
+    // Smooth scroll for anchor links
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      if (anchor && anchor.hash && anchor.origin === window.location.origin) {
+        const targetElement = document.querySelector(anchor.hash);
+        if (targetElement instanceof HTMLElement) {
+          e.preventDefault();
+          lenis.scrollTo(targetElement);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleAnchorClick);
+
     return () => {
       lenis.destroy();
+      document.removeEventListener('click', handleAnchorClick);
     };
   }, []);
 
@@ -695,6 +871,31 @@ function WorkDetail() {
         }
       });
   }, { scope: containerRef });
+
+  if (isPageLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white p-6">
+        <nav className="flex justify-between items-center py-8">
+          <Skeleton className="w-32 h-8" />
+          <Skeleton className="w-24 h-6" />
+        </nav>
+        <div className="mt-12">
+          <Skeleton className="w-full h-[60vh] rounded-2xl mb-12" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 max-w-7xl mx-auto">
+            <div className="lg:col-span-4 space-y-8">
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+              <Skeleton className="w-full h-12" />
+            </div>
+            <div className="lg:col-span-8 space-y-6">
+              <Skeleton className="w-full h-16" />
+              <Skeleton className="w-full h-32" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!work) {
     return (
@@ -724,11 +925,10 @@ function WorkDetail() {
 
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
-        <img 
+        <ImageWithLoader 
           src={work.image} 
           alt={work.name} 
-          className="w-full h-full object-cover grayscale brightness-50"
-          referrerPolicy="no-referrer"
+          className="w-full h-full grayscale brightness-50"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
           <div className="detail-header">
@@ -768,21 +968,48 @@ function WorkDetail() {
       </section>
 
       {/* Gallery */}
-      <section className="py-24 px-6 bg-zinc-950">
+      <section className="py-24 px-6 bg-zinc-950 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="gallery-grid grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="mb-12 flex justify-between items-end">
+            <h2 className="text-3xl uppercase tracking-tighter">Gallery</h2>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => {
+                  const carousel = document.getElementById('gallery-carousel');
+                  if (carousel) carousel.scrollBy({ left: -600, behavior: 'smooth' });
+                }}
+                className="p-2 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button 
+                onClick={() => {
+                  const carousel = document.getElementById('gallery-carousel');
+                  if (carousel) carousel.scrollBy({ left: 600, behavior: 'smooth' });
+                }}
+                className="p-2 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+          
+          <div 
+            id="gallery-carousel"
+            className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory cursor-grab active:cursor-grabbing scroll-smooth"
+          >
             {work.gallery.map((img, index) => (
-              <div key={index} className={cn(
-                "gallery-item overflow-hidden rounded-xl bg-zinc-900",
-                index === 0 ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/5]"
-              )}>
-                <img 
+              <motion.div 
+                key={index} 
+                className="min-w-[300px] md:min-w-[600px] aspect-[16/9] overflow-hidden rounded-xl bg-zinc-900 gallery-item snap-center shrink-0"
+                whileHover={{ scale: 0.98 }}
+              >
+                <ImageWithLoader 
                   src={img} 
                   alt={`${work.name} gallery ${index + 1}`} 
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
-                  referrerPolicy="no-referrer"
                 />
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
