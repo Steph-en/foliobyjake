@@ -7,9 +7,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { ShoppingCart, Menu, X, ArrowRight, Instagram, Twitter, Facebook, Plus, Minus, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShoppingCart, Menu, X, ArrowRight, Instagram, Twitter, Facebook, Plus, Minus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BrowserRouter, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -27,176 +26,27 @@ interface Work {
   category: string;
   image: string;
   description: string;
-  longDescription: string;
-  gallery: string[];
-  client?: string;
-  year?: string;
-  role?: string;
 }
 
 const WORKS: Work[] = [
-  { 
-    id: 1, 
-    name: 'Urban Branding', 
-    category: 'Graphic Design', 
-    image: 'https://picsum.photos/seed/work1/800/1000', 
-    description: 'A comprehensive branding project for a modern urban lifestyle brand, focusing on minimalist aesthetics and bold typography.',
-    longDescription: 'This project involved creating a complete visual identity for "Urban Pulse," a lifestyle brand targeting Gen Z. The challenge was to balance high-fashion elegance with street-level grit. We developed a custom typeface, a modular logo system, and a color palette that adapts to different seasonal collections. The result was a 40% increase in brand recognition within the first quarter of launch.',
-    gallery: [
-      'https://picsum.photos/seed/work1-1/1200/800',
-      'https://picsum.photos/seed/work1-2/1200/800',
-      'https://picsum.photos/seed/work1-3/1200/800'
-    ],
-    client: 'Urban Pulse',
-    year: '2024',
-    role: 'Lead Designer'
-  },
-  { 
-    id: 2, 
-    name: 'Digital Dreams', 
-    category: 'Digital Art', 
-    image: 'https://picsum.photos/seed/work2/800/1000', 
-    description: 'An experimental digital art series exploring the intersection of human emotion and artificial intelligence.',
-    longDescription: 'Digital Dreams is a series of 12 unique digital paintings created using a hybrid process of traditional digital painting and AI-assisted texture generation. Each piece represents a specific subconscious state, from "Lucid Clarity" to "Static Anxiety." The series was exhibited at the Accra Digital Arts Festival and sold as a limited NFT collection.',
-    gallery: [
-      'https://picsum.photos/seed/work2-1/1200/800',
-      'https://picsum.photos/seed/work2-2/1200/800',
-      'https://picsum.photos/seed/work2-3/1200/800'
-    ],
-    client: 'Personal Project',
-    year: '2025',
-    role: 'Digital Artist'
-  },
-  { 
-    id: 3, 
-    name: 'Motion Identity', 
-    category: 'Motion Graphics', 
-    image: 'https://picsum.photos/seed/work3/800/1000', 
-    description: 'Dynamic motion graphics created for a tech startup\'s product launch, emphasizing fluid transitions and vibrant colors.',
-    longDescription: 'For the launch of "FlowState," a productivity app, we created a 60-second brand anthem and a series of UI-focused social clips. The motion language was built around the concept of "frictionless flow," using liquid simulations and rhythmic editing. The campaign reached over 1 million views across platforms in its first week.',
-    gallery: [
-      'https://picsum.photos/seed/work3-1/1200/800',
-      'https://picsum.photos/seed/work3-2/1200/800',
-      'https://picsum.photos/seed/work3-3/1200/800'
-    ],
-    client: 'FlowState Tech',
-    year: '2024',
-    role: 'Motion Designer'
-  },
-  { 
-    id: 4, 
-    name: 'Editorial Layout', 
-    category: 'Print Design', 
-    image: 'https://picsum.photos/seed/work4/800/1000', 
-    description: 'A sophisticated editorial layout for a high-end fashion magazine, balancing negative space with striking photography.',
-    longDescription: 'This 24-page feature for "Vogue Ghana" explored the rise of sustainable textiles in West Africa. We utilized a grid-breaking layout and custom-shot macro photography of fabric textures. The design won the "Excellence in Print Media" award at the 2024 Design Awards.',
-    gallery: [
-      'https://picsum.photos/seed/work4-1/1200/800',
-      'https://picsum.photos/seed/work4-2/1200/800',
-      'https://picsum.photos/seed/work4-3/1200/800'
-    ],
-    client: 'Vogue Ghana',
-    year: '2024',
-    role: 'Art Director'
-  },
-  { 
-    id: 5, 
-    name: 'Social Campaign', 
-    category: 'Digital Marketing', 
-    image: 'https://picsum.photos/seed/work5/800/1000', 
-    description: 'A successful social media campaign designed to increase engagement for a sustainable clothing label.',
-    longDescription: 'The "Wear the Change" campaign for EcoThreads focused on transparency. We designed a series of interactive Instagram stories and a high-impact video series showcasing the artisans behind the brand. Engagement rates increased by 250% compared to previous campaigns.',
-    gallery: [
-      'https://picsum.photos/seed/work5-1/1200/800',
-      'https://picsum.photos/seed/work5-2/1200/800',
-      'https://picsum.photos/seed/work5-3/1200/800'
-    ],
-    client: 'EcoThreads',
-    year: '2025',
-    role: 'Creative Lead'
-  },
-  { 
-    id: 6, 
-    name: '3D Abstract', 
-    category: '3D Design', 
-    image: 'https://picsum.photos/seed/work6/800/1000', 
-    description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
-    longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
-    gallery: [
-      'https://picsum.photos/seed/work6-1/1200/800',
-      'https://picsum.photos/seed/work6-2/1200/800',
-      'https://picsum.photos/seed/work6-3/1200/800'
-    ],
-    client: 'Personal Project',
-    year: '2026',
-    role: '3D Artist'
-  },
-  { 
-    id: 7, 
-    name: 'Web Experience', 
-    category: 'UI/UX Design', 
-    image: 'https://picsum.photos/seed/work7/800/1000', 
-    description: 'An immersive web experience designed for a creative agency, featuring interactive elements and smooth animations.',
-    longDescription: 'The "Studio X" portfolio site was built to feel like a physical gallery. We implemented custom WebGL transitions and a non-linear navigation system. The site was awarded "Site of the Day" on Awwwards.',
-    gallery: [
-      'https://picsum.photos/seed/work7-1/1200/800',
-      'https://picsum.photos/seed/work7-2/1200/800',
-      'https://picsum.photos/seed/work7-3/1200/800'
-    ],
-    client: 'Studio X',
-    year: '2025',
-    role: 'UI/UX Designer'
-  },
-  { 
-    id: 8, 
-    name: 'Packaging Design', 
-    category: 'Graphic Design', 
-    image: 'https://picsum.photos/seed/work8/800/1000', 
-    description: 'Eco-friendly packaging design for a premium skincare line, using sustainable materials and elegant illustrations.',
-    longDescription: 'For "Nura Skincare," we developed a packaging system that uses 100% recycled paper and soy-based inks. The visual language uses delicate botanical illustrations and a muted, earthy color palette to reflect the brand\'s natural ingredients.',
-    gallery: [
-      'https://picsum.photos/seed/work8-1/1200/800',
-      'https://picsum.photos/seed/work8-2/1200/800',
-      'https://picsum.photos/seed/work8-3/1200/800'
-    ],
-    client: 'Nura Skincare',
-    year: '2024',
-    role: 'Packaging Designer'
-  },
-  { 
-    id: 9, 
-    name: 'Typography Study', 
-    category: 'Graphic Design', 
-    image: 'https://picsum.photos/seed/work9/800/1000', 
-    description: 'An in-depth study of typography, exploring the history and application of various typefaces in modern design.',
-    longDescription: 'This self-published book, "Type & Time," explores how typography has evolved alongside technology. It features 50 detailed case studies of iconic typefaces. The project was funded via a successful Kickstarter campaign.',
-    gallery: [
-      'https://picsum.photos/seed/work9-1/1200/800',
-      'https://picsum.photos/seed/work9-2/1200/800',
-      'https://picsum.photos/seed/work9-3/1200/800'
-    ],
-    client: 'Self-Published',
-    year: '2026',
-    role: 'Author & Designer'
-  },
+  { id: 1, name: 'Urban Branding', category: 'Graphic Design', image: 'https://picsum.photos/seed/work1/800/1000', description: 'A comprehensive branding project for a modern urban lifestyle brand, focusing on minimalist aesthetics and bold typography.' },
+  { id: 2, name: 'Digital Dreams', category: 'Digital Art', image: 'https://picsum.photos/seed/work2/800/1000', description: 'An experimental digital art series exploring the intersection of human emotion and artificial intelligence.' },
+  { id: 3, name: 'Motion Identity', category: 'Motion Graphics', image: 'https://picsum.photos/seed/work3/800/1000', description: 'Dynamic motion graphics created for a tech startup\'s product launch, emphasizing fluid transitions and vibrant colors.' },
+  { id: 4, name: 'Editorial Layout', category: 'Print Design', image: 'https://picsum.photos/seed/work4/800/1000', description: 'A sophisticated editorial layout for a high-end fashion magazine, balancing negative space with striking photography.' },
+  { id: 5, name: 'Social Campaign', category: 'Digital Marketing', image: 'https://picsum.photos/seed/work5/800/1000', description: 'A successful social media campaign designed to increase engagement for a sustainable clothing label.' },
+  { id: 6, name: '3D Abstract', category: '3D Design', image: 'https://picsum.photos/seed/work6/800/1000', description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.' },
+  { id: 7, name: 'Web Experience', category: 'UI/UX Design', image: 'https://picsum.photos/seed/work7/800/1000', description: 'An immersive web experience designed for a creative agency, featuring interactive elements and smooth animations.' },
+  { id: 8, name: 'Packaging Design', category: 'Graphic Design', image: 'https://picsum.photos/seed/work8/800/1000', description: 'Eco-friendly packaging design for a premium skincare line, using sustainable materials and elegant illustrations.' },
+  { id: 9, name: 'Typography Study', category: 'Graphic Design', image: 'https://picsum.photos/seed/work9/800/1000', description: 'An in-depth study of typography, exploring the history and application of various typefaces in modern design.' },
 ];
 
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-}
-
-function Home() {
+export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLHeadingElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isIntroComplete, setIsIntroComplete] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -384,9 +234,9 @@ function Home() {
         </div>
 
         <div className="relative z-10 w-full px-6">
-          <h1 className="hero-title text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-hidden">
+          <h1 className="hero-title font-jake text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-hidden">
             <span className="block">JAKE</span>
-            <span className="block italic font-serif lowercase tracking-normal">AMPONSAH</span>
+            <span className="block tracking-normal">AMPONSAH</span>
           </h1>
           <p className="hero-sub mt-8 text-sm md:text-lg max-w-xl mx-auto font-mono uppercase tracking-widest opacity-80">
             Graphic designer . Digital artist
@@ -533,22 +383,12 @@ function Home() {
                 <div className="flex flex-wrap gap-4 pt-8 border-t border-white/10">
                   <div className="flex flex-col">
                     <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 mb-1">Year</span>
-                    <span className="text-sm uppercase">{selectedWork.year || '2026'}</span>
+                    <span className="text-sm uppercase">2026</span>
                   </div>
                   <div className="flex flex-col ml-12">
                     <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 mb-1">Role</span>
-                    <span className="text-sm uppercase">{selectedWork.role || 'Lead Artist'}</span>
+                    <span className="text-sm uppercase">Lead Artist</span>
                   </div>
-                </div>
-
-                <div className="mt-12">
-                  <button 
-                    onClick={() => navigate(`/work/${selectedWork.id}`)}
-                    className="flex items-center gap-3 text-sm uppercase tracking-widest font-bold group hover:text-zinc-400 transition-colors"
-                  >
-                    View Full Details
-                    <ExternalLink size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                  </button>
                 </div>
               </div>
             </motion.div>
@@ -567,7 +407,7 @@ function Home() {
             </h2>
             <div className="space-y-6 text-lg opacity-80 max-w-lg">
               <p>
-                I am Jake Amponsah, a multi-disciplinary designer based in Accra. My work lives at the intersection of traditional graphic design and modern digital art.
+                Jake Amponsah, a multi-disciplinary designer based in Accra. My work lives at the intersection of traditional graphic design and modern digital art.
               </p>
               <p>
                 With over 5 years of experience in the creative industry, I've helped brands tell their stories through compelling visuals and immersive digital experiences. I believe in design that not only looks good but feels right.
@@ -581,7 +421,7 @@ function Home() {
           <div className="relative order-1 lg:order-2 parallax-img-container">
             <div className="aspect-[3/4] overflow-hidden rounded-2xl">
               <img 
-                src="https://picsum.photos/seed/jake-about/800/1000" 
+                src="/src/assets/jake.jpg" 
                 alt="Jake Amponsah" 
                 className="w-full h-full object-cover grayscale"
                 referrerPolicy="no-referrer"
@@ -633,10 +473,7 @@ function Home() {
           <div>
             <h4 className="font-mono text-xs uppercase tracking-widest mb-6 opacity-40">Social</h4>
             <ul className="space-y-4 text-sm uppercase tracking-widest">
-              <li><a href="#" className="hover:line-through">Behance</a></li>
-              <li><a href="#" className="hover:line-through">Dribbble</a></li>
-              <li><a href="#" className="hover:line-through">Instagram</a></li>
-              <li><a href="#" className="hover:line-through">LinkedIn</a></li>
+              <li><a href="https://www.instagram.com/bvhiewz/" className="hover:line-through">Instagram</a></li>
             </ul>
           </div>
         </div>
@@ -646,9 +483,7 @@ function Home() {
             © 2026 JAKE AMPONSAH. All Rights Reserved.
           </div>
           <div className="flex gap-8">
-            <a href="#" className="hover:opacity-60 transition-opacity"><Instagram size={20} /></a>
-            <a href="#" className="hover:opacity-60 transition-opacity"><Twitter size={20} /></a>
-            <a href="#" className="hover:opacity-60 transition-opacity"><Facebook size={20} /></a>
+            <a href="https://www.instagram.com/bvhiewz/" className="hover:opacity-60 transition-opacity"><Instagram size={20} /></a>
           </div>
           <div className="text-[10px] font-mono uppercase tracking-[0.3em] opacity-40">
             Designed in Accra, Ghana
@@ -656,180 +491,5 @@ function Home() {
         </div>
       </footer>
     </div>
-  );
-}
-
-function WorkDetail() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const work = WORKS.find(w => w.id === Number(id));
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    return () => {
-      lenis.destroy();
-    };
-  }, []);
-
-  useGSAP(() => {
-    const tl = gsap.timeline();
-    tl.from('.detail-header', { opacity: 0, y: 30, duration: 1, ease: 'power4.out' })
-      .from('.detail-meta', { opacity: 0, y: 20, stagger: 0.1, duration: 0.8 }, '-=0.6')
-      .from('.detail-content', { opacity: 0, y: 30, duration: 1 }, '-=0.6')
-      .from('.gallery-item', { 
-        opacity: 0, 
-        y: 50, 
-        stagger: 0.2, 
-        duration: 1,
-        scrollTrigger: {
-          trigger: '.gallery-grid',
-          start: 'top 80%',
-        }
-      });
-  }, { scope: containerRef });
-
-  if (!work) {
-    return (
-      <div className="h-screen flex flex-col items-center justify-center bg-black text-white">
-        <h1 className="text-4xl font-display mb-8">Work not found</h1>
-        <Link to="/" className="px-8 py-3 bg-white text-black font-bold uppercase tracking-widest rounded-full">
-          Back to Home
-        </Link>
-      </div>
-    );
-  }
-
-  const nextWork = WORKS.find(w => w.id === (work.id % WORKS.length) + 1) || WORKS[0];
-
-  return (
-    <div ref={containerRef} className="bg-black text-white min-h-screen">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-8 mix-blend-difference">
-        <Link to="/" className="text-2xl font-display tracking-tighter">
-          PORTFOLIO
-        </Link>
-        <Link to="/" className="flex items-center gap-2 text-xs uppercase tracking-widest font-bold hover:opacity-60 transition-opacity">
-          <ChevronLeft size={16} />
-          Back to Works
-        </Link>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="relative h-[80vh] overflow-hidden">
-        <img 
-          src={work.image} 
-          alt={work.name} 
-          className="w-full h-full object-cover grayscale brightness-50"
-          referrerPolicy="no-referrer"
-        />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-          <div className="detail-header">
-            <span className="text-xs font-mono uppercase tracking-[0.4em] opacity-60 mb-4 block">{work.category}</span>
-            <h1 className="text-[10vw] font-display leading-none uppercase tracking-tighter">{work.name}</h1>
-          </div>
-        </div>
-      </section>
-
-      {/* Project Info */}
-      <section className="py-24 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          <div className="lg:col-span-4 space-y-12">
-            <div className="detail-meta">
-              <h4 className="text-[10px] font-mono uppercase tracking-widest opacity-40 mb-2">Client</h4>
-              <p className="text-lg uppercase tracking-tight">{work.client || 'Confidential'}</p>
-            </div>
-            <div className="detail-meta">
-              <h4 className="text-[10px] font-mono uppercase tracking-widest opacity-40 mb-2">Year</h4>
-              <p className="text-lg uppercase tracking-tight">{work.year || '2025'}</p>
-            </div>
-            <div className="detail-meta">
-              <h4 className="text-[10px] font-mono uppercase tracking-widest opacity-40 mb-2">Role</h4>
-              <p className="text-lg uppercase tracking-tight">{work.role || 'Lead Designer'}</p>
-            </div>
-          </div>
-          
-          <div className="lg:col-span-8 detail-content">
-            <h3 className="text-3xl md:text-4xl mb-8 uppercase tracking-tight leading-tight">
-              {work.description}
-            </h3>
-            <div className="space-y-6 text-lg opacity-70 leading-relaxed font-light max-w-2xl">
-              <p>{work.longDescription}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery */}
-      <section className="py-24 px-6 bg-zinc-950">
-        <div className="max-w-7xl mx-auto">
-          <div className="gallery-grid grid grid-cols-1 md:grid-cols-2 gap-8">
-            {work.gallery.map((img, index) => (
-              <div key={index} className={cn(
-                "gallery-item overflow-hidden rounded-xl bg-zinc-900",
-                index === 0 ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/5]"
-              )}>
-                <img 
-                  src={img} 
-                  alt={`${work.name} gallery ${index + 1}`} 
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Next Project */}
-      <section className="py-32 px-6 border-t border-white/10">
-        <div className="max-w-7xl mx-auto text-center">
-          <span className="text-xs font-mono uppercase tracking-widest opacity-40 mb-8 block">Next Project</span>
-          <Link 
-            to={`/work/${nextWork.id}`}
-            className="group block"
-          >
-            <h2 className="text-[8vw] font-display uppercase tracking-tighter group-hover:italic transition-all duration-500">
-              {nextWork.name}
-            </h2>
-            <div className="mt-8 flex items-center justify-center gap-4 text-sm uppercase tracking-widest font-bold">
-              View Project
-              <ArrowRight className="group-hover:translate-x-4 transition-transform duration-500" />
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-12 px-6 border-t border-white/10 text-center">
-        <div className="text-[10px] font-mono uppercase tracking-[0.3em] opacity-40">
-          © 2026 JAKE AMPONSAH. All Rights Reserved.
-        </div>
-      </footer>
-    </div>
-  );
-}
-
-export default function App() {
-  return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/work/:id" element={<WorkDetail />} />
-      </Routes>
-    </BrowserRouter>
   );
 }
