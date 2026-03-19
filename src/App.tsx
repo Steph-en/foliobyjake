@@ -182,7 +182,7 @@ export default function App() {
             className="fixed inset-0 z-[60] bg-white text-black p-8 flex flex-col"
           >
             <div className="flex justify-between items-center mb-16">
-              <h1 className="text-3xl font-display">DEHOOD</h1>
+              <h1 className="text-3xl font-display">PORTFOLIO</h1>
               <button onClick={() => setIsMenuOpen(false)}>
                 <X size={32} />
               </button>
