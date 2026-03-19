@@ -581,7 +581,7 @@ function Home() {
           <div className="relative order-1 lg:order-2 parallax-img-container">
             <div className="aspect-[3/4] overflow-hidden rounded-2xl">
               <img 
-                src="/src/assets/jake.jpg" 
+                src="src/assets/jake.jpg" 
                 alt="Jake Amponsah" 
                 className="w-full h-full object-cover grayscale"
                 referrerPolicy="no-referrer"
