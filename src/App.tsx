@@ -36,6 +36,7 @@ interface Work {
   name: string;
   category: string;
   image: string;
+  video?: string;
   description: string;
   longDescription: string;
   gallery: string[];
@@ -50,12 +51,20 @@ const WORKS: Work[] = [
     name: 'Urban Branding', 
     category: 'Graphic Design', 
     image: 'https://picsum.photos/seed/work1/800/1000', 
+    video: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=fxdythconcover_ll2nfk&player[hide_controls]=true',
     description: 'A comprehensive branding project for a modern urban lifestyle brand, focusing on minimalist aesthetics and bold typography.',
     longDescription: 'This project involved creating a complete visual identity for "Urban Pulse," a lifestyle brand targeting Gen Z. The challenge was to balance high-fashion elegance with street-level grit. We developed a custom typeface, a modular logo system, and a color palette that adapts to different seasonal collections. The result was a 40% increase in brand recognition within the first quarter of launch.',
     gallery: [
-      'https://picsum.photos/seed/work1-1/1200/800',
-      'https://picsum.photos/seed/work1-2/1200/800',
-      'https://picsum.photos/seed/work1-3/1200/800'
+      'https://picsum.photos/seed/work1-1/1200/800', // 3:2
+      'https://picsum.photos/seed/work1-2/1000/1000', // 1:1
+      'https://picsum.photos/seed/work1-3/1000/1000', // 1:1
+      'https://picsum.photos/seed/work1-4/800/1200', // 2:3
+      'https://picsum.photos/seed/work1-5/1600/1000', // 16:10
+      'https://picsum.photos/seed/work1-6/2100/900', // 21:9
+      'https://picsum.photos/seed/work1-7/800/1000', // 4:5
+      'https://picsum.photos/seed/work1-8/800/1000', // 4:5
+      'https://picsum.photos/seed/work1-9/800/1000', // 4:5
+      'https://picsum.photos/seed/work1-10/1200/800' // 3:2
     ],
     client: 'Urban Pulse',
     year: '2024',
@@ -70,8 +79,15 @@ const WORKS: Work[] = [
     longDescription: 'Digital Dreams is a series of 12 unique digital paintings created using a hybrid process of traditional digital painting and AI-assisted texture generation. Each piece represents a specific subconscious state, from "Lucid Clarity" to "Static Anxiety." The series was exhibited at the Accra Digital Arts Festival and sold as a limited NFT collection.',
     gallery: [
       'https://picsum.photos/seed/work2-1/1200/800',
-      'https://picsum.photos/seed/work2-2/1200/800',
-      'https://picsum.photos/seed/work2-3/1200/800'
+      'https://picsum.photos/seed/work2-2/1000/1000',
+      'https://picsum.photos/seed/work2-3/1000/1000',
+      'https://picsum.photos/seed/work2-4/800/1200',
+      'https://picsum.photos/seed/work2-5/1600/1000',
+      'https://picsum.photos/seed/work2-6/2100/900',
+      'https://picsum.photos/seed/work2-7/800/1000',
+      'https://picsum.photos/seed/work2-8/800/1000',
+      'https://picsum.photos/seed/work2-9/800/1000',
+      'https://picsum.photos/seed/work2-10/1200/800'
     ],
     client: 'Personal Project',
     year: '2025',
@@ -86,8 +102,15 @@ const WORKS: Work[] = [
     longDescription: 'For the launch of "FlowState," a productivity app, we created a 60-second brand anthem and a series of UI-focused social clips. The motion language was built around the concept of "frictionless flow," using liquid simulations and rhythmic editing. The campaign reached over 1 million views across platforms in its first week.',
     gallery: [
       'https://picsum.photos/seed/work3-1/1200/800',
-      'https://picsum.photos/seed/work3-2/1200/800',
-      'https://picsum.photos/seed/work3-3/1200/800'
+      'https://picsum.photos/seed/work3-2/1000/1000',
+      'https://picsum.photos/seed/work3-3/1000/1000',
+      'https://picsum.photos/seed/work3-4/800/1200',
+      'https://picsum.photos/seed/work3-5/1600/1000',
+      'https://picsum.photos/seed/work3-6/2100/900',
+      'https://picsum.photos/seed/work3-7/800/1000',
+      'https://picsum.photos/seed/work3-8/800/1000',
+      'https://picsum.photos/seed/work3-9/800/1000',
+      'https://picsum.photos/seed/work3-10/1200/800'
     ],
     client: 'FlowState Tech',
     year: '2024',
@@ -102,8 +125,15 @@ const WORKS: Work[] = [
     longDescription: 'This 24-page feature for "Vogue Ghana" explored the rise of sustainable textiles in West Africa. We utilized a grid-breaking layout and custom-shot macro photography of fabric textures. The design won the "Excellence in Print Media" award at the 2024 Design Awards.',
     gallery: [
       'https://picsum.photos/seed/work4-1/1200/800',
-      'https://picsum.photos/seed/work4-2/1200/800',
-      'https://picsum.photos/seed/work4-3/1200/800'
+      'https://picsum.photos/seed/work4-2/1000/1000',
+      'https://picsum.photos/seed/work4-3/1000/1000',
+      'https://picsum.photos/seed/work4-4/800/1200',
+      'https://picsum.photos/seed/work4-5/1600/1000',
+      'https://picsum.photos/seed/work4-6/2100/900',
+      'https://picsum.photos/seed/work4-7/800/1000',
+      'https://picsum.photos/seed/work4-8/800/1000',
+      'https://picsum.photos/seed/work4-9/800/1000',
+      'https://picsum.photos/seed/work4-10/1200/800'
     ],
     client: 'Vogue Ghana',
     year: '2024',
@@ -118,8 +148,15 @@ const WORKS: Work[] = [
     longDescription: 'The "Wear the Change" campaign for EcoThreads focused on transparency. We designed a series of interactive Instagram stories and a high-impact video series showcasing the artisans behind the brand. Engagement rates increased by 250% compared to previous campaigns.',
     gallery: [
       'https://picsum.photos/seed/work5-1/1200/800',
-      'https://picsum.photos/seed/work5-2/1200/800',
-      'https://picsum.photos/seed/work5-3/1200/800'
+      'https://picsum.photos/seed/work5-2/1000/1000',
+      'https://picsum.photos/seed/work5-3/1000/1000',
+      'https://picsum.photos/seed/work5-4/800/1200',
+      'https://picsum.photos/seed/work5-5/1600/1000',
+      'https://picsum.photos/seed/work5-6/2100/900',
+      'https://picsum.photos/seed/work5-7/800/1000',
+      'https://picsum.photos/seed/work5-8/800/1000',
+      'https://picsum.photos/seed/work5-9/800/1000',
+      'https://picsum.photos/seed/work5-10/1200/800'
     ],
     client: 'EcoThreads',
     year: '2025',
@@ -134,8 +171,15 @@ const WORKS: Work[] = [
     longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
     gallery: [
       'https://picsum.photos/seed/work6-1/1200/800',
-      'https://picsum.photos/seed/work6-2/1200/800',
-      'https://picsum.photos/seed/work6-3/1200/800'
+      'https://picsum.photos/seed/work6-2/1000/1000',
+      'https://picsum.photos/seed/work6-3/1000/1000',
+      'https://picsum.photos/seed/work6-4/800/1200',
+      'https://picsum.photos/seed/work6-5/1600/1000',
+      'https://picsum.photos/seed/work6-6/2100/900',
+      'https://picsum.photos/seed/work6-7/800/1000',
+      'https://picsum.photos/seed/work6-8/800/1000',
+      'https://picsum.photos/seed/work6-9/800/1000',
+      'https://picsum.photos/seed/work6-10/1200/800'
     ],
     client: 'Personal Project',
     year: '2026',
@@ -150,8 +194,15 @@ const WORKS: Work[] = [
     longDescription: 'The "Studio X" portfolio site was built to feel like a physical gallery. We implemented custom WebGL transitions and a non-linear navigation system. The site was awarded "Site of the Day" on Awwwards.',
     gallery: [
       'https://picsum.photos/seed/work7-1/1200/800',
-      'https://picsum.photos/seed/work7-2/1200/800',
-      'https://picsum.photos/seed/work7-3/1200/800'
+      'https://picsum.photos/seed/work7-2/1000/1000',
+      'https://picsum.photos/seed/work7-3/1000/1000',
+      'https://picsum.photos/seed/work7-4/800/1200',
+      'https://picsum.photos/seed/work7-5/1600/1000',
+      'https://picsum.photos/seed/work7-6/2100/900',
+      'https://picsum.photos/seed/work7-7/800/1000',
+      'https://picsum.photos/seed/work7-8/800/1000',
+      'https://picsum.photos/seed/work7-9/800/1000',
+      'https://picsum.photos/seed/work7-10/1200/800'
     ],
     client: 'Studio X',
     year: '2025',
@@ -166,8 +217,15 @@ const WORKS: Work[] = [
     longDescription: 'For "Nura Skincare," we developed a packaging system that uses 100% recycled paper and soy-based inks. The visual language uses delicate botanical illustrations and a muted, earthy color palette to reflect the brand\'s natural ingredients.',
     gallery: [
       'https://picsum.photos/seed/work8-1/1200/800',
-      'https://picsum.photos/seed/work8-2/1200/800',
-      'https://picsum.photos/seed/work8-3/1200/800'
+      'https://picsum.photos/seed/work8-2/1000/1000',
+      'https://picsum.photos/seed/work8-3/1000/1000',
+      'https://picsum.photos/seed/work8-4/800/1200',
+      'https://picsum.photos/seed/work8-5/1600/1000',
+      'https://picsum.photos/seed/work8-6/2100/900',
+      'https://picsum.photos/seed/work8-7/800/1000',
+      'https://picsum.photos/seed/work8-8/800/1000',
+      'https://picsum.photos/seed/work8-9/800/1000',
+      'https://picsum.photos/seed/work8-10/1200/800'
     ],
     client: 'Nura Skincare',
     year: '2024',
@@ -183,7 +241,10 @@ const WORKS: Work[] = [
     gallery: [
       'https://picsum.photos/seed/work9-1/1200/800',
       'https://picsum.photos/seed/work9-2/1200/800',
-      'https://picsum.photos/seed/work9-3/1200/800'
+      'https://picsum.photos/seed/work9-3/1200/800',
+      'https://picsum.photos/seed/work9-4/1200/800',
+      'https://picsum.photos/seed/work9-5/1200/800',
+      'https://picsum.photos/seed/work9-6/1200/800'
     ],
     client: 'Self-Published',
     year: '2026',
@@ -322,24 +383,6 @@ function Home() {
       });
     });
 
-    // Enhanced Parallax/Smooth Scroll for Images
-    gsap.utils.toArray('.parallax-img-container').forEach((container: any) => {
-      const img = container.querySelector('img');
-      gsap.fromTo(img, 
-        { yPercent: -15 },
-        {
-          yPercent: 15,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: container,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          }
-        }
-      );
-    });
-
     // Marquee Animation
     gsap.to('.marquee-inner', {
       xPercent: -50,
@@ -442,7 +485,7 @@ function Home() {
       <section className="relative h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <iframe 
-            src="https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=videoExport-2026-03-20_03-00-23.875-2800x1750_60fps_i9tkw1&autoplay=true&loop=true&muted=true&player[hide_controls]=true" 
+            src="https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=videoExport-2026-03-20_03-00-23.875-2800x1750_60fps_i9tkw1&autoplay=true&loop=true&muted=true&player[hide_controls]=true&player[transformation][width]=1920&player[transformation][crop]=limit" 
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[max(100vw,160vh)] h-[max(100vh,62.5vw)] border-0 opacity-40 pointer-events-none"
             allow="autoplay; fullscreen"
             title="Hero Video"
@@ -539,14 +582,23 @@ function Home() {
               className="work-card group cursor-pointer"
               onClick={() => setSelectedWork(work)}
             >
-              <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 parallax-img-container">
-                <img 
-                  src={work.image} 
-                  alt={work.name}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out"
-                  referrerPolicy="no-referrer"
-                  loading="lazy"
-                />
+              <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900">
+                {work.video ? (
+                  <iframe 
+                    src={`${work.video}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
+                    className="w-full h-full border-0 pointer-events-none grayscale group-hover:grayscale-0 transition-all duration-1000"
+                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                    title={work.name}
+                  />
+                ) : (
+                  <img 
+                    src={work.image} 
+                    alt={work.name}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out"
+                    referrerPolicy="no-referrer"
+                    loading="lazy"
+                  />
+                )}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                   <div className="translate-y-4 group-hover:translate-y-0 transition-all duration-500 text-center px-6">
                     <span className="block px-8 py-3 bg-white text-black font-bold uppercase text-xs tracking-widest active:scale-95 transition-transform">
@@ -612,7 +664,11 @@ function Home() {
                 <h2 className="text-3xl uppercase tracking-tighter leading-none">{selectedWork.name}</h2>
               </div>
 
-              <ModalCarousel images={selectedWork.gallery.length > 0 ? selectedWork.gallery : [selectedWork.image]} name={selectedWork.name} />
+              <ModalCarousel 
+                images={selectedWork.gallery.length > 0 ? selectedWork.gallery : [selectedWork.image]} 
+                name={selectedWork.name} 
+                video={selectedWork.video}
+              />
               
               <div className="p-8 md:p-16 flex flex-col justify-center">
                 <div className="mb-8 hidden lg:block">
@@ -763,10 +819,20 @@ function Home() {
   );
 }
 
-function ModalCarousel({ images, name }: { images: string[], name: string }) {
+function ModalCarousel({ images, name, video }: { images: string[], name: string, video?: string }) {
   return (
     <div className="relative aspect-[4/5] lg:aspect-auto overflow-hidden bg-zinc-900">
       <div className="flex h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+        {video && (
+          <div className="w-full h-full shrink-0 snap-center">
+            <iframe 
+              src={`${video}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
+              className="w-full h-full border-0"
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              title={name}
+            />
+          </div>
+        )}
         {images.map((img, i) => (
           <div 
             key={i} 
@@ -852,7 +918,7 @@ function WorkDetail() {
   const work = WORKS.find(w => w.id === Number(id));
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
-  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     // Simulate page data loading
@@ -894,6 +960,23 @@ function WorkDetail() {
       document.removeEventListener('click', handleAnchorClick);
     };
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (lightboxIndex === null || !work) return;
+      
+      if (e.key === 'ArrowRight') {
+        setLightboxIndex((prev) => (prev !== null ? (prev + 1) % work.gallery.length : null));
+      } else if (e.key === 'ArrowLeft') {
+        setLightboxIndex((prev) => (prev !== null ? (prev - 1 + work.gallery.length) % work.gallery.length : null));
+      } else if (e.key === 'Escape') {
+        setLightboxIndex(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxIndex, work]);
 
   useGSAP(() => {
     const tl = gsap.timeline();
@@ -965,12 +1048,23 @@ function WorkDetail() {
 
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
-        <ImageWithLoader 
-          src={work.image} 
-          alt={work.name} 
-          className="w-full h-full grayscale brightness-50"
-        />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+        {work.video ? (
+          <div className="absolute inset-0 z-0">
+            <iframe 
+              src={`${work.video}&autoplay=true&muted=true&loop=true&player[transformation][width]=1920&player[transformation][crop]=limit&player[hide_controls]=true`}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[max(100vw,178vh)] h-[max(100vh,56.25vw)] border-0 grayscale brightness-50 pointer-events-none"
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              title={work.name}
+            />
+          </div>
+        ) : (
+          <ImageWithLoader 
+            src={work.image} 
+            alt={work.name} 
+            className="w-full h-full grayscale brightness-50"
+          />
+        )}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10">
           <div className="detail-header">
             <span className="text-xs font-mono uppercase tracking-[0.4em] opacity-60 mb-4 block">{work.category}</span>
             <h1 className="text-[10vw] font-display leading-none uppercase tracking-tighter">{work.name}</h1>
@@ -1009,56 +1103,127 @@ function WorkDetail() {
 
       {/* Gallery */}
       <section className="py-24 px-6 bg-zinc-950 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-12">
-            <h2 className="text-3xl uppercase tracking-tighter">Gallery</h2>
-            <p className="text-xs font-mono uppercase tracking-widest opacity-40 mt-2">Click an image to expand</p>
+        <div className="max-w-[1800px] mx-auto">
+          <div className="mb-16 md:mb-24">
+            <h2 className="text-4xl md:text-7xl uppercase tracking-tighter font-display leading-none">Selected Works</h2>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-6">
+              <p className="text-xs font-mono uppercase tracking-widest opacity-40">Gallery / {work.gallery.length} Images</p>
+              <p className="text-[10px] font-mono uppercase tracking-widest opacity-40 hidden md:block">Click any image to view in full detail</p>
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 gallery-grid">
-            {work.gallery.map((img, index) => (
-              <motion.div 
-                key={index} 
-                className="aspect-[4/3] overflow-hidden rounded-xl bg-zinc-900 gallery-item cursor-pointer"
-                whileHover={{ scale: 0.98 }}
-                onClick={() => setLightboxImage(img)}
-              >
-                <ImageWithLoader 
-                  src={img} 
-                  alt={`${work.name} gallery ${index + 1}`} 
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
-                />
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 lg:gap-16 grid-flow-dense gallery-grid">
+            {work.gallery.map((img, index) => {
+              // Dynamic 2-column grid layout pattern (using 12-column grid for flexibility)
+              const getSpanClasses = (idx: number) => {
+                const mod = idx % 8;
+                let classes = "w-full overflow-hidden rounded-xl bg-zinc-900 gallery-item cursor-pointer";
+                
+                // Pattern: Full, Half-Half, 2/3-1/3, Full, 1/3-2/3
+                if (mod === 0) {
+                  // Full Width
+                  classes += " md:col-span-12 aspect-[16/9] lg:aspect-[21/9]";
+                } else if (mod === 1 || mod === 2) {
+                  // Side-by-Side (Half)
+                  classes += " md:col-span-6 aspect-[4/5] lg:aspect-square";
+                } else if (mod === 3) {
+                  // Asymmetrical 2/3
+                  classes += " md:col-span-8 aspect-[3/2]";
+                } else if (mod === 4) {
+                  // Asymmetrical 1/3
+                  classes += " md:col-span-4 aspect-[2/3] lg:aspect-[3/4]";
+                } else if (mod === 5) {
+                  // Full Width
+                  classes += " md:col-span-12 aspect-[16/9]";
+                } else if (mod === 6) {
+                  // Asymmetrical 1/3
+                  classes += " md:col-span-4 aspect-[2/3] lg:aspect-[3/4]";
+                } else if (mod === 7) {
+                  // Asymmetrical 2/3
+                  classes += " md:col-span-8 aspect-[3/2]";
+                }
+                
+                return classes;
+              };
+
+              return (
+                <motion.div 
+                  key={index} 
+                  className={getSpanClasses(index)}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.8, ease: [0.215, 0.61, 0.355, 1], delay: (index % 3) * 0.1 }}
+                  whileHover={{ scale: 0.995 }}
+                  onClick={() => setLightboxIndex(index)}
+                >
+                  <ImageWithLoader 
+                    src={img} 
+                    alt={`${work.name} gallery ${index + 1}`} 
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
+                  />
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* Lightbox */}
       <AnimatePresence>
-        {lightboxImage && (
+        {lightboxIndex !== null && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4 md:p-12"
-            onClick={() => setLightboxImage(null)}
+            className="fixed inset-0 z-[200] bg-black/98 flex items-center justify-center p-4 md:p-12"
           >
+            <div className="absolute inset-0" onClick={() => setLightboxIndex(null)} />
+            
             <button 
-              className="absolute top-8 right-8 text-white hover:text-zinc-400 transition-colors z-[210]"
-              onClick={() => setLightboxImage(null)}
+              className="absolute top-8 right-8 text-white hover:text-zinc-400 transition-colors z-[210] p-2"
+              onClick={() => setLightboxIndex(null)}
             >
               <X size={32} />
             </button>
-            <motion.img 
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              src={lightboxImage} 
-              alt="Gallery Lightbox" 
-              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-              referrerPolicy="no-referrer"
-            />
+
+            <button 
+              className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white hover:text-zinc-400 transition-colors z-[210] p-4 bg-black/20 rounded-full backdrop-blur-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxIndex((prev) => (prev !== null ? (prev - 1 + work.gallery.length) % work.gallery.length : null));
+              }}
+            >
+              <ChevronLeft size={40} />
+            </button>
+
+            <button 
+              className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white hover:text-zinc-400 transition-colors z-[210] p-4 bg-black/20 rounded-full backdrop-blur-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                setLightboxIndex((prev) => (prev !== null ? (prev + 1) % work.gallery.length : null));
+              }}
+            >
+              <ChevronRight size={40} />
+            </button>
+
+            <div className="relative max-w-7xl max-h-[85vh] flex flex-col items-center">
+              <motion.img 
+                key={lightboxIndex}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                src={work.gallery[lightboxIndex]} 
+                alt="Gallery Lightbox" 
+                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute -bottom-12 left-0 right-0 text-center">
+                <p className="text-xs font-mono uppercase tracking-widest opacity-60">
+                  {lightboxIndex + 1} / {work.gallery.length}
+                </p>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
