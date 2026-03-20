@@ -451,7 +451,7 @@ function Home() {
         </div>
 
         <div className="relative z-10 w-full px-6">
-          <h1 className="hero-title font-jake text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-hidden">
+          <h1 className="hero-title font-jake text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-x-visible">
             <span className="block">JAKE</span>
             <span className="block tracking-normal">AMPONSAH</span>
           </h1>
