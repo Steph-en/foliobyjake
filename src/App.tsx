@@ -607,21 +607,26 @@ function Home() {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="relative w-full max-w-6xl max-h-[90vh] bg-zinc-950 rounded-2xl overflow-y-auto grid grid-cols-1 lg:grid-cols-2 shadow-2xl scrollbar-hide"
             >
+              {/* Mobile Title Header */}
+              <div className="p-8 pb-4 lg:hidden">
+                <h2 className="text-3xl uppercase tracking-tighter leading-none">{selectedWork.name}</h2>
+              </div>
+
               <ModalCarousel images={selectedWork.gallery.length > 0 ? selectedWork.gallery : [selectedWork.image]} name={selectedWork.name} />
               
               <div className="p-8 md:p-16 flex flex-col justify-center">
-                <div className="mb-8">
+                <div className="mb-8 hidden lg:block">
                   <span className="text-xs font-mono uppercase tracking-[0.3em] text-zinc-500">{selectedWork.category}</span>
                   <h2 className="text-4xl md:text-7xl mt-4 uppercase tracking-tighter leading-none">{selectedWork.name}</h2>
                 </div>
                 
-                <div className="space-y-6 mb-12">
+                <div className="space-y-6 mb-12 hidden lg:block">
                   <p className="text-lg md:text-xl opacity-70 leading-relaxed font-light">
                     {selectedWork.description}
                   </p>
                 </div>
                 
-                <div className="flex flex-wrap gap-4 pt-8 border-t border-white/10">
+                <div className="hidden lg:flex flex-wrap gap-4 pt-8 border-t border-white/10">
                   <div className="flex flex-col">
                     <span className="text-[10px] font-mono uppercase tracking-widest opacity-40 mb-1">Year</span>
                     <span className="text-sm uppercase">{selectedWork.year || '2026'}</span>
@@ -632,7 +637,7 @@ function Home() {
                   </div>
                 </div>
 
-                <div className="mt-12">
+                <div className="mt-8 lg:mt-12">
                   <button 
                     onClick={() => navigate(`/work/${selectedWork.id}`)}
                     className="flex items-center gap-3 text-sm uppercase tracking-widest font-bold group hover:text-zinc-400 transition-colors"
