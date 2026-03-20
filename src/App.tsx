@@ -649,7 +649,7 @@ function Home() {
           <div className="relative order-1 lg:order-2 parallax-img-container">
             <div className="aspect-[3/4] overflow-hidden rounded-2xl">
               <img 
-                src="src/assets/jake.jpg" 
+                src="https://res.cloudinary.com/degd6ahfu/image/upload/v1773974518/PHOTO-2026-03-17-23-00-06_ralnm5.jpg" 
                 alt="Jake Amponsah" 
                 className="w-full h-full object-cover grayscale"
                 referrerPolicy="no-referrer"
