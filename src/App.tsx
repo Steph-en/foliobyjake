@@ -441,11 +441,11 @@ function Home() {
       {/* Hero Section */}
       <section className="relative h-screen flex flex-col items-center justify-center text-center px-6">
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://picsum.photos/seed/dehood-hero/1920/1080" 
-            alt="Hero" 
-            className="w-full h-full object-cover opacity-40 grayscale"
-            referrerPolicy="no-referrer"
+          <iframe 
+            src="https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=videoExport-2026-03-20_03-00-23.875-2800x1750_60fps_i9tkw1&autoplay=true&loop=true&muted=true&player[hide_controls]=true" 
+            className="w-full h-full border-0 opacity-40 grayscale pointer-events-none scale-110"
+            allow="autoplay; fullscreen"
+            title="Hero Video"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
         </div>
