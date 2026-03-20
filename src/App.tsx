@@ -207,7 +207,27 @@ function Home() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
+
+  const validateEmail = (emailStr: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(emailStr);
+  };
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address.');
+      return;
+    }
+    setEmailError('');
+    setIsSubmitted(true);
+    setEmail('');
+    setTimeout(() => setIsSubmitted(false), 5000);
+  };
 
   const categories = Array.from(new Set(WORKS.map(w => w.category)));
 
@@ -431,7 +451,7 @@ function Home() {
         </div>
 
         <div className="relative z-10 w-full px-6">
-          <h1 className="hero-title font-jake text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-x-visible">
+          <h1 className="hero-title font-jake text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-hidden">
             <span className="block">JAKE</span>
             <span className="block tracking-normal">AMPONSAH</span>
           </h1>
@@ -668,15 +688,26 @@ function Home() {
         <div className="max-w-3xl mx-auto text-center reveal-up">
           <h2 className="text-4xl md:text-6xl mb-8 uppercase tracking-tighter">Let's Work Together</h2>
           <p className="font-mono uppercase tracking-widest opacity-60 mb-12">Available for freelance projects and collaborations.</p>
-          <form className="flex flex-col md:flex-row gap-4">
-            <input 
-              type="email" 
-              placeholder="YOUR EMAIL ADDRESS" 
-              className="reveal-up flex-1 bg-transparent border-b border-white/30 py-4 px-2 focus:border-white outline-none transition-colors font-mono text-sm"
-            />
-            <button className="reveal-up px-12 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors cursor-pointer active:scale-95">
-              Get in Touch
-            </button>
+          <form onSubmit={handleContactSubmit} className="flex flex-col gap-4 max-w-xl mx-auto">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 flex flex-col gap-2">
+                <input 
+                  type="email" 
+                  placeholder="YOUR EMAIL ADDRESS" 
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (emailError) setEmailError('');
+                  }}
+                  className="reveal-up w-full bg-transparent border-b border-white/30 py-4 px-2 focus:border-white outline-none transition-colors font-mono text-sm"
+                />
+                {emailError && <span className="text-red-500 text-[10px] font-mono uppercase tracking-widest text-left px-2">{emailError}</span>}
+              </div>
+              <button type="submit" className="reveal-up px-12 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors cursor-pointer active:scale-95 h-fit">
+                Get in Touch
+              </button>
+            </div>
+            {isSubmitted && <p className="text-emerald-500 text-xs font-mono uppercase tracking-widest mt-4">Thank you! Your message has been sent.</p>}
           </form>
         </div>
       </section>
