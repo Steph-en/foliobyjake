@@ -439,11 +439,11 @@ function Home() {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex flex-col items-center justify-center text-center px-6">
+      <section className="relative h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <iframe 
             src="https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=videoExport-2026-03-20_03-00-23.875-2800x1750_60fps_i9tkw1&autoplay=true&loop=true&muted=true&player[hide_controls]=true" 
-            className="w-full h-full border-0 opacity-40 pointer-events-none scale-110"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[max(100vw,160vh)] h-[max(100vh,62.5vw)] border-0 opacity-40 pointer-events-none"
             allow="autoplay; fullscreen"
             title="Hero Video"
           />
@@ -583,7 +583,7 @@ function Home() {
       {/* Work Modal */}
       <AnimatePresence>
         {selectedWork && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 overflow-hidden">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -591,19 +591,22 @@ function Home() {
               onClick={() => setSelectedWork(null)}
               className="absolute inset-0 bg-black/95 backdrop-blur-md"
             />
+            
+            {/* Fixed Close Button for Mobile/Desktop */}
+            <button 
+              onClick={() => setSelectedWork(null)}
+              className="fixed top-6 right-6 z-[110] p-3 bg-black/50 text-white rounded-full hover:bg-white hover:text-black transition-all shadow-xl border border-white/10"
+              aria-label="Close modal"
+            >
+              <X size={24} />
+            </button>
+
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-6xl bg-zinc-950 rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 shadow-2xl"
+              className="relative w-full max-w-6xl max-h-[90vh] bg-zinc-950 rounded-2xl overflow-y-auto grid grid-cols-1 lg:grid-cols-2 shadow-2xl scrollbar-hide"
             >
-              <button 
-                onClick={() => setSelectedWork(null)}
-                className="absolute top-6 right-6 z-10 p-3 bg-black/50 rounded-full hover:bg-white hover:text-black transition-all"
-              >
-                <X size={24} />
-              </button>
-              
               <ModalCarousel images={selectedWork.gallery.length > 0 ? selectedWork.gallery : [selectedWork.image]} name={selectedWork.name} />
               
               <div className="p-8 md:p-16 flex flex-col justify-center">
@@ -844,6 +847,7 @@ function WorkDetail() {
   const work = WORKS.find(w => w.id === Number(id));
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPageLoading, setIsPageLoading] = useState(true);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   useEffect(() => {
     // Simulate page data loading
@@ -1001,39 +1005,18 @@ function WorkDetail() {
       {/* Gallery */}
       <section className="py-24 px-6 bg-zinc-950 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-12 flex justify-between items-end">
+          <div className="mb-12">
             <h2 className="text-3xl uppercase tracking-tighter">Gallery</h2>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => {
-                  const carousel = document.getElementById('gallery-carousel');
-                  if (carousel) carousel.scrollBy({ left: -600, behavior: 'smooth' });
-                }}
-                className="p-2 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button 
-                onClick={() => {
-                  const carousel = document.getElementById('gallery-carousel');
-                  if (carousel) carousel.scrollBy({ left: 600, behavior: 'smooth' });
-                }}
-                className="p-2 border border-white/10 rounded-full hover:bg-white hover:text-black transition-all"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
+            <p className="text-xs font-mono uppercase tracking-widest opacity-40 mt-2">Click an image to expand</p>
           </div>
           
-          <div 
-            id="gallery-carousel"
-            className="flex gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory cursor-grab active:cursor-grabbing scroll-smooth"
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 gallery-grid">
             {work.gallery.map((img, index) => (
               <motion.div 
                 key={index} 
-                className="min-w-[300px] md:min-w-[600px] aspect-[16/9] overflow-hidden rounded-xl bg-zinc-900 gallery-item snap-center shrink-0"
+                className="aspect-[4/3] overflow-hidden rounded-xl bg-zinc-900 gallery-item cursor-pointer"
                 whileHover={{ scale: 0.98 }}
+                onClick={() => setLightboxImage(img)}
               >
                 <ImageWithLoader 
                   src={img} 
@@ -1045,6 +1028,35 @@ function WorkDetail() {
           </div>
         </div>
       </section>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4 md:p-12"
+            onClick={() => setLightboxImage(null)}
+          >
+            <button 
+              className="absolute top-8 right-8 text-white hover:text-zinc-400 transition-colors z-[210]"
+              onClick={() => setLightboxImage(null)}
+            >
+              <X size={32} />
+            </button>
+            <motion.img 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              src={lightboxImage} 
+              alt="Gallery Lightbox" 
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Next Project */}
       <section className="py-32 px-6 border-t border-white/10">
