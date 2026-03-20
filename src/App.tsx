@@ -443,7 +443,7 @@ function Home() {
         <div className="absolute inset-0 z-0">
           <iframe 
             src="https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=videoExport-2026-03-20_03-00-23.875-2800x1750_60fps_i9tkw1&autoplay=true&loop=true&muted=true&player[hide_controls]=true" 
-            className="w-full h-full border-0 opacity-40 grayscale pointer-events-none scale-110"
+            className="w-full h-full border-0 opacity-40 pointer-events-none scale-110"
             allow="autoplay; fullscreen"
             title="Hero Video"
           />
