@@ -51,7 +51,7 @@ const WORKS: Work[] = [
     name: 'Urban Branding', 
     category: 'Graphic Design', 
     image: 'https://picsum.photos/seed/work1/800/1000', 
-    video: 'src/assets/fxdythconcover.mp4',
+    video: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=fxdythconcover_ll2nfk&player[hide_controls]=true',
     description: 'A comprehensive branding project for a modern urban lifestyle brand, focusing on minimalist aesthetics and bold typography.',
     longDescription: 'This project involved creating a complete visual identity for "Urban Pulse," a lifestyle brand targeting Gen Z. The challenge was to balance high-fashion elegance with street-level grit. We developed a custom typeface, a modular logo system, and a color palette that adapts to different seasonal collections. The result was a 40% increase in brand recognition within the first quarter of launch.',
     gallery: [
