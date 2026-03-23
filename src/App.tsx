@@ -260,6 +260,44 @@ function ScrollToTop() {
   return null;
 }
 
+// Smooth Scroll Hook
+function useSmoothScroll() {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    // Smooth scroll for anchor links
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a');
+      if (anchor && anchor.hash && anchor.origin === window.location.origin) {
+        const targetElement = document.querySelector(anchor.hash);
+        if (targetElement instanceof HTMLElement) {
+          e.preventDefault();
+          lenis.scrollTo(targetElement);
+        }
+      }
+    };
+
+    document.addEventListener('click', handleAnchorClick);
+
+    return () => {
+      lenis.destroy();
+      document.removeEventListener('click', handleAnchorClick);
+    };
+  }, []);
+}
+
 function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLHeadingElement>(null);
@@ -272,6 +310,8 @@ function Home() {
   const [emailError, setEmailError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
+
+  useSmoothScroll();
 
   const validateEmail = (emailStr: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -587,7 +627,7 @@ function Home() {
                   <iframe 
                     src={`${work.video}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
                     className="w-full h-full border-0 pointer-events-none grayscale group-hover:grayscale-0 transition-all duration-1000"
-                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                    allow="autoplay; fullscreen; encrypted-media;"
                     title={work.name}
                   />
                 ) : (
@@ -850,23 +890,51 @@ function ModalCarousel({ images, name, video }: { images: string[], name: string
   );
 }
 
-function ImageWithLoader({ src, alt, className, priority = false }: { src: string, alt: string, className?: string, priority?: boolean }) {
+function ImageWithLoader({ 
+  src, 
+  alt, 
+  className, 
+  imgClassName,
+  priority = false 
+}: { 
+  src: string, 
+  alt: string, 
+  className?: string, 
+  imgClassName?: string,
+  priority?: boolean 
+}) {
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
   return (
-    <div className={cn("relative w-full h-full", className)}>
+    <div className={cn("relative w-full h-full overflow-hidden bg-zinc-900", className)}>
       {isLoading && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-900">
-          <LoadingSpinner />
+        <div className="absolute inset-0 z-10">
+          <Skeleton className="w-full h-full rounded-none" />
         </div>
       )}
-      <img 
-        src={src} 
-        alt={alt} 
-        className={cn("w-full h-full object-cover transition-opacity duration-500", isLoading ? "opacity-0" : "opacity-100")}
-        onLoad={() => setIsLoading(false)}
-        referrerPolicy="no-referrer"
-        loading={priority ? "eager" : "lazy"}
-      />
+      {hasError ? (
+        <div className="absolute inset-0 flex items-center justify-center text-zinc-500 text-xs font-mono uppercase tracking-widest">
+          Failed to load image
+        </div>
+      ) : (
+        <img 
+          src={src} 
+          alt={alt} 
+          className={cn(
+            "w-full h-full object-cover transition-all duration-700 ease-out", 
+            isLoading ? "opacity-0 scale-105" : "opacity-100 scale-100",
+            imgClassName
+          )}
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setIsLoading(false);
+            setHasError(true);
+          }}
+          referrerPolicy="no-referrer"
+          loading={priority ? "eager" : "lazy"}
+        />
+      )}
     </div>
   );
 }
@@ -920,46 +988,13 @@ function WorkDetail() {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  useSmoothScroll();
+
   useEffect(() => {
     // Simulate page data loading
     const timer = setTimeout(() => setIsPageLoading(false), 800);
     return () => clearTimeout(timer);
   }, [id]);
-
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    // Smooth scroll for anchor links
-    const handleAnchorClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const anchor = target.closest('a');
-      if (anchor && anchor.hash && anchor.origin === window.location.origin) {
-        const targetElement = document.querySelector(anchor.hash);
-        if (targetElement instanceof HTMLElement) {
-          e.preventDefault();
-          lenis.scrollTo(targetElement);
-        }
-      }
-    };
-
-    document.addEventListener('click', handleAnchorClick);
-
-    return () => {
-      lenis.destroy();
-      document.removeEventListener('click', handleAnchorClick);
-    };
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -1120,6 +1155,7 @@ function WorkDetail() {
                 let classes = "w-full overflow-hidden rounded-xl bg-zinc-900 gallery-item cursor-pointer";
                 
                 // Pattern: Full, Half-Half, 2/3-1/3, Full, 1/3-2/3
+                // We use aspect-ratio to ensure grid cells are filled appropriately
                 if (mod === 0) {
                   // Full Width
                   classes += " md:col-span-12 aspect-[16/9] lg:aspect-[21/9]";
@@ -1160,7 +1196,7 @@ function WorkDetail() {
                   <ImageWithLoader 
                     src={img} 
                     alt={`${work.name} gallery ${index + 1}`} 
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
+                    imgClassName="hover:scale-105 transition-transform duration-1000"
                   />
                 </motion.div>
               );
