@@ -452,8 +452,8 @@ function Home() {
       {/* Intro Overlay */}
       {!isIntroComplete && (
         <div className="intro-overlay fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden">
-          <h1 className="intro-logo text-[12vw] font-display tracking-tighter whitespace-nowrap">
-            PORTFOLIO
+          <h1 className="intro-logo text-[8vw] font-display tracking-tighter whitespace-nowrap">
+            ANCHOR. by Jake 
           </h1>
         </div>
       )}
@@ -464,7 +464,7 @@ function Home() {
         </div>
         
         <h1 ref={logoRef} className="nav-item text-2xl md:text-3xl font-display tracking-tighter absolute left-1/2 -translate-x-1/2">
-          PORTFOLIO
+        ANCHOR.
         </h1>
 
         <div className="flex items-center gap-6 nav-item">
@@ -534,7 +534,7 @@ function Home() {
         </div>
 
         <div className="relative z-10 w-full px-6">
-          <h1 className="hero-title font-jake text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-hidden">
+          <h1 className="hero-title font-jake text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-x-visible">
             <span className="block">JAKE</span>
             <span className="block tracking-normal">AMPONSAH</span>
           </h1>
@@ -766,7 +766,7 @@ function Home() {
               </p>
             </div>
             <button className="mt-12 text-xs uppercase tracking-[0.3em] font-bold flex items-center gap-4 group">
-              Download Portfolio
+              ANCHOR. by Jake 
               <div className="w-12 h-[1px] bg-white group-hover:w-20 transition-all duration-500" />
             </button>
           </div>
@@ -792,7 +792,7 @@ function Home() {
         <div className="max-w-3xl mx-auto text-center reveal-up">
           <h2 className="text-4xl md:text-6xl mb-8 uppercase tracking-tighter">Let's Work Together</h2>
           <p className="font-mono uppercase tracking-widest opacity-60 mb-12">Available for freelance projects and collaborations.</p>
-          <form onSubmit={handleContactSubmit} className="flex flex-col gap-4 max-w-xl mx-auto">
+          <form onSubmit={handleContactSubmit} className="flex flex-col gap-4 max-w-3xl mx-auto">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 flex flex-col gap-2">
                 <input 
