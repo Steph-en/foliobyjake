@@ -770,10 +770,10 @@ const [isExpanded, setIsExpanded] = useState(false);
                 <h2 className="text-3xl uppercase tracking-tighter leading-none">{selectedWork.name}</h2>
               </div>
 
-              <ModalCarousel 
-                images={selectedWork.gallery.length > 0 ? selectedWork.gallery : [selectedWork.image]} 
+              <ModalPoster 
+                mainImage={selectedWork.image} 
+                mainVideo={selectedWork.video}
                 name={selectedWork.name} 
-                video={selectedWork.video}
               />
               
               <div className="p-8 md:p-16 flex flex-col justify-center">
@@ -925,38 +925,23 @@ const [isExpanded, setIsExpanded] = useState(false);
   );
 }
 
-function ModalCarousel({ images, name, video }: { images: string[], name: string, video?: string }) {
+function ModalPoster({ mainImage, mainVideo, name }: { mainImage: string, mainVideo?: string, name: string }) {
   return (
     <div className="relative aspect-4/5 lg:aspect-auto overflow-hidden bg-zinc-900">
-      <div className="no-scrollbar flex h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} onWheel={(e) => e.preventDefault()} >
-        {video && (
-          <div className="w-full h-full shrink-0 snap-center">
-            <iframe 
-              src={`${video}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
-              className="w-full h-full border-0"
-              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-              title={name}
-            />
-          </div>
-        )}
-        {images.map((img, i) => (
-          <div 
-            key={i} 
-            className="w-full h-full shrink-0 snap-center"
-          >
-            <ImageWithLoader 
-              src={img} 
-              alt={`${name} slide ${i + 1}`} 
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
-      </div>
-      <style jsx>{`
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
+      {mainVideo ? (
+        <iframe 
+          src={`${mainVideo}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
+          className="w-full h-full border-0"
+          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+          title={name}
+        />
+      ) : (
+        <ImageWithLoader 
+          src={mainImage} 
+          alt={name} 
+          className="w-full h-full object-cover"
+        />
+      )}
     </div>
   );
 }
