@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { X, ArrowRight, Instagram, Twitter, Facebook, ExternalLink, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
+import { X, ArrowRight, Instagram, ExternalLink, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BrowserRouter, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
@@ -576,8 +576,6 @@ const [isExpanded, setIsExpanded] = useState(false);
             <div className="mt-auto flex justify-between items-end">
               <div className="flex gap-4">
                 <Instagram size={20} />
-                <Twitter size={20} />
-                <Facebook size={20} />
               </div>
               <div className="text-xs font-mono uppercase tracking-widest">
                 © 2026 JAKE AMPONSAH
