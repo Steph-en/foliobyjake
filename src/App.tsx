@@ -672,7 +672,7 @@ const [isExpanded, setIsExpanded] = useState(false);
           </div>
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
-            className="reveal-up text-xs uppercase tracking-widest font-bold border-b border-white pb-1 hover:opacity-60 transition-opacity"
+            className="reveal-up text-xs uppercase tracking-widest font-bold border-b border-white pb-1 hover:opacity-60 hover:cursor-pointer transition-opacity"
           >
             {isExpanded ? 'View Less Works' : 'View More Works'}
           </button>
@@ -685,7 +685,7 @@ const [isExpanded, setIsExpanded] = useState(false);
               onClick={() => setSelectedCategory(null)}
               className={cn(
                 "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border",
-                !selectedCategory ? "bg-white text-black border-white" : "bg-transparent text-white border-white/20 hover:border-white"
+                !selectedCategory ? "bg-white text-black border-white" : "bg-transparent text-white border-white/20 hover:border-white hover:cursor-pointer"
               )}
             >
               All
@@ -696,7 +696,7 @@ const [isExpanded, setIsExpanded] = useState(false);
                 onClick={() => setSelectedCategory(cat)}
                 className={cn(
                   "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border",
-                  selectedCategory === cat ? "bg-white text-black border-white" : "bg-transparent text-white border-white/20 hover:border-white"
+                  selectedCategory === cat ? "bg-white text-black border-white" : "bg-transparent text-white border-white/20 hover:border-white hover:cursor-pointer"
                 )}
               >
                 {cat}
@@ -856,7 +856,7 @@ const [isExpanded, setIsExpanded] = useState(false);
               </p>
             </div>
             <button className="mt-12 text-xs uppercase tracking-[0.3em] font-bold flex items-center gap-4 group">
-              ANCHOR. by Jake 
+              Portfolio. by Jake 
               <div className="w-12 h-1px bg-white group-hover:w-20 transition-all duration-500" />
             </button>
           </div>
