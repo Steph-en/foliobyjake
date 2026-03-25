@@ -55,16 +55,39 @@ const WORKS: Work[] = [
     description: 'A COMPREHENSIVE BRANDING PROJECT FOR A FAITH-BASED YOUTH CONFERENCE, FOCUSED ON CREATING A BOLD, CULTURALLY RELEVANT VISUAL IDENTITY ROOTED IN THE MESSAGE OF THE GOSPEL.',
     longDescription: 'This project involved developing a complete visual identity for FIXED YOUTH CON 2026, a dynamic youth conference hosted by EWC FIXED Teens Church. The objective was to translate a deeply spiritual message into a modern, engaging brand that resonates with today’s generation. The challenge was to balance clarity of the Gospel message with high-impact visual storytelling that feels fresh, youthful, and culturally aligned. The identity system was built from the ground up, including logo design, typography direction, color systems, and scalable assets across digital and print platforms. The final outcome is a cohesive and versatile brand experience that captures energy, faith, and community positioning the conference as both spiritually impactful and visually compelling to a new generation.',
     gallery: [
-      'https://picsum.photos/seed/work1-1/1200/800', // 3:2
-      'https://picsum.photos/seed/work1-2/1000/1000', // 1:1
-      'https://picsum.photos/seed/work1-3/1000/1000', // 1:1
-      'https://picsum.photos/seed/work1-4/800/1200', // 2:3
-      'https://picsum.photos/seed/work1-5/1600/1000', // 16:10
-      'https://picsum.photos/seed/work1-6/2100/900', // 21:9
-      'https://picsum.photos/seed/work1-7/800/1000', // 4:5
-      'https://picsum.photos/seed/work1-8/800/1000', // 4:5
-      'https://picsum.photos/seed/work1-9/800/1000', // 4:5
-      'https://picsum.photos/seed/work1-10/1200/800' // 3:2
+      'https://res.cloudinary.com/degd6ahfu/image/upload/14_kpi0wp.jpg', // 3:2
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435063/2_khuows.jpg', // 1:1
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435064/3_c2dnoz.jpg', // 1:1
+      'https://res.cloudinary.com/degd6ahfu/image/upload/26_mnpjqi.jpg', // 2:3
+      'https://res.cloudinary.com/degd6ahfu/image/upload/30_louggv.jpg', // 16:10
+      'https://res.cloudinary.com/degd6ahfu/image/upload/5_qz17qt.jpg', // 21:9
+      'https://res.cloudinary.com/degd6ahfu/image/upload/7_kiduyl.jpg', // 4:5
+      'https://res.cloudinary.com/degd6ahfu/image/upload/18_c5zdrr.jpg', // 4:5
+      'https://res.cloudinary.com/degd6ahfu/image/upload/35_ylwbca.jpg', // 4:5
+      'https://res.cloudinary.com/degd6ahfu/image/upload/9_guza8g.jpg', // 3:2
+      'https://res.cloudinary.com/degd6ahfu/image/upload/4_mhyin8.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/12_fuynnk.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/11_stduei.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/36_nqpljp.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/8_mtg3p3.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/16_xboxue.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435059/29_zhixco.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425778/32_nhibto.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425778/31_qkrlqa.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425774/20_an1zmk.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435060/10_jhrxig.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425766/17_terlfh.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425776/28_mqwebo.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425770/24_yao1ex.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425769/22_pee6ir.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425763/6_g8diiz.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425764/13_hrhwnp.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425771/25_is3pmw.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435058/27_tjlkbh.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425783/33_odamvo.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425767/19_u1963l.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425768/21_zkpxxr.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425764/15_adnuoi.jpg'
     ],
     client: 'EWC Fixed Teen\'s Church',
     year: '2026',
@@ -72,184 +95,193 @@ const WORKS: Work[] = [
   },
   { 
     id: 2, 
-    name: 'Digital Dreams', 
+    name: 'Tuniyi', 
     category: 'Digital Art', 
-    image: 'https://picsum.photos/seed/work2/800/1000', 
+    image: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442003/bannner_r79veh.jpg', 
     description: 'An experimental digital art series exploring the intersection of human emotion and artificial intelligence.',
     longDescription: 'Digital Dreams is a series of 12 unique digital paintings created using a hybrid process of traditional digital painting and AI-assisted texture generation. Each piece represents a specific subconscious state, from "Lucid Clarity" to "Static Anxiety." The series was exhibited at the Accra Digital Arts Festival and sold as a limited NFT collection.',
     gallery: [
-      'https://picsum.photos/seed/work2-1/1200/800',
-      'https://picsum.photos/seed/work2-2/1000/1000',
-      'https://picsum.photos/seed/work2-3/1000/1000',
-      'https://picsum.photos/seed/work2-4/800/1200',
-      'https://picsum.photos/seed/work2-5/1600/1000',
-      'https://picsum.photos/seed/work2-6/2100/900',
-      'https://picsum.photos/seed/work2-7/800/1000',
-      'https://picsum.photos/seed/work2-8/800/1000',
-      'https://picsum.photos/seed/work2-9/800/1000',
-      'https://picsum.photos/seed/work2-10/1200/800'
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442415/Jeans_Mock_up_gcktgr.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442667/STYLING_300x-100_dkbtrs.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442666/CLOTHES_AND_MERCH_300x-100_mnxlwj.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442413/Sweatshirt_2_Mock_Up_zfoxuf.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442411/tuniyi_post_5_wxbsdm.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442409/Free_Poster_Mockup_hhudxf.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442008/tuniyi_post_6_d52cbe.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442411/Sweatshirt_Mock_Up_knhws5.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442407/Citylight_Mockup_2_oxd0ju.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442008/Vector_Smart_Object_u7u9um.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442410/BRAND_IDENTITY_300x-100_e73mdy.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442006/FREE-Silk-Scarf-Mockup-Studio-Series-DEMO_By-Mocku_yyuggy.png',
     ],
-    client: 'Personal Project',
+    client: 'Tuniyi',
     year: '2025',
     role: 'Digital Artist'
   },
   { 
     id: 3, 
-    name: 'Motion Identity', 
-    category: 'Motion Graphics', 
-    image: 'https://picsum.photos/seed/work3/800/1000', 
+    name: 'Scolpta', 
+    category: 'Graphic Design', 
+    image: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/Artboard_1_fxrrrq.jpg', 
     description: 'Dynamic motion graphics created for a tech startup\'s product launch, emphasizing fluid transitions and vibrant colors.',
     longDescription: 'For the launch of "FlowState," a productivity app, we created a 60-second brand anthem and a series of UI-focused social clips. The motion language was built around the concept of "frictionless flow," using liquid simulations and rhythmic editing. The campaign reached over 1 million views across platforms in its first week.',
     gallery: [
-      'https://picsum.photos/seed/work3-1/1200/800',
-      'https://picsum.photos/seed/work3-2/1000/1000',
-      'https://picsum.photos/seed/work3-3/1000/1000',
-      'https://picsum.photos/seed/work3-4/800/1200',
-      'https://picsum.photos/seed/work3-5/1600/1000',
-      'https://picsum.photos/seed/work3-6/2100/900',
-      'https://picsum.photos/seed/work3-7/800/1000',
-      'https://picsum.photos/seed/work3-8/800/1000',
-      'https://picsum.photos/seed/work3-9/800/1000',
-      'https://picsum.photos/seed/work3-10/1200/800'
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425610/Artboard_2_copy_10_sqyv8y.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774440404/setup__c86oxu.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774440405/stup_2_xidnzf.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/board_1_rb71ut.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425613/Artboard_12_kx71wy.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/_MG_8714_na4lgt.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774440404/scolpta_logo__xyssqt.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/Artboard_5_wqyf7l.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425617/View_3_b0zaay.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425610/Artboard_2_copy_10_sqyv8y.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/Artboard_4_ugglwp.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774440405/stup_2_xidnzf.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425612/Artboard_8_odb620.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425613/Artboard_11_pnj5gj.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425613/Artboard_9_sye9mn.jpg',
     ],
-    client: 'FlowState Tech',
-    year: '2024',
-    role: 'Motion Designer'
-  },
-  { 
-    id: 4, 
-    name: 'Editorial Layout', 
-    category: 'Print Design', 
-    image: 'https://picsum.photos/seed/work4/800/1000', 
-    description: 'A sophisticated editorial layout for a high-end fashion magazine, balancing negative space with striking photography.',
-    longDescription: 'This 24-page feature for "Vogue Ghana" explored the rise of sustainable textiles in West Africa. We utilized a grid-breaking layout and custom-shot macro photography of fabric textures. The design won the "Excellence in Print Media" award at the 2024 Design Awards.',
-    gallery: [
-      'https://picsum.photos/seed/work4-1/1200/800',
-      'https://picsum.photos/seed/work4-2/1000/1000',
-      'https://picsum.photos/seed/work4-3/1000/1000',
-      'https://picsum.photos/seed/work4-4/800/1200',
-      'https://picsum.photos/seed/work4-5/1600/1000',
-      'https://picsum.photos/seed/work4-6/2100/900',
-      'https://picsum.photos/seed/work4-7/800/1000',
-      'https://picsum.photos/seed/work4-8/800/1000',
-      'https://picsum.photos/seed/work4-9/800/1000',
-      'https://picsum.photos/seed/work4-10/1200/800'
-    ],
-    client: 'Vogue Ghana',
-    year: '2024',
-    role: 'Art Director'
-  },
-  { 
-    id: 5, 
-    name: 'Social Campaign', 
-    category: 'Digital Marketing', 
-    image: 'https://picsum.photos/seed/work5/800/1000', 
-    description: 'A successful social media campaign designed to increase engagement for a sustainable clothing label.',
-    longDescription: 'The "Wear the Change" campaign for EcoThreads focused on transparency. We designed a series of interactive Instagram stories and a high-impact video series showcasing the artisans behind the brand. Engagement rates increased by 250% compared to previous campaigns.',
-    gallery: [
-      'https://picsum.photos/seed/work5-1/1200/800',
-      'https://picsum.photos/seed/work5-2/1000/1000',
-      'https://picsum.photos/seed/work5-3/1000/1000',
-      'https://picsum.photos/seed/work5-4/800/1200',
-      'https://picsum.photos/seed/work5-5/1600/1000',
-      'https://picsum.photos/seed/work5-6/2100/900',
-      'https://picsum.photos/seed/work5-7/800/1000',
-      'https://picsum.photos/seed/work5-8/800/1000',
-      'https://picsum.photos/seed/work5-9/800/1000',
-      'https://picsum.photos/seed/work5-10/1200/800'
-    ],
-    client: 'EcoThreads',
-    year: '2025',
-    role: 'Creative Lead'
-  },
-  { 
-    id: 6, 
-    name: '3D Abstract', 
-    category: '3D Design', 
-    image: 'https://picsum.photos/seed/work6/800/1000', 
-    description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
-    longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
-    gallery: [
-      'https://picsum.photos/seed/work6-1/1200/800',
-      'https://picsum.photos/seed/work6-2/1000/1000',
-      'https://picsum.photos/seed/work6-3/1000/1000',
-      'https://picsum.photos/seed/work6-4/800/1200',
-      'https://picsum.photos/seed/work6-5/1600/1000',
-      'https://picsum.photos/seed/work6-6/2100/900',
-      'https://picsum.photos/seed/work6-7/800/1000',
-      'https://picsum.photos/seed/work6-8/800/1000',
-      'https://picsum.photos/seed/work6-9/800/1000',
-      'https://picsum.photos/seed/work6-10/1200/800'
-    ],
-    client: 'Personal Project',
+    client: 'Scolpta',
     year: '2026',
-    role: '3D Artist'
+    role: 'Lead Brand & Graphic Designer'
   },
-  { 
-    id: 7, 
-    name: 'Web Experience', 
-    category: 'UI/UX Design', 
-    image: 'https://picsum.photos/seed/work7/800/1000', 
-    description: 'An immersive web experience designed for a creative agency, featuring interactive elements and smooth animations.',
-    longDescription: 'The "Studio X" portfolio site was built to feel like a physical gallery. We implemented custom WebGL transitions and a non-linear navigation system. The site was awarded "Site of the Day" on Awwwards.',
-    gallery: [
-      'https://picsum.photos/seed/work7-1/1200/800',
-      'https://picsum.photos/seed/work7-2/1000/1000',
-      'https://picsum.photos/seed/work7-3/1000/1000',
-      'https://picsum.photos/seed/work7-4/800/1200',
-      'https://picsum.photos/seed/work7-5/1600/1000',
-      'https://picsum.photos/seed/work7-6/2100/900',
-      'https://picsum.photos/seed/work7-7/800/1000',
-      'https://picsum.photos/seed/work7-8/800/1000',
-      'https://picsum.photos/seed/work7-9/800/1000',
-      'https://picsum.photos/seed/work7-10/1200/800'
-    ],
-    client: 'Studio X',
-    year: '2025',
-    role: 'UI/UX Designer'
-  },
-  { 
-    id: 8, 
-    name: 'Packaging Design', 
-    category: 'Graphic Design', 
-    image: 'https://picsum.photos/seed/work8/800/1000', 
-    description: 'Eco-friendly packaging design for a premium skincare line, using sustainable materials and elegant illustrations.',
-    longDescription: 'For "Nura Skincare," we developed a packaging system that uses 100% recycled paper and soy-based inks. The visual language uses delicate botanical illustrations and a muted, earthy color palette to reflect the brand\'s natural ingredients.',
-    gallery: [
-      'https://picsum.photos/seed/work8-1/1200/800',
-      'https://picsum.photos/seed/work8-2/1000/1000',
-      'https://picsum.photos/seed/work8-3/1000/1000',
-      'https://picsum.photos/seed/work8-4/800/1200',
-      'https://picsum.photos/seed/work8-5/1600/1000',
-      'https://picsum.photos/seed/work8-6/2100/900',
-      'https://picsum.photos/seed/work8-7/800/1000',
-      'https://picsum.photos/seed/work8-8/800/1000',
-      'https://picsum.photos/seed/work8-9/800/1000',
-      'https://picsum.photos/seed/work8-10/1200/800'
-    ],
-    client: 'Nura Skincare',
-    year: '2024',
-    role: 'Packaging Designer'
-  },
-  { 
-    id: 9, 
-    name: 'Typography Study', 
-    category: 'Graphic Design', 
-    image: 'https://picsum.photos/seed/work9/800/1000', 
-    description: 'An in-depth study of typography, exploring the history and application of various typefaces in modern design.',
-    longDescription: 'This self-published book, "Type & Time," explores how typography has evolved alongside technology. It features 50 detailed case studies of iconic typefaces. The project was funded via a successful Kickstarter campaign.',
-    gallery: [
-      'https://picsum.photos/seed/work9-1/1200/800',
-      'https://picsum.photos/seed/work9-2/1200/800',
-      'https://picsum.photos/seed/work9-3/1200/800',
-      'https://picsum.photos/seed/work9-4/1200/800',
-      'https://picsum.photos/seed/work9-5/1200/800',
-      'https://picsum.photos/seed/work9-6/1200/800'
-    ],
-    client: 'Self-Published',
-    year: '2026',
-    role: 'Author & Designer'
-  },
+  // { 
+  //   id: 4, 
+  //   name: 'Editorial Layout', 
+  //   category: 'Print Design', 
+  //   image: 'https://picsum.photos/seed/work4/800/1000', 
+  //   description: 'A sophisticated editorial layout for a high-end fashion magazine, balancing negative space with striking photography.',
+  //   longDescription: 'This 24-page feature for "Vogue Ghana" explored the rise of sustainable textiles in West Africa. We utilized a grid-breaking layout and custom-shot macro photography of fabric textures. The design won the "Excellence in Print Media" award at the 2024 Design Awards.',
+  //   gallery: [
+  //     'https://picsum.photos/seed/work4-1/1200/800',
+  //     'https://picsum.photos/seed/work4-2/1000/1000',
+  //     'https://picsum.photos/seed/work4-3/1000/1000',
+  //     'https://picsum.photos/seed/work4-4/800/1200',
+  //     'https://picsum.photos/seed/work4-5/1600/1000',
+  //     'https://picsum.photos/seed/work4-6/2100/900',
+  //     'https://picsum.photos/seed/work4-7/800/1000',
+  //     'https://picsum.photos/seed/work4-8/800/1000',
+  //     'https://picsum.photos/seed/work4-9/800/1000',
+  //     'https://picsum.photos/seed/work4-10/1200/800'
+  //   ],
+  //   client: 'Vogue Ghana',
+  //   year: '2024',
+  //   role: 'Art Director'
+  // },
+  // { 
+  //   id: 5, 
+  //   name: 'Social Campaign', 
+  //   category: 'Digital Marketing', 
+  //   image: 'https://picsum.photos/seed/work5/800/1000', 
+  //   description: 'A successful social media campaign designed to increase engagement for a sustainable clothing label.',
+  //   longDescription: 'The "Wear the Change" campaign for EcoThreads focused on transparency. We designed a series of interactive Instagram stories and a high-impact video series showcasing the artisans behind the brand. Engagement rates increased by 250% compared to previous campaigns.',
+  //   gallery: [
+  //     'https://picsum.photos/seed/work5-1/1200/800',
+  //     'https://picsum.photos/seed/work5-2/1000/1000',
+  //     'https://picsum.photos/seed/work5-3/1000/1000',
+  //     'https://picsum.photos/seed/work5-4/800/1200',
+  //     'https://picsum.photos/seed/work5-5/1600/1000',
+  //     'https://picsum.photos/seed/work5-6/2100/900',
+  //     'https://picsum.photos/seed/work5-7/800/1000',
+  //     'https://picsum.photos/seed/work5-8/800/1000',
+  //     'https://picsum.photos/seed/work5-9/800/1000',
+  //     'https://picsum.photos/seed/work5-10/1200/800'
+  //   ],
+  //   client: 'EcoThreads',
+  //   year: '2025',
+  //   role: 'Creative Lead'
+  // },
+  // { 
+  //   id: 6, 
+  //   name: '3D Abstract', 
+  //   category: '3D Design', 
+  //   image: 'https://picsum.photos/seed/work6/800/1000', 
+  //   description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
+  //   longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
+  //   gallery: [
+  //     'https://picsum.photos/seed/work6-1/1200/800',
+  //     'https://picsum.photos/seed/work6-2/1000/1000',
+  //     'https://picsum.photos/seed/work6-3/1000/1000',
+  //     'https://picsum.photos/seed/work6-4/800/1200',
+  //     'https://picsum.photos/seed/work6-5/1600/1000',
+  //     'https://picsum.photos/seed/work6-6/2100/900',
+  //     'https://picsum.photos/seed/work6-7/800/1000',
+  //     'https://picsum.photos/seed/work6-8/800/1000',
+  //     'https://picsum.photos/seed/work6-9/800/1000',
+  //     'https://picsum.photos/seed/work6-10/1200/800'
+  //   ],
+  //   client: 'Personal Project',
+  //   year: '2026',
+  //   role: '3D Artist'
+  // },
+  // { 
+  //   id: 7, 
+  //   name: 'Web Experience', 
+  //   category: 'UI/UX Design', 
+  //   image: 'https://picsum.photos/seed/work7/800/1000', 
+  //   description: 'An immersive web experience designed for a creative agency, featuring interactive elements and smooth animations.',
+  //   longDescription: 'The "Studio X" portfolio site was built to feel like a physical gallery. We implemented custom WebGL transitions and a non-linear navigation system. The site was awarded "Site of the Day" on Awwwards.',
+  //   gallery: [
+  //     'https://picsum.photos/seed/work7-1/1200/800',
+  //     'https://picsum.photos/seed/work7-2/1000/1000',
+  //     'https://picsum.photos/seed/work7-3/1000/1000',
+  //     'https://picsum.photos/seed/work7-4/800/1200',
+  //     'https://picsum.photos/seed/work7-5/1600/1000',
+  //     'https://picsum.photos/seed/work7-6/2100/900',
+  //     'https://picsum.photos/seed/work7-7/800/1000',
+  //     'https://picsum.photos/seed/work7-8/800/1000',
+  //     'https://picsum.photos/seed/work7-9/800/1000',
+  //     'https://picsum.photos/seed/work7-10/1200/800'
+  //   ],
+  //   client: 'Studio X',
+  //   year: '2025',
+  //   role: 'UI/UX Designer'
+  // },
+  // { 
+  //   id: 8, 
+  //   name: 'Packaging Design', 
+  //   category: 'Graphic Design', 
+  //   image: 'https://picsum.photos/seed/work8/800/1000', 
+  //   description: 'Eco-friendly packaging design for a premium skincare line, using sustainable materials and elegant illustrations.',
+  //   longDescription: 'For "Nura Skincare," we developed a packaging system that uses 100% recycled paper and soy-based inks. The visual language uses delicate botanical illustrations and a muted, earthy color palette to reflect the brand\'s natural ingredients.',
+  //   gallery: [
+  //     'https://picsum.photos/seed/work8-1/1200/800',
+  //     'https://picsum.photos/seed/work8-2/1000/1000',
+  //     'https://picsum.photos/seed/work8-3/1000/1000',
+  //     'https://picsum.photos/seed/work8-4/800/1200',
+  //     'https://picsum.photos/seed/work8-5/1600/1000',
+  //     'https://picsum.photos/seed/work8-6/2100/900',
+  //     'https://picsum.photos/seed/work8-7/800/1000',
+  //     'https://picsum.photos/seed/work8-8/800/1000',
+  //     'https://picsum.photos/seed/work8-9/800/1000',
+  //     'https://picsum.photos/seed/work8-10/1200/800'
+  //   ],
+  //   client: 'Nura Skincare',
+  //   year: '2024',
+  //   role: 'Packaging Designer'
+  // },
+  // { 
+  //   id: 9, 
+  //   name: 'Typography Study', 
+  //   category: 'Graphic Design', 
+  //   image: 'https://picsum.photos/seed/work9/800/1000', 
+  //   description: 'An in-depth study of typography, exploring the history and application of various typefaces in modern design.',
+  //   longDescription: 'This self-published book, "Type & Time," explores how typography has evolved alongside technology. It features 50 detailed case studies of iconic typefaces. The project was funded via a successful Kickstarter campaign.',
+  //   gallery: [
+  //     'https://picsum.photos/seed/work9-1/1200/800',
+  //     'https://picsum.photos/seed/work9-2/1200/800',
+  //     'https://picsum.photos/seed/work9-3/1200/800',
+  //     'https://picsum.photos/seed/work9-4/1200/800',
+  //     'https://picsum.photos/seed/work9-5/1200/800',
+  //     'https://picsum.photos/seed/work9-6/1200/800'
+  //   ],
+  //   client: 'Self-Published',
+  //   year: '2026',
+  //   role: 'Author & Designer'
+  // },
 ];
 
 function ScrollToTop() {
@@ -301,15 +333,49 @@ function useSmoothScroll() {
 function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLHeadingElement>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isIntroComplete, setIsIntroComplete] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+const [isExpanded, setIsExpanded] = useState(false);
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
+  const [scrollY, setScrollY] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
+
+  // Body scroll lock for modal
+  useEffect(() => {
+    if (selectedWork) {
+      setScrollY(window.scrollY);
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+      document.body.style.width = '100%';
+    } else {
+      const body = document.body;
+      body.style.position = '';
+      body.style.top = '';
+      body.style.left = '';
+      body.style.right = '';
+      body.style.overflow = '';
+      body.style.width = '';
+      window.scrollTo(0, scrollY);
+    }
+
+    return () => {
+      // Cleanup on unmount
+      const body = document.body;
+      body.style.position = '';
+      body.style.top = '';
+      body.style.left = '';
+      body.style.right = '';
+      body.style.overflow = '';
+      body.style.width = '';
+    };
+  }, [selectedWork]);
 
   useSmoothScroll();
 
@@ -697,7 +763,7 @@ function Home() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-6xl max-h-[90vh] bg-zinc-950 rounded-2xl overflow-y-auto grid grid-cols-1 lg:grid-cols-2 shadow-2xl scrollbar-hide"
+              className="relative w-full max-w-6xl max-h-[90vh] bg-zinc-950 rounded-2xl overflow-y-hidden grid grid-cols-1 lg:grid-cols-2 shadow-2xl scrollbar-hidden"
             >
               {/* Mobile Title Header */}
               <div className="p-8 pb-4 lg:hidden">
@@ -862,7 +928,7 @@ function Home() {
 function ModalCarousel({ images, name, video }: { images: string[], name: string, video?: string }) {
   return (
     <div className="relative aspect-4/5 lg:aspect-auto overflow-hidden bg-zinc-900">
-      <div className="flex h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+      <div className="no-scrollbar flex h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} onWheel={(e) => e.preventDefault()} >
         {video && (
           <div className="w-full h-full shrink-0 snap-center">
             <iframe 
@@ -886,6 +952,11 @@ function ModalCarousel({ images, name, video }: { images: string[], name: string
           </div>
         ))}
       </div>
+      <style jsx>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }
@@ -1086,7 +1157,7 @@ function WorkDetail() {
         <ImageWithLoader 
             src={work.image} 
             alt={work.name} 
-            className="w-full h-full object-cover grayscale-5 brightness-50"
+            className="w-full h-full object-cover grayscale-50 brightness-50"
           />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10">
           <div className="detail-header">
