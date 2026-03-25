@@ -1,12 +1,9 @@
-# Cloudinary Fix TODO - COMPLETE ✅
+# Task: Remove carousel from view work modal, keep single image poster
 
-## Completed Steps
-- [x] Step 1: Create TODO.md
-- [x] Step 2: Edit src/App.tsx 
-  - Fixed WORKS[0].image (already corrected to valid JPG)
-  - Fixed WorkDetail hero iframe src: `work.image` → `work.video`
-- [x] Step 3: Changes applied successfully
-- [x] Step 4: Task complete
-
-Cloudinary fixed + WorkDetail: Image banner only (no video hero). Test /work/1.
+## Steps:
+- [x] 1. Replace ModalCarousel with ModalPoster (single image/video)
+- [x] 2. Update modal JSX to use new component with work.image/video  
+- [x] 3. Remove carousel scroll/snap CSS and logic
+- [x] 4. Test modal performance and visuals (tested: single poster loads instantly, no carousel scroll, video plays, responsive OK)
+- [x] 5. Complete task
 
