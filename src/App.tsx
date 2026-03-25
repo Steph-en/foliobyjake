@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { ShoppingCart, Menu, X, ArrowRight, Instagram, Twitter, Facebook, Plus, Minus, ExternalLink, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
+import { X, ArrowRight, Instagram, Twitter, Facebook, ExternalLink, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BrowserRouter, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
@@ -48,12 +48,12 @@ interface Work {
 const WORKS: Work[] = [
   { 
     id: 1, 
-    name: 'Urban Branding', 
+    name: 'Fixed Youth Conference', 
     category: 'Graphic Design', 
-    image: 'https://picsum.photos/seed/work1/800/1000', 
+    image: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425757/1_zxghlw.jpg', 
     video: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=fxdythconcover_ll2nfk&player[hide_controls]=true',
-    description: 'A comprehensive branding project for a modern urban lifestyle brand, focusing on minimalist aesthetics and bold typography.',
-    longDescription: 'This project involved creating a complete visual identity for "Urban Pulse," a lifestyle brand targeting Gen Z. The challenge was to balance high-fashion elegance with street-level grit. We developed a custom typeface, a modular logo system, and a color palette that adapts to different seasonal collections. The result was a 40% increase in brand recognition within the first quarter of launch.',
+    description: 'A COMPREHENSIVE BRANDING PROJECT FOR A FAITH-BASED YOUTH CONFERENCE, FOCUSED ON CREATING A BOLD, CULTURALLY RELEVANT VISUAL IDENTITY ROOTED IN THE MESSAGE OF THE GOSPEL.',
+    longDescription: 'This project involved developing a complete visual identity for FIXED YOUTH CON 2026, a dynamic youth conference hosted by EWC FIXED Teens Church. The objective was to translate a deeply spiritual message into a modern, engaging brand that resonates with today’s generation. The challenge was to balance clarity of the Gospel message with high-impact visual storytelling that feels fresh, youthful, and culturally aligned. The identity system was built from the ground up, including logo design, typography direction, color systems, and scalable assets across digital and print platforms. The final outcome is a cohesive and versatile brand experience that captures energy, faith, and community positioning the conference as both spiritually impactful and visually compelling to a new generation.',
     gallery: [
       'https://picsum.photos/seed/work1-1/1200/800', // 3:2
       'https://picsum.photos/seed/work1-2/1000/1000', // 1:1
@@ -66,9 +66,9 @@ const WORKS: Work[] = [
       'https://picsum.photos/seed/work1-9/800/1000', // 4:5
       'https://picsum.photos/seed/work1-10/1200/800' // 3:2
     ],
-    client: 'Urban Pulse',
-    year: '2024',
-    role: 'Lead Designer'
+    client: 'EWC Fixed Teen\'s Church',
+    year: '2026',
+    role: 'Lead Conference Brand Designer'
   },
   { 
     id: 2, 
@@ -451,9 +451,9 @@ function Home() {
     <div ref={containerRef} className="relative min-h-screen overflow-x-hidden bg-black text-white">
       {/* Intro Overlay */}
       {!isIntroComplete && (
-        <div className="intro-overlay fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden">
-          <h1 className="intro-logo text-[8vw] font-display tracking-tighter whitespace-nowrap">
-            ANCHOR. by Jake 
+        <div className="intro-overlay fixed inset-0 z-100 bg-black flex items-center justify-center overflow-hidden">
+          <h1 className="intro-logo text-[12vw] font-display tracking-tighter whitespace-nowrap">
+          PORTFOLIO
           </h1>
         </div>
       )}
@@ -464,7 +464,7 @@ function Home() {
         </div>
         
         <h1 ref={logoRef} className="nav-item text-2xl md:text-3xl font-display tracking-tighter absolute left-1/2 -translate-x-1/2">
-        ANCHOR.
+        PORTFOLIO
         </h1>
 
         <div className="flex items-center gap-6 nav-item">
@@ -479,7 +479,7 @@ function Home() {
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[60] bg-white text-black p-8 flex flex-col"
+            className="fixed inset-0 z-60 bg-white text-black p-8 flex flex-col"
           >
             <div className="flex justify-between items-center mb-16">
               <h1 className="text-3xl font-display">PORTFOLIO</h1>
@@ -530,7 +530,7 @@ function Home() {
             allow="autoplay; fullscreen"
             title="Hero Video"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black" />
+          <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black" />
         </div>
 
         <div className="relative z-10 w-full px-6">
@@ -554,7 +554,7 @@ function Home() {
         </div>
 
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
-          <div className="w-[1px] h-12 bg-white" />
+          <div className="w-1px h-12 bg-white" />
         </div>
       </section>
 
@@ -622,7 +622,7 @@ function Home() {
               className="work-card group cursor-pointer"
               onClick={() => setSelectedWork(work)}
             >
-              <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900">
+              <div className="relative aspect-4/5 overflow-hidden bg-zinc-900">
                 {work.video ? (
                   <iframe 
                     src={`${work.video}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
@@ -675,7 +675,7 @@ function Home() {
       {/* Work Modal */}
       <AnimatePresence>
         {selectedWork && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 overflow-hidden">
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-4 md:p-8 overflow-hidden">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -687,7 +687,7 @@ function Home() {
             {/* Fixed Close Button for Mobile/Desktop */}
             <button 
               onClick={() => setSelectedWork(null)}
-              className="fixed top-6 right-6 z-[110] p-3 bg-black/50 text-white rounded-full hover:bg-white hover:text-black transition-all shadow-xl border border-white/10"
+              className="fixed top-6 right-6 z-110 p-3 bg-black/50 text-white rounded-full hover:bg-white hover:text-black transition-all shadow-xl border border-white/10"
               aria-label="Close modal"
             >
               <X size={24} />
@@ -767,11 +767,11 @@ function Home() {
             </div>
             <button className="mt-12 text-xs uppercase tracking-[0.3em] font-bold flex items-center gap-4 group">
               ANCHOR. by Jake 
-              <div className="w-12 h-[1px] bg-white group-hover:w-20 transition-all duration-500" />
+              <div className="w-12 h-1px bg-white group-hover:w-20 transition-all duration-500" />
             </button>
           </div>
           <div className="relative order-1 lg:order-2 parallax-img-container">
-            <div className="aspect-[3/4] overflow-hidden rounded-2xl">
+            <div className="aspect-3/4 overflow-hidden rounded-2xl">
               <img 
                 src="https://res.cloudinary.com/degd6ahfu/image/upload/v1773974518/PHOTO-2026-03-17-23-00-06_ralnm5.jpg" 
                 alt="Jake Amponsah" 
@@ -779,7 +779,7 @@ function Home() {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white text-black p-6 rounded-full flex flex-col items-center justify-center text-center reveal-up hidden md:flex">
+            <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white text-black p-6 rounded-full flex flex-col items-center justify-center text-center reveal-up md:flex">
               <span className="text-xs font-mono uppercase tracking-widest mb-2">Exp.</span>
               <span className="text-4xl font-display">5+ YRS</span>
             </div>
@@ -861,7 +861,7 @@ function Home() {
 
 function ModalCarousel({ images, name, video }: { images: string[], name: string, video?: string }) {
   return (
-    <div className="relative aspect-[4/5] lg:aspect-auto overflow-hidden bg-zinc-900">
+    <div className="relative aspect-4/5 lg:aspect-auto overflow-hidden bg-zinc-900">
       <div className="flex h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
         {video && (
           <div className="w-full h-full shrink-0 snap-center">
@@ -970,7 +970,7 @@ function BackToTop() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-[60] p-4 bg-white text-black rounded-full shadow-2xl hover:bg-zinc-200 transition-colors active:scale-95"
+          className="fixed bottom-8 right-8 z-60 p-4 bg-white text-black rounded-full shadow-2xl hover:bg-zinc-200 transition-colors active:scale-95"
           aria-label="Back to top"
         >
           <ArrowUp size={24} />
@@ -1083,22 +1083,11 @@ function WorkDetail() {
 
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
-        {work.video ? (
-          <div className="absolute inset-0 z-0">
-            <iframe 
-              src={`${work.video}&autoplay=true&muted=true&loop=true&player[transformation][width]=1920&player[transformation][crop]=limit&player[hide_controls]=true`}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[max(100vw,178vh)] h-[max(100vh,56.25vw)] border-0 grayscale brightness-50 pointer-events-none"
-              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-              title={work.name}
-            />
-          </div>
-        ) : (
-          <ImageWithLoader 
+        <ImageWithLoader 
             src={work.image} 
             alt={work.name} 
-            className="w-full h-full grayscale brightness-50"
+            className="w-full h-full object-cover grayscale-5 brightness-50"
           />
-        )}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10">
           <div className="detail-header">
             <span className="text-xs font-mono uppercase tracking-[0.4em] opacity-60 mb-4 block">{work.category}</span>
@@ -1138,7 +1127,7 @@ function WorkDetail() {
 
       {/* Gallery */}
       <section className="py-24 px-6 bg-zinc-950 overflow-hidden">
-        <div className="max-w-[1800px] mx-auto">
+        <div className="max-w-1800px mx-auto">
           <div className="mb-16 md:mb-24">
             <h2 className="text-4xl md:text-7xl uppercase tracking-tighter font-display leading-none">Selected Works</h2>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-6">
@@ -1212,19 +1201,19 @@ function WorkDetail() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black/98 flex items-center justify-center p-4 md:p-12"
+            className="fixed inset-0 z-200 bg-black/98 flex items-center justify-center p-4 md:p-12"
           >
             <div className="absolute inset-0" onClick={() => setLightboxIndex(null)} />
             
             <button 
-              className="absolute top-8 right-8 text-white hover:text-zinc-400 transition-colors z-[210] p-2"
+              className="absolute top-8 right-8 text-white hover:text-zinc-400 transition-colors z-210 p-2"
               onClick={() => setLightboxIndex(null)}
             >
               <X size={32} />
             </button>
 
             <button 
-              className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white hover:text-zinc-400 transition-colors z-[210] p-4 bg-black/20 rounded-full backdrop-blur-sm"
+              className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white hover:text-zinc-400 transition-colors z-210 p-4 bg-black/20 rounded-full backdrop-blur-sm"
               onClick={(e) => {
                 e.stopPropagation();
                 setLightboxIndex((prev) => (prev !== null ? (prev - 1 + work.gallery.length) % work.gallery.length : null));
@@ -1234,7 +1223,7 @@ function WorkDetail() {
             </button>
 
             <button 
-              className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white hover:text-zinc-400 transition-colors z-[210] p-4 bg-black/20 rounded-full backdrop-blur-sm"
+              className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white hover:text-zinc-400 transition-colors z-210 p-4 bg-black/20 rounded-full backdrop-blur-sm"
               onClick={(e) => {
                 e.stopPropagation();
                 setLightboxIndex((prev) => (prev !== null ? (prev + 1) % work.gallery.length : null));
