@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { X, ArrowRight, Instagram, Twitter, Facebook, ExternalLink, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
+import { X, ArrowRight, Instagram, ExternalLink, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BrowserRouter, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
@@ -37,6 +37,7 @@ interface Work {
   category: string;
   image: string;
   video?: string;
+  video2?: string;
   description: string;
   longDescription: string;
   gallery: string[];
@@ -118,8 +119,33 @@ const WORKS: Work[] = [
     year: '2025',
     role: 'Digital Artist'
   },
+  // { 
+  //   id: 3, 
+  //   name: '3D Abstract', 
+  //   category: 'Motion Graphics', 
+  //   image: 'https://picsum.photos/seed/work6/800/1000', 
+  //   video: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv', 
+  //   video2: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4', 
+  //   description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
+  //   longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
+  //   gallery: [
+  //     'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+  //     'https://picsum.photos/seed/work6-2/1000/1000',
+  //     'https://picsum.photos/seed/work6-3/1000/1000',
+  //     'https://picsum.photos/seed/work6-4/800/1200',
+  //     'https://picsum.photos/seed/work6-5/1600/1000',
+  //     'https://picsum.photos/seed/work6-6/2100/900',
+  //     'https://picsum.photos/seed/work6-7/800/1000',
+  //     'https://picsum.photos/seed/work6-8/800/1000',
+  //     'https://picsum.photos/seed/work6-9/800/1000',
+  //     'https://picsum.photos/seed/work6-10/1200/800'
+  //   ],
+  //   client: 'Personal Project',
+  //   year: '2026',
+  //   role: '3D Artist'
+  // },
   { 
-    id: 3, 
+    id: 4, 
     name: 'Scolpta', 
     category: 'Graphic Design', 
     image: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/Artboard_1_fxrrrq.jpg', 
@@ -140,7 +166,7 @@ const WORKS: Work[] = [
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/Artboard_4_ugglwp.jpg',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774440405/stup_2_xidnzf.png',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425612/Artboard_8_odb620.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg',
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425613/Artboard_11_pnj5gj.jpg',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425613/Artboard_9_sye9mn.jpg',
     ],
@@ -149,7 +175,7 @@ const WORKS: Work[] = [
     role: 'Lead Brand & Graphic Designer'
   },
   // { 
-  //   id: 4, 
+  //   id: 5, 
   //   name: 'Editorial Layout', 
   //   category: 'Print Design', 
   //   image: 'https://picsum.photos/seed/work4/800/1000', 
@@ -172,7 +198,7 @@ const WORKS: Work[] = [
   //   role: 'Art Director'
   // },
   // { 
-  //   id: 5, 
+  //   id: 6, 
   //   name: 'Social Campaign', 
   //   category: 'Digital Marketing', 
   //   image: 'https://picsum.photos/seed/work5/800/1000', 
@@ -195,7 +221,7 @@ const WORKS: Work[] = [
   //   role: 'Creative Lead'
   // },
   // { 
-  //   id: 6, 
+  //   id: 7, 
   //   name: '3D Abstract', 
   //   category: '3D Design', 
   //   image: 'https://picsum.photos/seed/work6/800/1000', 
@@ -218,7 +244,7 @@ const WORKS: Work[] = [
   //   role: '3D Artist'
   // },
   // { 
-  //   id: 7, 
+  //   id: 8, 
   //   name: 'Web Experience', 
   //   category: 'UI/UX Design', 
   //   image: 'https://picsum.photos/seed/work7/800/1000', 
@@ -241,7 +267,7 @@ const WORKS: Work[] = [
   //   role: 'UI/UX Designer'
   // },
   // { 
-  //   id: 8, 
+  //   id: 9, 
   //   name: 'Packaging Design', 
   //   category: 'Graphic Design', 
   //   image: 'https://picsum.photos/seed/work8/800/1000', 
@@ -264,7 +290,7 @@ const WORKS: Work[] = [
   //   role: 'Packaging Designer'
   // },
   // { 
-  //   id: 9, 
+  //   id: 10, 
   //   name: 'Typography Study', 
   //   category: 'Graphic Design', 
   //   image: 'https://picsum.photos/seed/work9/800/1000', 
@@ -576,8 +602,6 @@ const [isExpanded, setIsExpanded] = useState(false);
             <div className="mt-auto flex justify-between items-end">
               <div className="flex gap-4">
                 <Instagram size={20} />
-                <Twitter size={20} />
-                <Facebook size={20} />
               </div>
               <div className="text-xs font-mono uppercase tracking-widest">
                 © 2026 JAKE AMPONSAH
@@ -936,7 +960,7 @@ function ModalPoster({ mainImage, mainVideo, name }: { mainImage: string, mainVi
           title={name}
         />
       ) : (
-        <ImageWithLoader 
+        <MediaLoader 
           src={mainImage} 
           alt={name} 
           className="w-full h-full object-cover"
@@ -946,33 +970,72 @@ function ModalPoster({ mainImage, mainVideo, name }: { mainImage: string, mainVi
   );
 }
 
-function ImageWithLoader({ 
+
+function isVideo(url: string): boolean {
+  return url.includes('/video/') || /\.(mp4|webm|mov|avi)$/i.test(url);
+}
+
+interface MediaLoaderProps {
+  src: string;
+  alt: string;
+  className?: string;
+  mediaClassName?: string;
+  priority?: boolean;
+}
+
+function MediaLoader({ 
   src, 
   alt, 
   className, 
-  imgClassName,
+  mediaClassName,
   priority = false 
-}: { 
-  src: string, 
-  alt: string, 
-  className?: string, 
-  imgClassName?: string,
-  priority?: boolean 
-}) {
+}: MediaLoaderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const isVid = isVideo(src);
+
+  const handleLoad = useCallback(() => {
+    setIsLoading(false);
+    if (isVid && videoRef.current) {
+      videoRef.current.play().catch(console.error);
+    }
+  }, [isVid]);
+
+  const handleError = useCallback(() => {
+    setIsLoading(false);
+    setHasError(true);
+  }, []);
 
   return (
     <div className={cn("relative w-full h-full overflow-hidden bg-zinc-900", className)}>
       {isLoading && (
-        <div className="absolute inset-0 z-10">
-          <Skeleton className="w-full h-full rounded-none" />
+        <div className="absolute inset-0 z-10 flex items-center justify-center">
+          <Skeleton className="w-16 h-16 rounded-full" />
         </div>
       )}
       {hasError ? (
         <div className="absolute inset-0 flex items-center justify-center text-zinc-500 text-xs font-mono uppercase tracking-widest">
-          Failed to load image
+          Failed to load media
         </div>
+      ) : isVid ? (
+        <video
+          ref={videoRef}
+          src={src}
+          className={cn(
+            "w-full h-full object-cover transition-all duration-700 ease-out",
+            isLoading ? "opacity-0 scale-105" : "opacity-100 scale-100",
+            mediaClassName
+          )}
+          playsInline
+          loop
+          muted
+          preload={priority ? "auto" : "metadata"}
+          onLoadedData={handleLoad}
+          onError={handleError}
+          referrerPolicy="no-referrer"
+        />
       ) : (
         <img 
           src={src} 
@@ -980,13 +1043,10 @@ function ImageWithLoader({
           className={cn(
             "w-full h-full object-cover transition-all duration-700 ease-out", 
             isLoading ? "opacity-0 scale-105" : "opacity-100 scale-100",
-            imgClassName
+            mediaClassName
           )}
-          onLoad={() => setIsLoading(false)}
-          onError={() => {
-            setIsLoading(false);
-            setHasError(true);
-          }}
+          onLoad={handleLoad}
+          onError={handleError}
           referrerPolicy="no-referrer"
           loading={priority ? "eager" : "lazy"}
         />
@@ -1139,8 +1199,8 @@ function WorkDetail() {
 
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
-        <ImageWithLoader 
-            src={work.image} 
+        <MediaLoader 
+            src={work.image || work.video2 || work.video || ''} 
             alt={work.name} 
             className="w-full h-full object-cover grayscale-50 brightness-50"
           />
@@ -1238,10 +1298,10 @@ function WorkDetail() {
                   whileHover={{ scale: 0.995 }}
                   onClick={() => setLightboxIndex(index)}
                 >
-                  <ImageWithLoader 
+                  <MediaLoader 
                     src={img} 
                     alt={`${work.name} gallery ${index + 1}`} 
-                    imgClassName="hover:scale-105 transition-transform duration-1000"
+                    mediaClassName="hover:scale-105 transition-transform duration-1000"
                   />
                 </motion.div>
               );
@@ -1289,16 +1349,20 @@ function WorkDetail() {
             </button>
 
             <div className="relative max-w-7xl max-h-[85vh] flex flex-col items-center">
-              <motion.img 
-                key={lightboxIndex}
+              <motion.div 
+                key={`lightbox-${lightboxIndex}`}
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                src={work.gallery[lightboxIndex]} 
-                alt="Gallery Lightbox" 
-                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-                referrerPolicy="no-referrer"
-              />
+                className="w-full h-[85vh] flex items-center justify-center"
+              >
+                <MediaLoader 
+                  src={work!.gallery[lightboxIndex!]} 
+                  alt="Gallery Lightbox" 
+                  className="max-w-7xl max-h-full object-contain rounded-lg shadow-2xl"
+                  priority={true}
+                />
+              </motion.div>
               <div className="absolute -bottom-12 left-0 right-0 text-center">
                 <p className="text-xs font-mono uppercase tracking-widest opacity-60">
                   {lightboxIndex + 1} / {work.gallery.length}
