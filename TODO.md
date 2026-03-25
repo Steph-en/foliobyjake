@@ -1,9 +1,8 @@
-# Task: Remove carousel from view work modal, keep single image poster
-
-## Steps:
-- [x] 1. Replace ModalCarousel with ModalPoster (single image/video)
-- [x] 2. Update modal JSX to use new component with work.image/video  
-- [x] 3. Remove carousel scroll/snap CSS and logic
-- [x] 4. Test modal performance and visuals (tested: single poster loads instantly, no carousel scroll, video plays, responsive OK)
-- [x] 5. Complete task
+# Gallery Media Support (Images + Videos) ✅
+- [x] Step 1: Add isVideo utility function
+- [x] Step 2: Create MediaLoader component  
+- [x] Step 3: Update gallery grid to use MediaLoader
+- [x] Step 4: Update lightbox to use MediaLoader
+- [x] Step 5: Test video playback (/work/3)
+- [x] Step 6: Complete task
 
