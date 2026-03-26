@@ -120,33 +120,8 @@ const WORKS: Work[] = [
     year: '2025',
     role: 'Digital Artist'
   },
-  // { 
-  //   id: 3, 
-  //   name: '3D Abstract', 
-  //   category: 'Motion Graphics', 
-  //   image: 'https://picsum.photos/seed/work6/800/1000', 
-  //   video: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv', 
-  //   video2: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4', 
-  //   description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
-  //   longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
-  //   gallery: [
-  //     'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
-  //     'https://picsum.photos/seed/work6-2/1000/1000',
-  //     'https://picsum.photos/seed/work6-3/1000/1000',
-  //     'https://picsum.photos/seed/work6-4/800/1200',
-  //     'https://picsum.photos/seed/work6-5/1600/1000',
-  //     'https://picsum.photos/seed/work6-6/2100/900',
-  //     'https://picsum.photos/seed/work6-7/800/1000',
-  //     'https://picsum.photos/seed/work6-8/800/1000',
-  //     'https://picsum.photos/seed/work6-9/800/1000',
-  //     'https://picsum.photos/seed/work6-10/1200/800'
-  //   ],
-  //   client: 'Personal Project',
-  //   year: '2026',
-  //   role: '3D Artist'
-  // },
   { 
-    id: 4, 
+    id: 3, 
     name: 'Scolpta', 
     category: 'Graphic Design', 
     image: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/Artboard_1_fxrrrq.jpg', 
@@ -174,6 +149,31 @@ const WORKS: Work[] = [
     client: 'Scolpta',
     year: '2026',
     role: 'Lead Brand & Graphic Designer'
+  },
+  { 
+    id: 4, 
+    name: '3D Abstract', 
+    category: 'Motion Graphics', 
+    image: 'https://picsum.photos/seed/work6/800/1000', 
+    video: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv', 
+    video2: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4', 
+    description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
+    longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
+    gallery: [
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+      'https://picsum.photos/seed/work6-2/1000/1000',
+      'https://picsum.photos/seed/work6-3/1000/1000',
+      'https://picsum.photos/seed/work6-4/800/1200',
+      'https://picsum.photos/seed/work6-5/1600/1000',
+      'https://picsum.photos/seed/work6-6/2100/900',
+      'https://picsum.photos/seed/work6-7/800/1000',
+      'https://picsum.photos/seed/work6-8/800/1000',
+      'https://picsum.photos/seed/work6-9/800/1000',
+      'https://picsum.photos/seed/work6-10/1200/800'
+    ],
+    client: 'Personal Project',
+    year: '2026',
+    role: '3D Artist'
   },
   // { 
   //   id: 5, 
@@ -707,7 +707,7 @@ const [isExpanded, setIsExpanded] = useState(false);
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 work-grid">
-          {(isExpanded ? filteredWorks : filteredWorks.slice(0, 6)).map((work) => (
+          {(isExpanded ? filteredWorks : filteredWorks.slice(0, 3)).map((work) => (
             <div 
               key={work.id} 
               className="work-card group cursor-pointer"
