@@ -35,9 +35,13 @@ interface Work {
   id: number;
   name: string;
   category: string;
-  image: string;
+  image?: string;
   video?: string;
-  video2?: string;
+  // Decoupled media fields
+  previewImage?: string;
+  previewVideo?: string;
+  heroImage?: string;
+  heroVideo?: string;
   description: string;
   longDescription: string;
   gallery: string[];
@@ -50,9 +54,9 @@ const WORKS: Work[] = [
   { 
     id: 1, 
     name: 'Fixed Youth Conference', 
-    category: 'Graphic Design', 
-    image: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425757/1_zxghlw.jpg', 
-    video: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=fxdythconcover_ll2nfk&player[hide_controls]=true',
+    category: 'Graphic Design',
+    previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=fxdythconcover_ll2nfk',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/c_fill,w_1920,h_1080/v1774425757/1_zxghlw.jpg',
     description: 'A COMPREHENSIVE BRANDING PROJECT FOR A FAITH-BASED YOUTH CONFERENCE, FOCUSED ON CREATING A BOLD, CULTURALLY RELEVANT VISUAL IDENTITY ROOTED IN THE MESSAGE OF THE GOSPEL.',
     longDescription: 'This project involved developing a complete visual identity for FIXED YOUTH CON 2026, a dynamic youth conference hosted by EWC FIXED Teens Church. The objective was to translate a deeply spiritual message into a modern, engaging brand that resonates with today’s generation. The challenge was to balance clarity of the Gospel message with high-impact visual storytelling that feels fresh, youthful, and culturally aligned. The identity system was built from the ground up, including logo design, typography direction, color systems, and scalable assets across digital and print platforms. The final outcome is a cohesive and versatile brand experience that captures energy, faith, and community positioning the conference as both spiritually impactful and visually compelling to a new generation.',
     gallery: [
@@ -96,11 +100,12 @@ const WORKS: Work[] = [
   },
   { 
     id: 2, 
-    name: 'Tuniyi', 
-    category: 'Digital Art', 
-    image: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442003/bannner_r79veh.jpg', 
-    description: 'An experimental digital art series exploring the intersection of human emotion and artificial intelligence.',
-    longDescription: 'Digital Dreams is a series of 12 unique digital paintings created using a hybrid process of traditional digital painting and AI-assisted texture generation. Each piece represents a specific subconscious state, from "Lucid Clarity" to "Static Anxiety." The series was exhibited at the Accra Digital Arts Festival and sold as a limited NFT collection.',
+    name: 'UAl by TúNiyi', 
+    category: 'Graphic Design', 
+    previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/c_thumb,g_face,w_800/v1774561640/tuniyi_PORTRAIT_COVER_yxvs6h.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442003/bannner_r79veh.jpg',
+    description: 'A BRAND IDENTITY FOR A CONCEPTUAL FASHION LABEL EXPLORING THE INTERSECTION OF HUMAN VISION, SELF-EXPRESSION, AND ARTIFICIAL INTELLIGENCE.',
+    longDescription: 'Developed for UAl by TúNiyi, this project transforms the philosophy “You Are Important” into a visually striking and intellectually grounded brand system. Inspired by the spectrum of human vision (20/20–20/200), the identity challenges how individuals perceive and utilize fashion as a form of expression. With a focus on minimalism, clarity, and symbolic storytelling, the brand positions the individual as the focal point where technology enhances, rather than replaces, human value.',
     gallery: [
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442415/Jeans_Mock_up_gcktgr.png',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442667/STYLING_300x-100_dkbtrs.jpg',
@@ -116,17 +121,18 @@ const WORKS: Work[] = [
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442006/FREE-Silk-Scarf-Mockup-Studio-Series-DEMO_By-Mocku_yyuggy.png',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774471199/tuniyi_post_1_qy6fn1.png',
     ],
-    client: 'Tuniyi',
+    client: 'TúNiyi',
     year: '2025',
-    role: 'Digital Artist'
+    role: 'Brand Identity Designer'
   },
   { 
     id: 3, 
-    name: 'Scolpta', 
+    name: 'Scolpta Career Fair', 
     category: 'Graphic Design', 
-    image: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/Artboard_1_fxrrrq.jpg', 
-    description: 'Dynamic motion graphics created for a tech startup\'s product launch, emphasizing fluid transitions and vibrant colors.',
-    longDescription: 'For the launch of "FlowState," a productivity app, we created a 60-second brand anthem and a series of UI-focused social clips. The motion language was built around the concept of "frictionless flow," using liquid simulations and rhythmic editing. The campaign reached over 1 million views across platforms in its first week.',
+    previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/c_fill,w_1920,h_1080/v1774425611/Artboard_1_fxrrrq.jpg',
+    description: 'A BRAND IDENTITY AND EXPERIENTIAL DESIGN PROJECT FOR A GEN Z–FOCUSED CAREER FAIR ACTIVATION, BUILT TO MAXIMIZE ENGAGEMENT THROUGH INTERACTIVITY AND CULTURE-DRIVEN DESIGN.',
+    longDescription: 'This project involved creating a bold and unconventional visual identity for Scolpta’s career fair presence, with the objective of capturing student attention in a highly competitive environment. The concept, “Think Upside Down,” challenged traditional corporate communication by introducing a playful and disruptive design language rooted in Y2K aesthetics and Gen Z culture. The goal was not just visibility but interaction. To extend the brand beyond visuals, the activation incorporated puzzle-based and card game experiences, aligning with student interests and encouraging active participation at the booth. This transformed the space from a static display into an engaging, high-energy environment. The identity system was applied across multiple touchpoints, including backdrops, spatial layout, merchandise, and sticker packs, ensuring a cohesive and immersive brand experience. The result was a consistently crowded booth, with high student engagement and increased brand interaction demonstrating the effectiveness of blending cultural insight with strategic design.',
     gallery: [
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425610/Artboard_2_copy_10_sqyv8y.jpg',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774440404/setup__c86oxu.png',
@@ -148,32 +154,31 @@ const WORKS: Work[] = [
     ],
     client: 'Scolpta',
     year: '2026',
-    role: 'Lead Brand & Graphic Designer'
+    role: 'Brand Identity & Experiential Designer'
   },
   { 
     id: 4, 
-    name: '3D Abstract', 
-    category: 'Motion Graphics', 
-    image: 'https://picsum.photos/seed/work6/800/1000', 
-    video: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv', 
-    video2: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4', 
-    description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
-    longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
+    name: 'Motion',
+    category: 'Motion Graphics',
+    previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv',
+    heroVideo: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+    description: 'A COLLECTION OF MOTION-DRIVEN VISUALS DESIGNED TO BRING BRANDS AND IDEAS TO LIFE THROUGH DYNAMIC STORYTELLING.',
+    longDescription: 'This body of work explores the intersection of design and movement, transforming static visuals into engaging, immersive experiences. From typography-driven animations to brand-focused motion systems, each piece is crafted to capture attention, communicate clearly, and enhance visual identity. The work emphasizes timing, rhythm, and visual hierarchy, ensuring that every motion element serves a purpose whether for digital content, event promotion, or brand storytelling.',
     gallery: [
       'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
-      'https://picsum.photos/seed/work6-2/1000/1000',
-      'https://picsum.photos/seed/work6-3/1000/1000',
-      'https://picsum.photos/seed/work6-4/800/1200',
-      'https://picsum.photos/seed/work6-5/1600/1000',
-      'https://picsum.photos/seed/work6-6/2100/900',
-      'https://picsum.photos/seed/work6-7/800/1000',
-      'https://picsum.photos/seed/work6-8/800/1000',
-      'https://picsum.photos/seed/work6-9/800/1000',
-      'https://picsum.photos/seed/work6-10/1200/800'
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
+      // 'https://picsum.photos/seed/work6-3/1000/1000',
+      // 'https://picsum.photos/seed/work6-4/800/1200',
+      // 'https://picsum.photos/seed/work6-5/1600/1000',
+      // 'https://picsum.photos/seed/work6-6/2100/900',
+      // 'https://picsum.photos/seed/work6-7/800/1000',
+      // 'https://picsum.photos/seed/work6-8/800/1000',
+      // 'https://picsum.photos/seed/work6-9/800/1000',
+      // 'https://picsum.photos/seed/work6-10/1200/800'
     ],
     client: 'Personal Project',
     year: '2026',
-    role: '3D Artist'
+    role: 'Motion Designer'
   },
   // { 
   //   id: 5, 
@@ -714,16 +719,16 @@ const [isExpanded, setIsExpanded] = useState(false);
               onClick={() => setSelectedWork(work)}
             >
               <div className="relative aspect-4/5 overflow-hidden bg-zinc-900">
-                {work.video ? (
+                {work.previewVideo ? (
                   <iframe 
-                    src={`${work.video}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
+                    src={`${work.previewVideo}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
                     className="w-full h-full border-0 pointer-events-none grayscale group-hover:grayscale-0 transition-all duration-1000"
                     allow="autoplay; fullscreen; encrypted-media;"
                     title={work.name}
                   />
                 ) : (
                   <img 
-                    src={work.image} 
+                    src={work.previewImage || work.image} 
                     alt={work.name}
                     className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out"
                     referrerPolicy="no-referrer"
@@ -795,9 +800,9 @@ const [isExpanded, setIsExpanded] = useState(false);
                 <h2 className="text-3xl uppercase tracking-tighter leading-none">{selectedWork.name}</h2>
               </div>
 
-              <ModalPoster 
-                mainImage={selectedWork.image} 
-                mainVideo={selectedWork.video}
+<ModalPoster 
+                mainImage={selectedWork.previewImage || selectedWork.image} 
+                mainVideo={selectedWork.previewVideo || selectedWork.video}
                 name={selectedWork.name} 
               />
               
@@ -951,6 +956,7 @@ const [isExpanded, setIsExpanded] = useState(false);
 }
 
 function ModalPoster({ mainImage, mainVideo, name }: { mainImage: string, mainVideo?: string, name: string }) {
+  // Uses preview media by caller
   return (
     <div className="relative aspect-4/5 lg:aspect-auto overflow-hidden bg-zinc-900">
       {mainVideo ? (
@@ -1200,15 +1206,27 @@ function WorkDetail() {
 
       {/* Hero Section */}
       <section className="relative h-[80vh] overflow-hidden">
-        <MediaLoader 
-            src={work.image || work.video2 || work.video || ''} 
-            alt={work.name} 
-            className="w-full h-full object-cover grayscale-50 brightness-50"
+        {work.heroVideo ? (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+            poster={work.heroImage}
+            src={work.heroVideo.replace('player.cloudinary.com/embed/', 'res.cloudinary.com/degd6ahfu/video/upload/f_auto,q_auto:eco,c_fill,w_1920,h_1080/')}
           />
+        ) : (
+          <MediaLoader 
+            src={work.heroImage || work.image} 
+            alt={work.name} 
+            className="w-full h-full object-cover grayscale-10 brightness-100"
+          />
+        )}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10">
           <div className="detail-header">
-            <span className="text-xs font-mono uppercase tracking-[0.4em] opacity-60 mb-4 block">{work.category}</span>
-            <h1 className="text-[10vw] font-display leading-none uppercase tracking-tighter">{work.name}</h1>
+            {/* <span className="text-xs font-mono uppercase tracking-[0.4em] opacity-60 mb-4 block">{work.category}</span> */}
+            {/* <h1 className="text-[10vw] font-display leading-none uppercase tracking-tighter">{work.name}</h1> */}
           </div>
         </div>
       </section>
