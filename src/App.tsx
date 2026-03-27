@@ -56,43 +56,43 @@ const WORKS: Work[] = [
     name: 'Fixed Youth Conference', 
     category: 'Graphic Design',
     previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=fxdythconcover_ll2nfk',
-    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/c_fill,w_1920,h_1080/v1774425757/1_zxghlw.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576064/1_ovs88o.jpg',
     description: 'A COMPREHENSIVE BRANDING PROJECT FOR A FAITH-BASED YOUTH CONFERENCE, FOCUSED ON CREATING A BOLD, CULTURALLY RELEVANT VISUAL IDENTITY ROOTED IN THE MESSAGE OF THE GOSPEL.',
     longDescription: 'This project involved developing a complete visual identity for FIXED YOUTH CON 2026, a dynamic youth conference hosted by EWC FIXED Teens Church. The objective was to translate a deeply spiritual message into a modern, engaging brand that resonates with today’s generation. The challenge was to balance clarity of the Gospel message with high-impact visual storytelling that feels fresh, youthful, and culturally aligned. The identity system was built from the ground up, including logo design, typography direction, color systems, and scalable assets across digital and print platforms. The final outcome is a cohesive and versatile brand experience that captures energy, faith, and community positioning the conference as both spiritually impactful and visually compelling to a new generation.',
     gallery: [
-      'https://res.cloudinary.com/degd6ahfu/image/upload/14_kpi0wp.jpg', // 3:2
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435063/2_khuows.jpg', // 1:1
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435064/3_c2dnoz.jpg', // 1:1
-      'https://res.cloudinary.com/degd6ahfu/image/upload/26_mnpjqi.jpg', // 2:3
-      'https://res.cloudinary.com/degd6ahfu/image/upload/30_louggv.jpg', // 16:10
-      'https://res.cloudinary.com/degd6ahfu/image/upload/5_qz17qt.jpg', // 21:9
-      'https://res.cloudinary.com/degd6ahfu/image/upload/7_kiduyl.jpg', // 4:5
-      'https://res.cloudinary.com/degd6ahfu/image/upload/18_c5zdrr.jpg', // 4:5
-      'https://res.cloudinary.com/degd6ahfu/image/upload/35_ylwbca.jpg', // 4:5
-      'https://res.cloudinary.com/degd6ahfu/image/upload/9_guza8g.jpg', // 3:2
-      'https://res.cloudinary.com/degd6ahfu/image/upload/4_mhyin8.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/12_fuynnk.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/11_stduei.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/36_nqpljp.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/8_mtg3p3.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/16_xboxue.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435059/29_zhixco.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425778/32_nhibto.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425778/31_qkrlqa.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425774/20_an1zmk.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435060/10_jhrxig.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425766/17_terlfh.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425776/28_mqwebo.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425770/24_yao1ex.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425769/22_pee6ir.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425763/6_g8diiz.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425764/13_hrhwnp.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425771/25_is3pmw.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435058/27_tjlkbh.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425783/33_odamvo.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425767/19_u1963l.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425768/21_zkpxxr.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425764/15_adnuoi.jpg'
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/14_zlxozl.jpg', // 3:2
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/2_jrisoo.jpg', // 1:1
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/3_ba5hmh.jpg', // 1:1
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576071/26_rt15ep.jpg', // 2:3
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576072/30_dzuiob.jpg', // 16:10
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/5_fdzjf1.jpg', // 21:9
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/7_olui9d.jpg', // 4:5
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/18_bajx9j.jpg', // 4:5
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/35_uyjv3j.jpg', // 4:5
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/9_fca1fd.jpg', // 3:2
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/4_kluty2.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/12_asdues.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/11_siobas.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/36_xsjomz.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/8_ichaae.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576067/16_qzf6d1.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/29_f31vsf.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/32_octwo6.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576072/31_d8cihb.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/20_jgxzsl.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/10_y7cf9b.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/17_gb6giz.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576072/28_oraqjh.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576071/24_pvjohp.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576070/22_adh37d.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/6_crc8p6.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576065/13_p6u3vy.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576071/25_hc0q6y.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576072/27_pnxxlm.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/33_kpffn1.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/19_hyst5x.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/15_fs5nui.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576070/21_lcp79w.jpg',
     ],
     client: 'EWC Fixed Teen\'s Church',
     year: '2026',
@@ -100,7 +100,7 @@ const WORKS: Work[] = [
   },
   { 
     id: 2, 
-    name: 'UAl by TúNiyi', 
+    name: 'UAI by TúNiyi', 
     category: 'Graphic Design', 
     previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/c_thumb,g_face,w_800/v1774561640/tuniyi_PORTRAIT_COVER_yxvs6h.jpg',
     heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442003/bannner_r79veh.jpg',
@@ -118,8 +118,9 @@ const WORKS: Work[] = [
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442407/Citylight_Mockup_2_oxd0ju.png',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442008/Vector_Smart_Object_u7u9um.png',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442410/BRAND_IDENTITY_300x-100_e73mdy.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442006/FREE-Silk-Scarf-Mockup-Studio-Series-DEMO_By-Mocku_yyuggy.png',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774471199/tuniyi_post_1_qy6fn1.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442418/tuniyi_post_2_yrrulk.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442006/FREE-Silk-Scarf-Mockup-Studio-Series-DEMO_By-Mocku_yyuggy.png',
     ],
     client: 'TúNiyi',
     year: '2025',
@@ -158,6 +159,127 @@ const WORKS: Work[] = [
   },
   { 
     id: 4, 
+    name: 'VANT', 
+    category: 'Graphic Design', 
+    previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628837/cover_portrait_4x-100_pz4u6u.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628826/Artboard_1_4x-100_jl5nih.jpg', 
+    description: 'A BRAND IDENTITY PROJECT FOR A CONTEMPORARY FASHION LABEL BUILT AROUND PERSPECTIVE, RESTRAINT, AND QUIET CONFIDENCE.',
+    longDescription: 'This project translates the idea of vantage—a moment of clarity and reflection—into a refined visual system centered on structure and restraint. The challenge was to express an introspective narrative through a minimal yet impactful design language. Using New York typography and a restrained black, white, and ash palette, the identity emphasizes balance, contrast, and composure. Every element was designed to communicate strength without excess, allowing the concept to speak with subtlety and intention. VANT is not about noise—it is about perspective.',
+    gallery: [
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628830/Artboard_8_4x-100_yyxc4i.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628826/Artboard_2_copy_4x-100_rhhmfx.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628826/Artboard_2_4x-100_cqpzrz.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628828/Artboard_5_4x-100_szeqcb.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628838/Artboard_10_4x-100_tbkaui.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628827/Artboard_3_4x-100_mbfpxb.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628832/Artboard_10_copy_4x-100_mxi6x4.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628836/Artboard_15_4x-100_ubxvlg.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628833/Artboard_9_4x-100_fuyvwl.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628834/Artboard_12_4x-100_esw5tq.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628828/Artboard_6_4x-100_ckuqie.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628833/Artboard_11_4x-100_rxoc56.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628836/Artboard_17_4x-100_ji8yq2.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628838/Artboard_16_4x-100_axeqyi.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628828/Artboard_6_4x-100_ckuqie.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628836/Artboard_14_4x-100_z32uu4.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628834/Artboard_13_4x-100_lvrzvs.jpg',
+    ],
+    client: 'VANT',
+    year: '2026',
+    role: 'Brand Identity Designer'
+  },
+  { 
+    id: 5, 
+    name: 'Main Squeeze', 
+    category: 'Graphic Design', 
+    previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633759/COVER_b61g2a.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633765/MAIN_SQUEEZE_4x-100_or8fag.jpg', 
+    description: 'A BRAND IDENTITY PROJECT FOR A MODERN BEVERAGE BRAND, FOCUSED ON FRESHNESS, ENERGY, AND BOLD VISUAL APPEAL.',
+    longDescription: 'This was a branding project I worked on for Main Squeeze, a beverage brand focused on freshness and energy. I wanted the identity to feel bright, fun, and easy to connect with—something that immediately gives off that refreshing vibe. The direction leaned into bold typography and clean layouts, keeping things simple but still full of personality. The goal was to create something that could work across different touchpoints like packaging and promo materials, while still feeling consistent and recognizable. Overall, the outcome is a brand that feels lively, approachable, and easy to remember.',
+    gallery: [
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633759/Artboard_5_4x-100_ho8lbg.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633761/IMG_2335_hfuvwr.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633763/IMG_2340_fc4pik.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633757/Artboard_12_4x-100_vol3br.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633760/IMG_2336_uauhwv.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633758/Artboard_4_4x-100_jkpmai.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633763/IMG_2341_tp0vik.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633763/IMG_2339_agzarn.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633755/Artboard_3_4x-100_emzslj.jpg',
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774633772/99B98ED4-9383-4541-BDB8-42831F66F7C9_gbqdog.mp4',
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774633758/c2f141b513704558b8fea924c221e12b_nc29m1.mp4',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633755/Artboard_2_4x-100_yodrxg.jpg',
+    ],
+    client: 'Ms Jo',
+    year: '2023',
+    role: 'Brand Identity Designer'
+  },
+  { 
+      id: 8, 
+      name: 'Stackz', 
+      category: 'Graphic Design', 
+      previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774642493/Artboard_10_4x-100_copy_wmgwyw.jpg',
+      heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640756/Artboard_1_4x-100_tzpe6t.jpg', 
+      description: 'BRAND IDENTITY (AVAILABLE FOR SALE)',
+      longDescription: 'This is a self-initiated branding project for Stackz, a pastry brand inspired by a family-style tradition of stacked desserts. The idea started from the concept of layering pies stacked on top of each other which became the foundation for both the name and identity. Stackz reflects growth, creativity, and a modern twist on something rooted in tradition. The goal was to create a brand that feels warm, inviting, and easy to connect with, while still having a distinct and memorable personality. This project is currently available for sale, including full brand identity and concept.',
+      gallery: [
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640780/Artboard_14_4x-100_otsrtp.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640733/Artboard_8_4x-100_s59olb.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640740/Artboard_5_4x-100_zsgqvx.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640773/Artboard_11_4x-100_efloea.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640745/Artboard_10_4x-100_q9u1cn.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640745/Artboard_9_4x-100_nasrxc.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640797/Artboard_2_4x-100_x6rcrh.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640727/Artboard_3_4x-100_kttlbi.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640739/Artboard_6_4x-100_vmrz4z.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640798/Artboard_13_4x-100_h9s6rd.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640738/Artboard_4_4x-100_thdhcr.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640737/Artboard_7_4x-100_hw61a9.jpg',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640777/Artboard_12_4x-100_k7l5ry.jpg',
+      ],
+      client: 'Self Initiated',
+      year: '2024',
+      role: 'Brand Identity Designer'
+    },
+    { 
+      id: 7, 
+      name: 'Digital Art', 
+      category: 'Digital art', 
+      previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639542/Use_this_as_cover_busnvj.png',
+      heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639538/web_banner_2_wojtaz.png', 
+      description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
+      longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
+      gallery: [
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639538/pappy_kojo_nothing_matters_BACK_ihgjrc.png',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639539/love_and_hate_art_zkc5c6.png',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639540/p_mpwtoo.png',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639539/kenyaan_car_deluxe_version_xk1wvp.png',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639535/create_with_jake_tsbafc.png',
+      ],
+      client: '',
+      year: '2023 - 2026',
+      role: 'Digital Artist'
+    },
+    { 
+      id: 9, 
+      name: 'Creative Exploration', 
+      category: 'Creative Explorations', 
+      previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639570/BRAND_IDENTITY_qzhdw9.png',
+      heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639571/BM_ADS_FLYERS-02_zkdrxo.png', 
+      description: 'Eco-friendly packaging design for a premium skincare line, using sustainable materials and elegant illustrations.',
+      longDescription: 'For "Nura Skincare," we developed a packaging system that uses 100% recycled paper and soy-based inks. The visual language uses delicate botanical illustrations and a muted, earthy color palette to reflect the brand\'s natural ingredients.',
+      gallery: [
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639572/Screenshot_2025-02-19_074920_kok6ds.png',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639579/BM_ADS_FLYERS-01_2_vn9ncj.png',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639579/bm_matt_drxmk0.png',
+        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639581/bm_emulsion_fjeunz.png',
+      ],
+      client: 'Nura Skincare',
+      year: '2024',
+      role: 'Packaging Designer'
+    },
+    { 
+    id: 6, 
     name: 'Motion',
     category: 'Motion Graphics',
     previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv',
@@ -167,134 +289,11 @@ const WORKS: Work[] = [
     gallery: [
       'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
       'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
-      // 'https://picsum.photos/seed/work6-3/1000/1000',
-      // 'https://picsum.photos/seed/work6-4/800/1200',
-      // 'https://picsum.photos/seed/work6-5/1600/1000',
-      // 'https://picsum.photos/seed/work6-6/2100/900',
-      // 'https://picsum.photos/seed/work6-7/800/1000',
-      // 'https://picsum.photos/seed/work6-8/800/1000',
-      // 'https://picsum.photos/seed/work6-9/800/1000',
-      // 'https://picsum.photos/seed/work6-10/1200/800'
     ],
     client: 'Personal Project',
     year: '2026',
     role: 'Motion Designer'
   },
-  // { 
-  //   id: 5, 
-  //   name: 'Editorial Layout', 
-  //   category: 'Print Design', 
-  //   image: 'https://picsum.photos/seed/work4/800/1000', 
-  //   description: 'A sophisticated editorial layout for a high-end fashion magazine, balancing negative space with striking photography.',
-  //   longDescription: 'This 24-page feature for "Vogue Ghana" explored the rise of sustainable textiles in West Africa. We utilized a grid-breaking layout and custom-shot macro photography of fabric textures. The design won the "Excellence in Print Media" award at the 2024 Design Awards.',
-  //   gallery: [
-  //     'https://picsum.photos/seed/work4-1/1200/800',
-  //     'https://picsum.photos/seed/work4-2/1000/1000',
-  //     'https://picsum.photos/seed/work4-3/1000/1000',
-  //     'https://picsum.photos/seed/work4-4/800/1200',
-  //     'https://picsum.photos/seed/work4-5/1600/1000',
-  //     'https://picsum.photos/seed/work4-6/2100/900',
-  //     'https://picsum.photos/seed/work4-7/800/1000',
-  //     'https://picsum.photos/seed/work4-8/800/1000',
-  //     'https://picsum.photos/seed/work4-9/800/1000',
-  //     'https://picsum.photos/seed/work4-10/1200/800'
-  //   ],
-  //   client: 'Vogue Ghana',
-  //   year: '2024',
-  //   role: 'Art Director'
-  // },
-  // { 
-  //   id: 6, 
-  //   name: 'Social Campaign', 
-  //   category: 'Digital Marketing', 
-  //   image: 'https://picsum.photos/seed/work5/800/1000', 
-  //   description: 'A successful social media campaign designed to increase engagement for a sustainable clothing label.',
-  //   longDescription: 'The "Wear the Change" campaign for EcoThreads focused on transparency. We designed a series of interactive Instagram stories and a high-impact video series showcasing the artisans behind the brand. Engagement rates increased by 250% compared to previous campaigns.',
-  //   gallery: [
-  //     'https://picsum.photos/seed/work5-1/1200/800',
-  //     'https://picsum.photos/seed/work5-2/1000/1000',
-  //     'https://picsum.photos/seed/work5-3/1000/1000',
-  //     'https://picsum.photos/seed/work5-4/800/1200',
-  //     'https://picsum.photos/seed/work5-5/1600/1000',
-  //     'https://picsum.photos/seed/work5-6/2100/900',
-  //     'https://picsum.photos/seed/work5-7/800/1000',
-  //     'https://picsum.photos/seed/work5-8/800/1000',
-  //     'https://picsum.photos/seed/work5-9/800/1000',
-  //     'https://picsum.photos/seed/work5-10/1200/800'
-  //   ],
-  //   client: 'EcoThreads',
-  //   year: '2025',
-  //   role: 'Creative Lead'
-  // },
-  // { 
-  //   id: 7, 
-  //   name: '3D Abstract', 
-  //   category: '3D Design', 
-  //   image: 'https://picsum.photos/seed/work6/800/1000', 
-  //   description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
-  //   longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
-  //   gallery: [
-  //     'https://picsum.photos/seed/work6-1/1200/800',
-  //     'https://picsum.photos/seed/work6-2/1000/1000',
-  //     'https://picsum.photos/seed/work6-3/1000/1000',
-  //     'https://picsum.photos/seed/work6-4/800/1200',
-  //     'https://picsum.photos/seed/work6-5/1600/1000',
-  //     'https://picsum.photos/seed/work6-6/2100/900',
-  //     'https://picsum.photos/seed/work6-7/800/1000',
-  //     'https://picsum.photos/seed/work6-8/800/1000',
-  //     'https://picsum.photos/seed/work6-9/800/1000',
-  //     'https://picsum.photos/seed/work6-10/1200/800'
-  //   ],
-  //   client: 'Personal Project',
-  //   year: '2026',
-  //   role: '3D Artist'
-  // },
-  // { 
-  //   id: 8, 
-  //   name: 'Web Experience', 
-  //   category: 'UI/UX Design', 
-  //   image: 'https://picsum.photos/seed/work7/800/1000', 
-  //   description: 'An immersive web experience designed for a creative agency, featuring interactive elements and smooth animations.',
-  //   longDescription: 'The "Studio X" portfolio site was built to feel like a physical gallery. We implemented custom WebGL transitions and a non-linear navigation system. The site was awarded "Site of the Day" on Awwwards.',
-  //   gallery: [
-  //     'https://picsum.photos/seed/work7-1/1200/800',
-  //     'https://picsum.photos/seed/work7-2/1000/1000',
-  //     'https://picsum.photos/seed/work7-3/1000/1000',
-  //     'https://picsum.photos/seed/work7-4/800/1200',
-  //     'https://picsum.photos/seed/work7-5/1600/1000',
-  //     'https://picsum.photos/seed/work7-6/2100/900',
-  //     'https://picsum.photos/seed/work7-7/800/1000',
-  //     'https://picsum.photos/seed/work7-8/800/1000',
-  //     'https://picsum.photos/seed/work7-9/800/1000',
-  //     'https://picsum.photos/seed/work7-10/1200/800'
-  //   ],
-  //   client: 'Studio X',
-  //   year: '2025',
-  //   role: 'UI/UX Designer'
-  // },
-  // { 
-  //   id: 9, 
-  //   name: 'Packaging Design', 
-  //   category: 'Graphic Design', 
-  //   image: 'https://picsum.photos/seed/work8/800/1000', 
-  //   description: 'Eco-friendly packaging design for a premium skincare line, using sustainable materials and elegant illustrations.',
-  //   longDescription: 'For "Nura Skincare," we developed a packaging system that uses 100% recycled paper and soy-based inks. The visual language uses delicate botanical illustrations and a muted, earthy color palette to reflect the brand\'s natural ingredients.',
-  //   gallery: [
-  //     'https://picsum.photos/seed/work8-1/1200/800',
-  //     'https://picsum.photos/seed/work8-2/1000/1000',
-  //     'https://picsum.photos/seed/work8-3/1000/1000',
-  //     'https://picsum.photos/seed/work8-4/800/1200',
-  //     'https://picsum.photos/seed/work8-5/1600/1000',
-  //     'https://picsum.photos/seed/work8-6/2100/900',
-  //     'https://picsum.photos/seed/work8-7/800/1000',
-  //     'https://picsum.photos/seed/work8-8/800/1000',
-  //     'https://picsum.photos/seed/work8-9/800/1000',
-  //     'https://picsum.photos/seed/work8-10/1200/800'
-  //   ],
-  //   client: 'Nura Skincare',
-  //   year: '2024',
-  //   role: 'Packaging Designer'
-  // },
   // { 
   //   id: 10, 
   //   name: 'Typography Study', 
@@ -674,7 +673,7 @@ const [isExpanded, setIsExpanded] = useState(false);
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div className="reveal-up">
             <h2 className="text-5xl md:text-7xl uppercase tracking-tighter">RECENT PROJECTS</h2>
-            <p className="font-mono uppercase tracking-widest opacity-60 mt-4">Selected works from 2024-2026</p>
+            <p className="font-mono uppercase tracking-widest opacity-60 mt-4">Selected works from 2023-2026</p>
           </div>
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
@@ -712,7 +711,7 @@ const [isExpanded, setIsExpanded] = useState(false);
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 work-grid">
-          {(isExpanded ? filteredWorks : filteredWorks.slice(0, 3)).map((work) => (
+          {(isExpanded ? filteredWorks : filteredWorks.slice(0, 9)).map((work) => (
             <div 
               key={work.id} 
               className="work-card group cursor-pointer"
@@ -1367,19 +1366,19 @@ function WorkDetail() {
               <ChevronRight size={40} />
             </button>
 
-            <div className="relative max-w-7xl max-h-[85vh] flex flex-col items-center">
-              <motion.div 
+<div className="relative w-full max-w-[95vw] md:max-w-7xl max-h-[95vh] md:max-h-[85vh p-2 md:p-8 flex flex-col items-center justify-center mx-auto">
+               <motion.div 
                 key={`lightbox-${lightboxIndex}`}
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="w-full h-[85vh] flex items-center justify-center"
+className="flex-1 w-full md:h-[85vh] flex items-center justify-center"
               >
                 <MediaLoader 
                   src={work!.gallery[lightboxIndex!]} 
                   alt="Gallery Lightbox" 
-                  className="max-w-7xl max-h-full object-contain rounded-lg shadow-2xl"
-                  priority={true}
+className="w-auto h-auto max-w-full md:max-w-7xl max-h-full object-contain rounded-lg shadow-2xl"
+                   priority={true}
                 />
               </motion.div>
               <div className="absolute -bottom-12 left-0 right-0 text-center">
