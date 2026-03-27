@@ -56,43 +56,43 @@ const WORKS: Work[] = [
     name: 'Fixed Youth Conference', 
     category: 'Graphic Design',
     previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=fxdythconcover_ll2nfk',
-    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/c_fill,w_1920,h_1080/v1774425757/1_zxghlw.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576064/1_ovs88o.jpg',
     description: 'A COMPREHENSIVE BRANDING PROJECT FOR A FAITH-BASED YOUTH CONFERENCE, FOCUSED ON CREATING A BOLD, CULTURALLY RELEVANT VISUAL IDENTITY ROOTED IN THE MESSAGE OF THE GOSPEL.',
     longDescription: 'This project involved developing a complete visual identity for FIXED YOUTH CON 2026, a dynamic youth conference hosted by EWC FIXED Teens Church. The objective was to translate a deeply spiritual message into a modern, engaging brand that resonates with today’s generation. The challenge was to balance clarity of the Gospel message with high-impact visual storytelling that feels fresh, youthful, and culturally aligned. The identity system was built from the ground up, including logo design, typography direction, color systems, and scalable assets across digital and print platforms. The final outcome is a cohesive and versatile brand experience that captures energy, faith, and community positioning the conference as both spiritually impactful and visually compelling to a new generation.',
     gallery: [
-      'https://res.cloudinary.com/degd6ahfu/image/upload/14_kpi0wp.jpg', // 3:2
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435063/2_khuows.jpg', // 1:1
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435064/3_c2dnoz.jpg', // 1:1
-      'https://res.cloudinary.com/degd6ahfu/image/upload/26_mnpjqi.jpg', // 2:3
-      'https://res.cloudinary.com/degd6ahfu/image/upload/30_louggv.jpg', // 16:10
-      'https://res.cloudinary.com/degd6ahfu/image/upload/5_qz17qt.jpg', // 21:9
-      'https://res.cloudinary.com/degd6ahfu/image/upload/7_kiduyl.jpg', // 4:5
-      'https://res.cloudinary.com/degd6ahfu/image/upload/18_c5zdrr.jpg', // 4:5
-      'https://res.cloudinary.com/degd6ahfu/image/upload/35_ylwbca.jpg', // 4:5
-      'https://res.cloudinary.com/degd6ahfu/image/upload/9_guza8g.jpg', // 3:2
-      'https://res.cloudinary.com/degd6ahfu/image/upload/4_mhyin8.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/12_fuynnk.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/11_stduei.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/36_nqpljp.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/8_mtg3p3.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/16_xboxue.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435059/29_zhixco.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425778/32_nhibto.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425778/31_qkrlqa.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425774/20_an1zmk.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435060/10_jhrxig.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425766/17_terlfh.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425776/28_mqwebo.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425770/24_yao1ex.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425769/22_pee6ir.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425763/6_g8diiz.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425764/13_hrhwnp.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425771/25_is3pmw.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774435058/27_tjlkbh.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425783/33_odamvo.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425767/19_u1963l.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425768/21_zkpxxr.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425764/15_adnuoi.jpg'
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/14_zlxozl.jpg', // 3:2
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/2_jrisoo.jpg', // 1:1
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/3_ba5hmh.jpg', // 1:1
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576071/26_rt15ep.jpg', // 2:3
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576072/30_dzuiob.jpg', // 16:10
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/5_fdzjf1.jpg', // 21:9
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/7_olui9d.jpg', // 4:5
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/18_bajx9j.jpg', // 4:5
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/35_uyjv3j.jpg', // 4:5
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/9_fca1fd.jpg', // 3:2
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/4_kluty2.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/12_asdues.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/11_siobas.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/36_xsjomz.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/8_ichaae.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576067/16_qzf6d1.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/29_f31vsf.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/32_octwo6.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576072/31_d8cihb.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/20_jgxzsl.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/10_y7cf9b.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/17_gb6giz.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576072/28_oraqjh.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576071/24_pvjohp.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576070/22_adh37d.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576068/6_crc8p6.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576065/13_p6u3vy.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576071/25_hc0q6y.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576072/27_pnxxlm.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576073/33_kpffn1.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576069/19_hyst5x.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/15_fs5nui.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576070/21_lcp79w.jpg',
     ],
     client: 'EWC Fixed Teen\'s Church',
     year: '2026',
