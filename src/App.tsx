@@ -711,7 +711,7 @@ const [isExpanded, setIsExpanded] = useState(false);
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 work-grid">
-          {(isExpanded ? filteredWorks : filteredWorks.slice(0, 9)).map((work) => (
+          {(isExpanded ? filteredWorks : filteredWorks.slice(0, 6)).map((work) => (
             <div 
               key={work.id} 
               className="work-card group cursor-pointer"
