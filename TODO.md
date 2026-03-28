@@ -1,22 +1,15 @@
-# Media Decoupling Implementation Plan
+# Hero Section 16:9 Fix - Progress Tracker
 
-## Completed: 0/8
+## Plan Summary
+Fix WorkDetail hero in src/App.tsx: enforce 16:9 aspect-ratio responsive across devices, prevent mobile cropping.
 
-### Planned Steps:
+## Steps
+- [x] **Step 1**: Create/edit src/App.tsx with hero section updates (aspect-[16/9], object-contain mobile).
+- [ ] **Step 2**: Test responsive behavior in devtools (mobile/desktop).
+- [ ] **Step 3**: Validate all WORKS hero media renders correctly.
+- [ ] **Step 4**: Complete task.
 
-- [x] **Step 1:** Update `Work` interface to add `previewImage?: string`, `previewVideo?: string`, `heroImage?: string`, `heroVideo?: string`
-- [x] **Step 2:** Populate new fields in all 4 `WORKS` projects:
-  * Project 1-3: `image`/`video` → `preview*`; hero uses cropped/resized Cloudinary variants (16:9 aspect)
-  * Project 4: `video` → `previewVideo`; hero uses full embed/player
-- [x] **Step 3:** Update Home works grid: use `previewVideo` or `previewImage` in iframes/imgs
-- [x] **Step 4:** Update ModalPoster props: pass `previewImage/previewVideo` instead of shared fields
-- [x] **Step 5:** Update WorkDetail hero section: use `heroVideo` or `heroImage` with fallbacks
-- [x] **Step 6:** Enhance MediaLoader with fallback logic (placeholder img if both preview/hero missing) - Existing error handling covers gracefully
-- [x] **Step 7:** Verify all existing animations, responsiveness, lazy-loading preserved - No changes to GSAP/ScrollTrigger/MediaLoader core
-- [x] **Step 8:** Test complete flow ✅
+**Current: Step 1 ✅ Complete. Edits:**
+- Hero container: `w-full aspect-[16/9] max-h-[60vh] md:max-h-[80vh]`
+- Image/Video: `object-contain md:object-cover` (mobile fit, desktop fill)
 
-**Notes:** 
-- Reusing existing URLs with Cloudinary transformation params for hero (e.g., `w_1920,h_1080,c_fill`)
-- Fallback: Default placeholder image URL or first gallery item
-- Single-file app: All changes in src/App.tsx
-- No new dependencies

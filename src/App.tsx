@@ -176,8 +176,8 @@ const WORKS: Work[] = [
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628836/Artboard_15_4x-100_ubxvlg.jpg',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628833/Artboard_9_4x-100_fuyvwl.jpg',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628834/Artboard_12_4x-100_esw5tq.jpg',
-      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628828/Artboard_6_4x-100_ckuqie.jpg',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628833/Artboard_11_4x-100_rxoc56.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628845/Artboard_7_4x-100_gkx0kc.jpg',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628836/Artboard_17_4x-100_ji8yq2.jpg',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628838/Artboard_16_4x-100_axeqyi.jpg',
       'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628828/Artboard_6_4x-100_ckuqie.jpg',
@@ -1204,14 +1204,14 @@ function WorkDetail() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative h-[80vh] overflow-hidden">
+      <section className="relative w-full aspect-[16/9] max-h-[60vh] md:max-h-[80vh] overflow-hidden">
         {work.heroVideo ? (
           <video
             autoPlay
             loop
             muted
             playsInline
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain md:object-cover"
             poster={work.heroImage}
             src={work.heroVideo.replace('player.cloudinary.com/embed/', 'res.cloudinary.com/degd6ahfu/video/upload/f_auto,q_auto:eco,c_fill,w_1920,h_1080/')}
           />
@@ -1219,7 +1219,7 @@ function WorkDetail() {
           <MediaLoader 
             src={work.heroImage || work.image} 
             alt={work.name} 
-            className="w-full h-full object-cover grayscale-10 brightness-100"
+            className="w-full h-full object-contain md:object-cover grayscale-10 brightness-100"
           />
         )}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 z-10">
