@@ -241,59 +241,59 @@ const WORKS: Work[] = [
       year: '2024',
       role: 'Brand Identity Designer'
     },
-    { 
-      id: 7, 
-      name: 'Digital Art', 
-      category: 'Digital art', 
-      previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639542/Use_this_as_cover_busnvj.png',
-      heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639538/web_banner_2_wojtaz.png', 
-      description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
-      longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
-      gallery: [
-        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639538/pappy_kojo_nothing_matters_BACK_ihgjrc.png',
-        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639539/love_and_hate_art_zkc5c6.png',
-        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639540/p_mpwtoo.png',
-        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639539/kenyaan_car_deluxe_version_xk1wvp.png',
-        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639535/create_with_jake_tsbafc.png',
-      ],
-      client: '',
-      year: '2023 - 2026',
-      role: 'Digital Artist'
-    },
-    { 
-      id: 9, 
-      name: 'Creative Exploration', 
-      category: 'Creative Explorations', 
-      previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639570/BRAND_IDENTITY_qzhdw9.png',
-      heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639571/BM_ADS_FLYERS-02_zkdrxo.png', 
-      description: 'Eco-friendly packaging design for a premium skincare line, using sustainable materials and elegant illustrations.',
-      longDescription: 'For "Nura Skincare," we developed a packaging system that uses 100% recycled paper and soy-based inks. The visual language uses delicate botanical illustrations and a muted, earthy color palette to reflect the brand\'s natural ingredients.',
-      gallery: [
-        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639572/Screenshot_2025-02-19_074920_kok6ds.png',
-        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639579/BM_ADS_FLYERS-01_2_vn9ncj.png',
-        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639579/bm_matt_drxmk0.png',
-        'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639581/bm_emulsion_fjeunz.png',
-      ],
-      client: 'Nura Skincare',
-      year: '2024',
-      role: 'Packaging Designer'
-    },
-    { 
-    id: 6, 
-    name: 'Motion',
-    category: 'Motion Graphics',
-    previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv',
-    heroVideo: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
-    description: 'A COLLECTION OF MOTION-DRIVEN VISUALS DESIGNED TO BRING BRANDS AND IDEAS TO LIFE THROUGH DYNAMIC STORYTELLING.',
-    longDescription: 'This body of work explores the intersection of design and movement, transforming static visuals into engaging, immersive experiences. From typography-driven animations to brand-focused motion systems, each piece is crafted to capture attention, communicate clearly, and enhance visual identity. The work emphasizes timing, rhythm, and visual hierarchy, ensuring that every motion element serves a purpose whether for digital content, event promotion, or brand storytelling.',
-    gallery: [
-      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
-      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
-    ],
-    client: 'Personal Project',
-    year: '2026',
-    role: 'Motion Designer'
-  },
+    // { 
+    //   id: 7, 
+    //   name: 'Digital Art', 
+    //   category: 'Digital art', 
+    //   previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639542/Use_this_as_cover_busnvj.png',
+    //   heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639538/web_banner_2_wojtaz.png', 
+    //   description: 'A series of abstract 3D renders exploring texture, light, and form in a virtual environment.',
+    //   longDescription: 'This personal exploration pushed the boundaries of procedural material generation in Blender. I focused on the contrast between organic, soft forms and harsh, metallic surfaces. The renders were featured on the front page of Behance\'s 3D Design gallery.',
+    //   gallery: [
+    //     'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639538/pappy_kojo_nothing_matters_BACK_ihgjrc.png',
+    //     'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639539/love_and_hate_art_zkc5c6.png',
+    //     'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639540/p_mpwtoo.png',
+    //     'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639539/kenyaan_car_deluxe_version_xk1wvp.png',
+    //     'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639535/create_with_jake_tsbafc.png',
+    //   ],
+    //   client: '',
+    //   year: '2023 - 2026',
+    //   role: 'Digital Artist'
+    // },
+    // { 
+    //   id: 9, 
+    //   name: 'Creative Exploration', 
+    //   category: 'Creative Explorations', 
+    //   previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639570/BRAND_IDENTITY_qzhdw9.png',
+    //   heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639571/BM_ADS_FLYERS-02_zkdrxo.png', 
+    //   description: 'Eco-friendly packaging design for a premium skincare line, using sustainable materials and elegant illustrations.',
+    //   longDescription: 'For "Nura Skincare," we developed a packaging system that uses 100% recycled paper and soy-based inks. The visual language uses delicate botanical illustrations and a muted, earthy color palette to reflect the brand\'s natural ingredients.',
+    //   gallery: [
+    //     'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639572/Screenshot_2025-02-19_074920_kok6ds.png',
+    //     'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639579/BM_ADS_FLYERS-01_2_vn9ncj.png',
+    //     'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639579/bm_matt_drxmk0.png',
+    //     'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639581/bm_emulsion_fjeunz.png',
+    //   ],
+    //   client: 'Nura Skincare',
+    //   year: '2024',
+    //   role: 'Packaging Designer'
+    // },
+    // { 
+    //   id: 6, 
+    //   name: 'Motion',
+    //   category: 'Motion Graphics',
+    //   previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv',
+    //   heroVideo: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+    //   description: 'A COLLECTION OF MOTION-DRIVEN VISUALS DESIGNED TO BRING BRANDS AND IDEAS TO LIFE THROUGH DYNAMIC STORYTELLING.',
+    //   longDescription: 'This body of work explores the intersection of design and movement, transforming static visuals into engaging, immersive experiences. From typography-driven animations to brand-focused motion systems, each piece is crafted to capture attention, communicate clearly, and enhance visual identity. The work emphasizes timing, rhythm, and visual hierarchy, ensuring that every motion element serves a purpose whether for digital content, event promotion, or brand storytelling.',
+    //   gallery: [
+    //     'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+    //     'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
+    //   ],
+    //   client: 'Personal Project',
+    //   year: '2026',
+    //   role: 'Motion Designer'
+    // },
   // { 
   //   id: 10, 
   //   name: 'Typography Study', 
@@ -711,7 +711,7 @@ const [isExpanded, setIsExpanded] = useState(false);
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 work-grid">
-          {(isExpanded ? filteredWorks : filteredWorks.slice(0, 6)).map((work) => (
+          {(isExpanded ? filteredWorks : filteredWorks.slice(0, 9)).map((work) => (
             <div 
               key={work.id} 
               className="work-card group cursor-pointer"
@@ -799,7 +799,7 @@ const [isExpanded, setIsExpanded] = useState(false);
                 <h2 className="text-3xl uppercase tracking-tighter leading-none">{selectedWork.name}</h2>
               </div>
 
-<ModalPoster 
+              <ModalPoster 
                 mainImage={selectedWork.previewImage || selectedWork.image} 
                 mainVideo={selectedWork.previewVideo || selectedWork.video}
                 name={selectedWork.name} 
@@ -1204,7 +1204,7 @@ function WorkDetail() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative w-full aspect-[16/9] max-h-[60vh] md:max-h-[80vh] overflow-hidden">
+      <section className="relative w-full aspect-video max-h-[60vh] md:max-h-[80vh] overflow-hidden">
         {work.heroVideo ? (
           <video
             autoPlay
