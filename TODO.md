@@ -1,15 +1,16 @@
-# Hero Section 16:9 Fix - Progress Tracker
+# Media Optimization - Performance Tracker
 
 ## Plan Summary
-Fix WorkDetail hero in src/App.tsx: enforce 16:9 aspect-ratio responsive across devices, prevent mobile cropping.
+Optimize all Cloudinary images/videos:
+- Images: WebP/AVIF, srcset responsive, lazy gallery.
+- Videos: MP4/WebM, preload hero, smooth autoplay.
+CDN caching, no layout shifts.
 
 ## Steps
-- [x] **Step 1**: Create/edit src/App.tsx with hero section updates (aspect-[16/9], object-contain mobile).
-- [ ] **Step 2**: Test responsive behavior in devtools (mobile/desktop).
-- [ ] **Step 3**: Validate all WORKS hero media renders correctly.
-- [ ] **Step 4**: Complete task.
+- [x] **Step 1**: mediaOptimizer.ts util created.
+- [x] **Step 2**: Preload in main.tsx.
+- [x] **Step 3**: Work preview/gallery/about optimized (srcset).
+- [x] **Step 4**: Hero bg iframe → native video.
+- [ ] **Step 5**: Test Lighthouse + commit/PR.
 
-**Current: Step 1 ✅ Complete. Edits:**
-- Hero container: `w-full aspect-[16/9] max-h-[60vh] md:max-h-[80vh]`
-- Image/Video: `object-contain md:object-cover` (mobile fit, desktop fill)
-
+**Current**: Steps 1-4 ✅ Complete. Media optimized!

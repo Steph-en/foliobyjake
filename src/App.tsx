@@ -9,6 +9,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { X, ArrowRight, Instagram, ExternalLink, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { optimizeImageUrl, getSrcSet, optimizeVideoUrl, getOptimizedPreviewSrc, getOptimizedHeroSrc } from './utils/mediaOptimizer';
 import { BrowserRouter, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 import { clsx, type ClassValue } from 'clsx';
@@ -55,7 +56,7 @@ const WORKS: Work[] = [
     id: 1, 
     name: 'Fixed Youth Conference', 
     category: 'Graphic Design',
-    previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=fxdythconcover_ll2nfk',
+    previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=fxdythconcover_ll2nfk&autoplay=true&muted=true&loop=true&player[hide_controls]=true',
     heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576064/1_ovs88o.jpg',
     description: 'A COMPREHENSIVE BRANDING PROJECT FOR A FAITH-BASED YOUTH CONFERENCE, FOCUSED ON CREATING A BOLD, CULTURALLY RELEVANT VISUAL IDENTITY ROOTED IN THE MESSAGE OF THE GOSPEL.',
     longDescription: 'This project involved developing a complete visual identity for FIXED YOUTH CON 2026, a dynamic youth conference hosted by EWC FIXED Teens Church. The objective was to translate a deeply spiritual message into a modern, engaging brand that resonates with today’s generation. The challenge was to balance clarity of the Gospel message with high-impact visual storytelling that feels fresh, youthful, and culturally aligned. The identity system was built from the ground up, including logo design, typography direction, color systems, and scalable assets across digital and print platforms. The final outcome is a cohesive and versatile brand experience that captures energy, faith, and community positioning the conference as both spiritually impactful and visually compelling to a new generation.',
@@ -278,22 +279,22 @@ const WORKS: Work[] = [
     //   year: '2024',
     //   role: 'Packaging Designer'
     // },
-    // { 
-    //   id: 6, 
-    //   name: 'Motion',
-    //   category: 'Motion Graphics',
-    //   previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv',
-    //   heroVideo: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
-    //   description: 'A COLLECTION OF MOTION-DRIVEN VISUALS DESIGNED TO BRING BRANDS AND IDEAS TO LIFE THROUGH DYNAMIC STORYTELLING.',
-    //   longDescription: 'This body of work explores the intersection of design and movement, transforming static visuals into engaging, immersive experiences. From typography-driven animations to brand-focused motion systems, each piece is crafted to capture attention, communicate clearly, and enhance visual identity. The work emphasizes timing, rhythm, and visual hierarchy, ensuring that every motion element serves a purpose whether for digital content, event promotion, or brand storytelling.',
-    //   gallery: [
-    //     'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
-    //     'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
-    //   ],
-    //   client: 'Personal Project',
-    //   year: '2026',
-    //   role: 'Motion Designer'
-    // },
+    { 
+      id: 6, 
+      name: 'Motion',
+      category: 'Motion Graphics',
+      previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv',
+      heroVideo: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+      description: 'A COLLECTION OF MOTION-DRIVEN VISUALS DESIGNED TO BRING BRANDS AND IDEAS TO LIFE THROUGH DYNAMIC STORYTELLING.',
+      longDescription: 'This body of work explores the intersection of design and movement, transforming static visuals into engaging, immersive experiences. From typography-driven animations to brand-focused motion systems, each piece is crafted to capture attention, communicate clearly, and enhance visual identity. The work emphasizes timing, rhythm, and visual hierarchy, ensuring that every motion element serves a purpose whether for digital content, event promotion, or brand storytelling.',
+      gallery: [
+        'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+        'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
+      ],
+      client: 'Personal Project',
+      year: '2026',
+      role: 'Motion Designer'
+    },
   // { 
   //   id: 10, 
   //   name: 'Typography Study', 
@@ -619,8 +620,8 @@ const [isExpanded, setIsExpanded] = useState(false);
       {/* Hero Section */}
       <section className="relative h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <iframe 
-            src="https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=videoExport-2026-03-20_03-00-23.875-2800x1750_60fps_i9tkw1&autoplay=true&loop=true&muted=true&player[hide_controls]=true&player[transformation][width]=1920&player[transformation][crop]=limit" 
+        <iframe 
+            src="https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=videoExport-2026-03-20_03-00-23.875-2800x1750_60fps_i9tkw1&autoplay=true&loop=true&muted=true&player[hide_controls]=true&player[transformation][quality]=auto&player[transformation][crop]=limit&player[transformation][width]=1920" 
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[max(100vw,160vh)] h-[max(100vh,62.5vw)] border-0 opacity-40 pointer-events-none"
             allow="autoplay; fullscreen"
             title="Hero Video"
@@ -718,21 +719,22 @@ const [isExpanded, setIsExpanded] = useState(false);
               onClick={() => setSelectedWork(work)}
             >
               <div className="relative aspect-4/5 overflow-hidden bg-zinc-900">
-                {work.previewVideo ? (
+  {work.previewVideo ? (
                   <iframe 
-                    src={`${work.previewVideo}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
+            src={work.previewVideo.replace('embed/?', 'embed/?autoplay=true&muted=true&loop=true&controls=false&player[hide_controls]=true&')}
                     className="w-full h-full border-0 pointer-events-none grayscale group-hover:grayscale-0 transition-all duration-1000"
                     allow="autoplay; fullscreen; encrypted-media;"
                     title={work.name}
                   />
                 ) : (
-                  <img 
-                    src={work.previewImage || work.image} 
-                    alt={work.name}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                  />
+                <img 
+                  {...getSrcSet(work.previewImage || work.image)}
+                  src={optimizeImageUrl(work.previewImage || work.image, 800)}
+                  alt={work.name}
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out"
+                  referrerPolicy="no-referrer"
+                  loading="lazy"
+                />
                 )}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                   <div className="translate-y-4 group-hover:translate-y-0 transition-all duration-500 text-center px-6">
@@ -868,7 +870,8 @@ const [isExpanded, setIsExpanded] = useState(false);
           <div className="relative order-1 lg:order-2 parallax-img-container">
             <div className="aspect-3/4 overflow-hidden rounded-2xl">
               <img 
-                src="https://res.cloudinary.com/degd6ahfu/image/upload/v1773974518/PHOTO-2026-03-17-23-00-06_ralnm5.jpg" 
+                {...getSrcSet('https://res.cloudinary.com/degd6ahfu/image/upload/v1773974518/PHOTO-2026-03-17-23-00-06_ralnm5.jpg')}
+                src={optimizeImageUrl('https://res.cloudinary.com/degd6ahfu/image/upload/v1773974518/PHOTO-2026-03-17-23-00-06_ralnm5.jpg', 600)}
                 alt="Jake Amponsah" 
                 className="w-full h-full object-cover grayscale"
                 referrerPolicy="no-referrer"
@@ -960,16 +963,17 @@ function ModalPoster({ mainImage, mainVideo, name }: { mainImage: string, mainVi
     <div className="relative aspect-4/5 lg:aspect-auto overflow-hidden bg-zinc-900">
       {mainVideo ? (
         <iframe 
-          src={`${mainVideo}&autoplay=true&muted=true&loop=true&player[transformation][width]=1280&player[transformation][crop]=limit&player[hide_controls]=true`}
+          src={`${mainVideo}&autoplay=true&muted=true&loop=true&player[hide_controls]=true&player[transformation][quality]=auto&player[transformation][crop]=limit&player[transformation][width]=640,1280`}
           className="w-full h-full border-0"
           allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
           title={name}
         />
       ) : (
         <MediaLoader 
-          src={mainImage} 
+          src={optimizeImageUrl(mainImage, 800)} 
           alt={name} 
           className="w-full h-full object-cover"
+          priority={true}
         />
       )}
     </div>
@@ -1316,11 +1320,13 @@ function WorkDetail() {
                   whileHover={{ scale: 0.995 }}
                   onClick={() => setLightboxIndex(index)}
                 >
-                  <MediaLoader 
-                    src={img} 
-                    alt={`${work.name} gallery ${index + 1}`} 
-                    mediaClassName="hover:scale-105 transition-transform duration-1000"
-                  />
+      <MediaLoader 
+        {...getSrcSet(img)}
+        src={optimizeImageUrl(img, 1200)}
+        alt={`${work.name} gallery ${index + 1}`} 
+        mediaClassName="hover:scale-105 transition-transform duration-1000"
+        priority={false}
+      />
                 </motion.div>
               );
             })}
