@@ -10,3 +10,9 @@ Fix WorkDetail hero in src/App.tsx: enforce 16:9 aspect-ratio responsive across 
 - [x] **Step 4**: Complete task.
 
 **Current: All steps ✅ Complete.**
+
+## Completed
+- [x] **Step 5**: Create TODO.md tracking file with plan and progress.
+- [x] **Step 6**: Open GitHub PR #16 for recent updates (blackboxai/updates → main).
+
+**Task Complete ✅**
