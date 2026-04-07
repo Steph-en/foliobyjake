@@ -6,6 +6,7 @@
 import React, {
   useEffect, useRef, useState, useCallback, useMemo, memo,
 } from 'react';
+
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -158,7 +159,7 @@ const WORKS: Work[] = [
   },
   {
     id: 3,
-    name: 'Scolpta Career Fair',
+    name: 'Scolpta (Ashesi Career Fair)',
     category: 'Graphic Design',
     previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg',
     heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/c_fill,w_1920,h_1080/v1774425611/Artboard_1_fxrrrq.jpg',
@@ -484,7 +485,7 @@ const MediaLoader = memo(function MediaLoader({
           ? <video ref={videoRef} src={optimizedSrc}
               className={cn('w-full h-full object-cover transition-opacity duration-700', isLoaded ? 'opacity-100' : 'opacity-0', mediaClassName)}
               playsInline loop muted preload={priority ? 'auto' : 'metadata'}
-              onLoadedData={onLoad} onError={onError} referrerPolicy="no-referrer" />
+              onLoadedData={onLoad} onError={onError} />
           : <img src={optimizedSrc} alt={alt}
               className={cn('w-full h-full object-cover transition-opacity duration-700', isLoaded ? 'opacity-100' : 'opacity-0', mediaClassName)}
               onLoad={onLoad} onError={onError} referrerPolicy="no-referrer"
@@ -525,7 +526,6 @@ const PreviewVideo = memo(function PreviewVideo({
           className={cn('w-full h-full object-cover transition-opacity duration-700', isLoaded ? 'opacity-100' : 'opacity-0')}
           playsInline loop muted preload="metadata"
           onLoadedData={() => setIsLoaded(true)}
-          referrerPolicy="no-referrer"
           aria-hidden="true"
           title={`${name} preview`}
         />
