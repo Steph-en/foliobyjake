@@ -3,11 +3,111 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Folio By Jake</title>
+
+    <!-- Primary Meta -->
+    <title>Jake Amponsah — Graphic Designer & Digital Artist | Accra, Ghana</title>
+    <meta name="description" content="Jake Amponsah is a multi-disciplinary graphic designer and digital artist based in Accra, Ghana. Specialising in brand identity, motion graphics, and immersive digital experiences." />
+    <meta name="keywords" content="graphic designer, brand identity, digital artist, motion graphics, Accra, Ghana, Jake Amponsah" />
+    <meta name="author" content="Jake Amponsah" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://jakeamponsah.com/" />
+
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://jakeamponsah.com/" />
+    <meta property="og:title" content="Jake Amponsah — Graphic Designer & Digital Artist" />
+    <meta property="og:description" content="Multi-disciplinary designer based in Accra. Brand identity, motion graphics, and immersive digital experiences." />
+    <meta property="og:image" content="https://res.cloudinary.com/degd6ahfu/image/upload/f_auto,q_auto,w_1200/v1773974518/PHOTO-2026-03-17-23-00-06_ralnm5.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_GH" />
+    <meta property="og:site_name" content="Jake Amponsah Portfolio" />
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Jake Amponsah — Graphic Designer & Digital Artist" />
+    <meta name="twitter:description" content="Multi-disciplinary designer based in Accra. Brand identity, motion graphics, and immersive digital experiences." />
+    <meta name="twitter:image" content="https://res.cloudinary.com/degd6ahfu/image/upload/f_auto,q_auto,w_1200/v1773974518/PHOTO-2026-03-17-23-00-06_ralnm5.jpg" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#000000" />
+
+    <!-- Performance: DNS prefetch & preconnect -->
+    <!-- Establish connections to external origins before they're needed   -->
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link rel="preconnect" href="https://player.cloudinary.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+    <link rel="dns-prefetch" href="https://player.cloudinary.com" />
+
+    <!-- Fonts: load display swap with preconnect done above -->
+    <link
+      href="/src/assets/fonts/OpenType-TT/Foun.ttf"
+      rel="stylesheet"
+    />
+
+    <!-- Structured Data: Person + Portfolio (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://jakeamponsah.com/#person",
+          "name": "Jake Amponsah",
+          "jobTitle": "Graphic Designer & Digital Artist",
+          "description": "Multi-disciplinary designer based in Accra, Ghana, specialising in brand identity, motion graphics, and digital art.",
+          "url": "https://jakeamponsah.com/",
+          "image": "https://res.cloudinary.com/degd6ahfu/image/upload/f_auto,q_auto,w_800/v1773974518/PHOTO-2026-03-17-23-00-06_ralnm5.jpg",
+          "sameAs": [
+            "https://www.instagram.com/bvhiewz/"
+          ],
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Accra",
+            "addressCountry": "GH"
+          },
+          "knowsAbout": [
+            "Brand Identity Design",
+            "Motion Graphics",
+            "Digital Art",
+            "Adobe Photoshop",
+            "Adobe Illustrator",
+            "After Effects"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://jakeamponsah.com/#website",
+          "url": "https://jakeamponsah.com/",
+          "name": "Jake Amponsah Portfolio",
+          "description": "Portfolio of Jake Amponsah — Graphic Designer & Digital Artist based in Accra, Ghana.",
+          "author": { "@id": "https://jakeamponsah.com/#person" }
+        },
+        {
+          "@type": "CreativeWork",
+          "name": "Portfolio",
+          "author": { "@id": "https://jakeamponsah.com/#person" },
+          "url": "https://jakeamponsah.com/",
+          "description": "Selected works from 2023–2026 including brand identity, graphic design, motion graphics, and digital art."
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
+    <!-- Skip navigation: first focusable element for keyboard/screen-reader users -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-9999 focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:font-bold focus:uppercase focus:text-xs focus:tracking-widest focus:rounded"
+    >
+      Skip to main content
+    </a>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
