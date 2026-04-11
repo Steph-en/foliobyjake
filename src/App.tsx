@@ -269,8 +269,24 @@ const WORKS: Work[] = [
     year: '2024',
     role: 'Brand Identity Designer',
   },
+  {
+    id: 7,
+    name: 'Motion',
+    category: 'Motion Graphics',
+    previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv',
+    heroVideo: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+    description: 'A COLLECTION OF MOTION-DRIVEN VISUALS DESIGNED TO BRING BRANDS AND IDEAS TO LIFE THROUGH DYNAMIC STORYTELLING.',
+    longDescription: 'This body of work explores the intersection of design and movement, transforming static visuals into engaging, immersive experiences through typography-driven animations and brand-focused motion systems.',
+    gallery: [
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
+    ],
+    client: 'Personal Project',
+    year: '2026',
+    role: 'Motion Designer',
+  },
   // {
-  //   id: 7,
+  //   id: 8,
   //   name: 'Digital Art',
   //   category: 'Digital art',
   //   previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639542/Use_this_as_cover_busnvj.png',
@@ -289,7 +305,7 @@ const WORKS: Work[] = [
   //   role: 'Digital Artist',
   // },
   // {
-  //   id: 8,
+  //   id: 9,
   //   name: 'Creative Exploration',
   //   category: 'Creative Explorations',
   //   previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774639570/BRAND_IDENTITY_qzhdw9.png',
@@ -305,22 +321,6 @@ const WORKS: Work[] = [
   //   client: 'Nura Skincare',
   //   year: '2024',
   //   role: 'Packaging Designer',
-  // },
-  // {
-  //   id: 9,
-  //   name: 'Motion',
-  //   category: 'Motion Graphics',
-  //   previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv',
-  //   heroVideo: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
-  //   description: 'A COLLECTION OF MOTION-DRIVEN VISUALS DESIGNED TO BRING BRANDS AND IDEAS TO LIFE THROUGH DYNAMIC STORYTELLING.',
-  //   longDescription: 'This body of work explores the intersection of design and movement, transforming static visuals into engaging, immersive experiences through typography-driven animations and brand-focused motion systems.',
-  //   gallery: [
-  //     'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
-  //     'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
-  //   ],
-  //   client: 'Personal Project',
-  //   year: '2026',
-  //   role: 'Motion Designer',
   // },
 ];
 
@@ -1176,7 +1176,7 @@ function WorkDetail() {
 
       <main id="main-content">
         <section
-          className="relative w-full h-[80vh] aspect-video overflow-hidden pt-16"
+          className="relative w-full h-auto md:h-[80vh] aspect-video overflow-hidden pt-16"
           aria-label={`${work.name} — hero banner`}
         >
           {/* Inner wrapper fills the full section box (minus the navbar offset) */}
