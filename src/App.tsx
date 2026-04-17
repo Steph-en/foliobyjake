@@ -692,7 +692,10 @@ function Home() {
       .from('.hero-sub', { opacity: 0, y: 20, duration: 0.8 }, '-=0.5')
       .from('.hero-btn', { scale: 0.8, opacity: 0, duration: 0.5 }, '-=0.3');
 
-    gsap.utils.toArray('.reveal-up').forEach((el: any) =>
+    // Force Contact section to be visible immediately (fix blank rendering)
+    gsap.set('#contact', { clearProps: 'opacity,transform', opacity: 1, y: 0 });
+    
+    gsap.utils.toArray('.reveal-up:not(#contact .reveal-up)').forEach((el: any) =>
       gsap.from(el, {
         scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' },
         y: 60, opacity: 0, duration: 1, ease: 'power3.out',
@@ -1016,7 +1019,7 @@ function Home() {
 
         {/* Contact CTA - triggers modal */}
         <section id="contact" className="py-24 px-6 border-t border-white/10" aria-labelledby="contact-heading">
-          <div className="max-w-3xl mx-auto text-center reveal-up">
+          <div className="max-w-3xl mx-auto text-center">
             <h2 id="contact-heading" className="text-4xl md:text-6xl mb-8 uppercase tracking-tighter">Let's Work Together</h2>
               <p className="font-mono uppercase tracking-widest opacity-60 mb-12 max-w-lg mx-auto">
               Available for freelance projects and collaborations.
