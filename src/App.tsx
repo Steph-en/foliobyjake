@@ -692,7 +692,7 @@ function Home() {
       .from('.hero-sub', { opacity: 0, y: 20, duration: 0.8 }, '-=0.5')
       .from('.hero-btn', { scale: 0.8, opacity: 0, duration: 0.5 }, '-=0.3');
 
-    gsap.utils.toArray('.reveal-up').forEach((el: any) =>
+    gsap.utils.toArray('.reveal-up:not(#contact *)').forEach((el: any) =>
       gsap.from(el, {
         scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' },
         y: 60, opacity: 0, duration: 1, ease: 'power3.out',
