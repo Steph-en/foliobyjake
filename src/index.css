@@ -6,6 +6,13 @@
   --font-display: "Anton", sans-serif;
   --font-mono: "Space Grotesk", monospace;
   --font-jake: "Foun", sans-serif;
+
+  /* Contact Modal CSS Vars - adapted from HTML */
+  --cream: 240 235 225;
+  --accent: 200 184 154;
+  --muted: 240 235 225 / 0.45;
+  --subtle: 240 235 225 / 0.12;
+  --border: 240 235 225 / 0.1;
 }
 
 @font-face {
@@ -27,7 +34,11 @@
     @apply uppercase tracking-tighter;
   }
 
-  h2, h3, h4, h5, h6 {
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     @apply uppercase tracking-tighter;
   }
@@ -37,14 +48,79 @@
   height: auto;
 }
 
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
 .lenis.lenis-stopped {
   overflow: hidden;
 }
 
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+/* ── Contact Modal Styles ── */
+
+/* Grain Overlay */
+@layer utilities {
+  .grain-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.35;
+    pointer-events: none;
+  }
+}
+
+/* Float Label Animations */
+.field {
+  --label-top: 0.75rem;
+  --label-top-active: -0.5rem;
+  --label-size: 0.75rem;
+  --label-size-active: 0.625rem;
+}
+
+.field label {
+  top: var(--label-top);
+  font-size: var(--label-size);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.field input:focus+label,
+.field input:not(:placeholder-shown)+label,
+.field textarea:focus+label,
+.field textarea:not(:placeholder-shown)+label,
+.field select:focus+label,
+.field select:not([value=""])+label {
+  top: var(--label-top-active);
+  font-size: var(--label-size-active);
+  color: hsl(var(--accent));
+}
+
+.field-underline {
+  width: 0;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.field input:focus~.field-underline,
+.field textarea:focus~.field-underline,
+.field select:focus~.field-underline,
+.field.active .field-underline {
+  width: 100%;
+}
+
+/* Button Animations */
+@keyframes slide-right {
+  0% {
+    transform: translateX(-101%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .contact-modal-full {
+    @apply w-full;
+  }
 }

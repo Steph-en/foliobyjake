@@ -14,6 +14,7 @@ import {
   X, ArrowRight, Instagram, ExternalLink,
   ChevronLeft, ChevronRight, ArrowUp, Menu,
 } from 'lucide-react';
+import ContactModal from './components/ContactModal';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   BrowserRouter, Routes, Route, Link,
@@ -622,6 +623,7 @@ function Home() {
   const [selectedWork, setSelectedWork] = useState<Work | null>(null);
   const [savedScrollY, setSavedScrollY] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -635,10 +637,12 @@ function Home() {
 
   useSmoothScroll(!reduced);
   useFocusTrap(modalRef, !!selectedWork);
+  const contactModalRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(contactModalRef, isContactOpen);
 
   // Scroll lock when modal is open
   useEffect(() => {
-    if (selectedWork) {
+    if (selectedWork || isContactOpen) {
       setSavedScrollY(window.scrollY);
       document.body.style.cssText = `position:fixed;top:-${window.scrollY}px;left:0;right:0;overflow:hidden;width:100%`;
     } else {
@@ -646,7 +650,7 @@ function Home() {
       window.scrollTo(0, savedScrollY);
     }
     return () => { document.body.style.cssText = ''; };
-  }, [selectedWork]);
+  }, [selectedWork, isContactOpen]);
 
   // Global Escape to close modal
   useEffect(() => {
@@ -734,7 +738,11 @@ function Home() {
           <div className="hidden md:flex items-center gap-6 ml-auto nav-item">
             {[['#works','Works'],['#about','About'],['#contact','Contact']].map(([href, label]) => (
               <a key={label} href={href}
-                className="text-xs font-mono uppercase tracking-widest hover:opacity-60 transition-opacity focus:outline-none focus:underline">
+                className="text-xs font-mono uppercase tracking-widest hover:opacity-60 transition-opacity focus:outline-none focus:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+                }}>
                 {label}
               </a>
             ))}
@@ -773,12 +781,16 @@ function Home() {
               </div>
               <nav aria-label="Mobile navigation links">
                 <ul className="flex flex-col gap-8 text-6xl md:text-8xl font-display uppercase tracking-tighter list-none">
-                  {[['#works','Works'],['#about','About'],['#contact','Contact']].map(([href, label], i) => (
+                {[['#works','Works'],['#about','About'],['#contact','Contact']].map(([href, label], i) => (
                     <li key={label}>
                       <motion.a
                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: (i + 1) * 0.1 }}
-                        href={href} onClick={() => setIsMenuOpen(false)}
+                        href={href} onClick={(e) => {
+                          e.preventDefault();
+                          setIsMenuOpen(false);
+                          document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+                        }}
                         className="hover:italic transition-all focus:outline-none focus:underline"
                       >{label}</motion.a>
                     </li>
@@ -1002,46 +1014,42 @@ function Home() {
           </div>
         </section>
 
-        {/* Contact */}
+        {/* Contact CTA - triggers modal */}
         <section id="contact" className="py-24 px-6 border-t border-white/10" aria-labelledby="contact-heading">
           <div className="max-w-3xl mx-auto text-center reveal-up">
             <h2 id="contact-heading" className="text-4xl md:text-6xl mb-8 uppercase tracking-tighter">Let's Work Together</h2>
-            <p className="font-mono uppercase tracking-widest opacity-60 mb-12">Available for freelance projects and collaborations.</p>
-            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1 flex flex-col gap-2">
-                  <label htmlFor="contact-email" className="sr-only">Your email address</label>
-                  <input
-                    id="contact-email"
-                    type="email"
-                    placeholder="YOUR EMAIL ADDRESS"
-                    value={email}
-                    onChange={e => { setEmail(e.target.value); if (emailError) setEmailError(''); }}
-                    className="w-full bg-transparent border-b border-white/30 py-4 px-2 focus:border-white outline-none transition-colors font-mono text-sm"
-                    aria-required="true"
-                    aria-invalid={!!emailError}
-                    aria-describedby={emailError ? 'email-error' : undefined}
-                    autoComplete="email"
-                  />
-                  {emailError && (
-                    <span id="email-error" role="alert" className="text-red-400 text-[10px] font-mono uppercase tracking-widest text-left px-2">
-                      {emailError}
-                    </span>
-                  )}
-                </div>
-                <button type="submit"
-                  className="px-12 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors cursor-pointer active:scale-95 h-fit focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black">
-                  Get in Touch
-                </button>
-              </div>
-              {isSubmitted && (
-                <p role="status" aria-live="polite" className="text-emerald-400 text-xs font-mono uppercase tracking-widest mt-4">
-                  Thank you! Your message has been received.
-                </p>
-              )}
-            </form>
+              <p className="font-mono uppercase tracking-widest opacity-60 mb-12 max-w-lg mx-auto">
+              Available for freelance projects and collaborations.
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsContactOpen(true)}
+              className="mt-12 px-12 py-5 bg-white text-black font-bold uppercase tracking-widest text-sm hover:bg-zinc-100 active:scale-95 rounded-full transition-all shadow-2xl border-2 border-white focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+              aria-label="Open contact form"
+            >
+              Get In Touch
+              <ArrowRight size={20} className="ml-2 inline" aria-hidden="true" />
+            </motion.button>
           </div>
         </section>
+
+        {/* Contact Modal */}
+        <AnimatePresence>
+          {isContactOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/40 backdrop-blur-md z-40"
+                onClick={() => setIsContactOpen(false)}
+                aria-hidden="true"
+              />
+              <ContactModal ref={contactModalRef} isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+            </>
+          )}
+        </AnimatePresence>
       </main>
 
       {/* Footer */}
@@ -1057,7 +1065,11 @@ function Home() {
             <h3 className="font-mono text-xs uppercase tracking-widest mb-6 opacity-40">Navigation</h3>
             <ul className="space-y-4 text-sm uppercase tracking-widest list-none">
               {[['#works','Works'],['#about','About'],['#contact','Contact']].map(([href,label]) => (
-                <li key={label}><a href={href} className="hover:line-through transition-all focus:outline-none focus:underline">{label}</a></li>
+                <li key={label}><a href={href} className="hover:line-through transition-all focus:outline-none focus:underline"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+                  }}>{label}</a></li>
               ))}
             </ul>
           </nav>
