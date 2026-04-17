@@ -56,11 +56,12 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
         'service_lrefqpe', // Your EmailJS Service ID
         'template_xb95gh6',      // Your EmailJS Template ID
         {
-          to_email: 'hello@foliobyjake.com', // Your receiving email
-          from_name: formData.name,
-          from_email: formData.email,
-          service_type: formData.service,
+          to_email: 'hello@foliobyjake.com',
+          name: formData.name,
+          email: formData.email,
+          project_type: formData.service,
           message: formData.message,
+          reply_to: formData.email,
         }
       );
 
@@ -207,9 +208,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                       onChange={handleFieldChange('email')}
                       onFocus={() => handleFieldFocus('email')}
                       onBlur={() => handleFieldBlur('email')}
-                      className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 px-0 text-sm sm:text-base font-light
-                                 focus:border-zinc-300 focus:placeholder-transparent outline-none transition-all
-                                 peer placeholder-transparent"
+                      className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 px-0 text-sm sm:text-base font-light focus:border-zinc-300 focus:placeholder-transparent outline-none transition-all peer placeholder-transparent"
                       placeholder="Email Address"
                       aria-invalid={!!errors.email}
                       required
@@ -234,8 +233,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                     onChange={(e) => handleFieldChange('service')(e as any)}
                     onFocus={() => handleFieldFocus('service')}
                     onBlur={() => handleFieldBlur('service')}
-                    className="w-full bg-transparent border-b border-white/20 py-3 px-0 text-base font-light 
-                               focus:border-zinc-300 appearance-none outline-none transition-all peer"
+                    className="w-full bg-transparent border-b border-white/20 py-3 px-0 text-base font-light focus:border-zinc-300 appearance-none outline-none transition-all peer"
                   >
                     <option value="" disabled />
                     <option value="brand">Brand Identity</option>

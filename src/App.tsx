@@ -1016,8 +1016,8 @@ function Home() {
 
         {/* Contact CTA - triggers modal */}
         <section id="contact" className="py-24 px-6 border-t border-white/10" aria-labelledby="contact-heading">
-          <div className="max-w-3xl mx-auto text-center reveal-up">
-            <h2 id="contact-heading" className="text-4xl md:text-6xl mb-8 uppercase tracking-tighter">Let's Work Together</h2>
+          <div className="max-w-4xl mx-auto text-center reveal-up">
+            <h2 id="contact-heading" className="text-4xl md:text-6xl mb-8 uppercase tracking-tighter">Let's Work On A Masterpeice</h2>
               <p className="font-mono uppercase tracking-widest opacity-60 mb-12 max-w-lg mx-auto">
               Available for freelance projects and collaborations.
             </p>
