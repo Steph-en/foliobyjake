@@ -1025,7 +1025,7 @@ function Home() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsContactOpen(true)}
-              className="mt-12 px-12 py-5 bg-white text-black font-bold uppercase tracking-widest text-sm hover:bg-zinc-100 active:scale-95 rounded-full transition-all shadow-2xl border-2 border-white focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
+              className="mt-10 md:mt-0 px-12 py-5 bg-white text-black font-bold uppercase tracking-widest text-sm hover:bg-zinc-100 active:scale-95 rounded-full transition-all shadow-2xl border-2 border-white focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-black cursor-pointer"
               aria-label="Open contact form"
             >
               Get In Touch
