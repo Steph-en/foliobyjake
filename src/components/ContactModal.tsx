@@ -169,7 +169,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
           {/* Grid - Stack on mobile */}
           <div className="flex lg:flex-row gap-12 sm:gap-16 lg:gap-1">
             {/* Right - Form */}
-            <div className="contact-form-wrap w-full lg:w-5/5 flex-shrink-0 pb-12">
+            <div className="contact-form-wrap w-full lg:w-5/5 shrink-0 pb-12">
               <form ref={formRef} onSubmit={handleSubmit} className="space-y-8 sm:space-y-10" noValidate>
                 
                 {/* Name/Email Row */}
@@ -264,9 +264,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                     onChange={handleFieldChange('message')}
                     onFocus={() => handleFieldFocus('message')}
                     onBlur={() => handleFieldBlur('message')}
-                    className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 px-0 text-sm sm:text-base font-light resize-none
-                               focus:border-zinc-300 focus:placeholder-transparent outline-none transition-all
-                               peer placeholder-transparent min-h-[100px] sm:min-h-[120px]"
+                    className="w-full bg-transparent border-b border-white/20 py-2 sm:py-3 px-0 text-sm sm:text-base font-light resize-none focus:border-zinc-300 focus:placeholder-transparent outline-none transition-all peer placeholder-transparent min-h-25 sm:min-h-30"
                     placeholder="Tell me about your project"
                     aria-invalid={!!errors.message}
                     required
