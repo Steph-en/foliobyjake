@@ -1,8 +1,20 @@
+# Dependencies
 node_modules/
+
+# Build outputs
 build/
 dist/
 coverage/
-.DS_Store
+
+# Caches / Vite
+.vite/
+
+# Logs
 *.log
+
+# OS
+.DS_Store
+
+# Environment variables
 .env*
 !.env.example
