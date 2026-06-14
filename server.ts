@@ -361,8 +361,8 @@ function saveDb() {
 // Auth Mock login
 app.post("/api/auth/login", (req, res) => {
   const { username, password } = req.body;
-  const expectedUsername = process.env.USERNAME || "admin";
-  const expectedPassword = process.env.PASSWORD || "admin";
+  const expectedUsername = process.env.USERNAME || "";
+  const expectedPassword = process.env.PASSWORD || "";
 
   if (username === expectedUsername && password === expectedPassword) {
     res.json({ success: true, token: "mock-jwt-token-jake-cm-system" });
