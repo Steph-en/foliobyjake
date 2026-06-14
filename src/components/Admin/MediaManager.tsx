@@ -165,7 +165,7 @@ export default function MediaManager() {
       const file = e.dataTransfer.files[0];
       const validation = validateFile(file);
       if (!validation.isValid) {
-        setError(validation.error);
+        setError(validation.error || 'Invalid file. Please select a supported image or video file under 50MB.');
         setSelectedFile(null);
         return;
       }
@@ -184,7 +184,7 @@ export default function MediaManager() {
       const file = e.target.files[0];
       const validation = validateFile(file);
       if (!validation.isValid) {
-        setError(validation.error);
+        setError(validation.error || 'Invalid file. Please select a supported image or video file under 50MB.');
         setSelectedFile(null);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
