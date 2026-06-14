@@ -3,9 +3,9 @@
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Anton", sans-serif;
+  --font-display: "Helvetica", sans-serif;
   --font-mono: "Space Grotesk", monospace;
-  --font-jake: "Foun", sans-serif;
+  --font-jake: "Arial", "Helvetica", sans-serif;
 
   /* Contact Modal CSS Vars - adapted from HTML */
   --cream: 240 235 225;
