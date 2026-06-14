@@ -34,29 +34,7 @@
       "seoTitle": "Fixed Youth Conference 2026 Branding - Jake Amponsah",
       "seoDescription": "Case study of the comprehensive branding system designed for FIXED Teens Church youth conference in Accra, Ghana.",
       "seoKeywords": "Branding, Faith, Youth Conference, Graphic Design, Ghana",
-      "seoOgImage": "https://res.cloudinary.com/degd6ahfu/image/upload/v1774576064/1_ovs88o.jpg",
-      "sections": [
-        {
-          "id": "sec1-1",
-          "type": "text",
-          "content": {
-            "textHeader": "THE DESIGN STRATEGY",
-            "textBody": "To capture the attention of high-schoolers, we developed a raw, modern aesthetic combining high-contrast punk/grunge typesetting with spiritual subtext. Over 30 graphics, flyers, posters, and video formats were generated to maintain digital engagement."
-          },
-          "order": 1
-        },
-        {
-          "id": "sec1-2",
-          "type": "side-by-side",
-          "content": {
-            "images": [
-              "https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/14_zlxozl.jpg",
-              "https://res.cloudinary.com/degd6ahfu/image/upload/v1774576066/2_jrisoo.jpg"
-            ]
-          },
-          "order": 2
-        }
-      ]
+      "sections": []
     },
     {
       "id": 2,
@@ -80,11 +58,9 @@
       "role": "Brand Identity Designer",
       "status": "published",
       "isFeatured": true,
-      "views": 890,
+      "views": 1106,
       "seoTitle": "UAI by TúNiyi Brand Identity - Jake Amponsah",
-      "seoDescription": "Explore the comprehensive graphic identity and branding system built for the UAI conceptual fashion label exploring self-expression, human vision, and artificial intelligence.",
-      "seoKeywords": "UAI by TuNiyi, Brand Identity, Fashion Branding, Graphic Design, Jake Amponsah, Typographic Design, Editorial Design",
-      "seoOgImage": "https://res.cloudinary.com/degd6ahfu/image/upload/v1774442003/bannner_r79veh.jpg",
+      "seoDescription": "Explore the graphic identity system built for UAI conceptual fashion label.",
       "sections": []
     },
     {
@@ -108,10 +84,6 @@
       "status": "published",
       "isFeatured": true,
       "views": 955,
-      "seoTitle": "Scolpta Ashesi Career Fair Brand & Experiential Design - Jake Amponsah",
-      "seoDescription": "Diving into the disruptive and bold Y2K-inspired Gen Z brand identity and experiential design system created for the Scolpta campaign at the Ashesi Career Fair.",
-      "seoKeywords": "Scolpta, Ashesi Career Fair, Experiential Design, Gen Z Branding, Y2K Aesthetic, Brand Identity, Accra Graphic Design, Disruptive Design",
-      "seoOgImage": "https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg",
       "sections": []
     },
     {
@@ -133,11 +105,7 @@
       "role": "Brand Identity Designer",
       "status": "published",
       "isFeatured": false,
-      "views": 422,
-      "seoTitle": "VANT Contemporary Fashion Label Brand Identity - Jake Amponsah",
-      "seoDescription": "A refined case study showcasing the minimalist visual system, NY typography selection, and restraint styled for the VANT contemporary fashion label.",
-      "seoKeywords": "VANT, Fashion Branding, Minimalist Graphic Design, Visual Identity, NYC Style Typography, Editorial Web Design, Quiet Luxury Brand",
-      "seoOgImage": "https://res.cloudinary.com/degd6ahfu/image/upload/v1774628837/cover_portrait_4x-100_pz4u6u.jpg",
+      "views": 555,
       "sections": []
     },
     {
@@ -160,10 +128,6 @@
       "status": "published",
       "isFeatured": false,
       "views": 532,
-      "seoTitle": "Main Squeeze Beverage Brand Identity & Packaging - Jake Amponsah",
-      "seoDescription": "A vibrant, bold beverage brand identity and packaging design case study for Main Squeeze, centering high-energy typography and clean layout aesthetics.",
-      "seoKeywords": "Main Squeeze, Beverage Packaging, Brand Identity, Bold Typography, Product Design, Graphic Design Portfolio, Creative Juice Brand",
-      "seoOgImage": "https://res.cloudinary.com/degd6ahfu/image/upload/v1774633759/COVER_b61g2a.jpg",
       "sections": []
     },
     {
@@ -186,10 +150,6 @@
       "status": "published",
       "isFeatured": false,
       "views": 311,
-      "seoTitle": "Stackz Pastry Brand Brand Identity for Sale - Jake Amponsah",
-      "seoDescription": "A self-initiated premium branding identity concept designed for Stackz, a pastry brand showcasing stacked dessert structures and warm, family-style heritage aesthetics.",
-      "seoKeywords": "Stackz, Pastry Branding, Brand Identity for Sale, Bakery Visual Identity, Creative Logo Design, Packaging Concepts, Jake Amponsah",
-      "seoOgImage": "https://res.cloudinary.com/degd6ahfu/image/upload/v1774642493/Artboard_10_4x-100_copy_wmgwyw.jpg",
       "sections": []
     },
     {
@@ -211,10 +171,6 @@
       "status": "published",
       "isFeatured": true,
       "views": 742,
-      "seoTitle": "Motion Collection Showcase: Typography & Visual Kinetics - Jake Amponsah",
-      "seoDescription": "Explore a selective collection of high-fidelity, typography-driven brand motion designs, animated system loops, and immersive modern video storytelling.",
-      "seoKeywords": "Motion Graphics, 2D Animation, Kinetic Typography, Video Reels, Brand Motion Systems, Visual Storytelling, Creative Motion Portfolio",
-      "seoOgImage": "https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4",
       "sections": []
     }
   ],
@@ -237,7 +193,7 @@
       "name": "Youth Conference Hero",
       "type": "image",
       "size": "1.2 MB",
-      "createdAt": "2026-06-14T04:50:22.511Z"
+      "createdAt": "2026-06-14T04:58:25.345Z"
     },
     {
       "id": "m2",
@@ -245,7 +201,7 @@
       "name": "UAI Banner",
       "type": "image",
       "size": "840 KB",
-      "createdAt": "2026-06-14T04:50:22.512Z"
+      "createdAt": "2026-06-14T04:58:25.346Z"
     },
     {
       "id": "m3",
@@ -253,7 +209,7 @@
       "name": "Scolpta Poster",
       "type": "image",
       "size": "1.4 MB",
-      "createdAt": "2026-06-14T04:50:22.512Z"
+      "createdAt": "2026-06-14T04:58:25.346Z"
     },
     {
       "id": "m4",
@@ -261,7 +217,7 @@
       "name": "Logo Motion Loop",
       "type": "video",
       "size": "4.8 MB",
-      "createdAt": "2026-06-14T04:50:22.512Z"
+      "createdAt": "2026-06-14T04:58:25.346Z"
     }
   ],
   "contactsCount": 14

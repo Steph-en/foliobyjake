@@ -110,12 +110,6 @@ export default function Login({ onLoginSuccess }: LoginProps) {
             )}
           </button>
         </form>
-
-        <div className="mt-8 text-center border-t border-zinc-900/50 pt-6">
-          <p className="text-[10px] text-zinc-600 font-mono">
-            Demo credentials: <span className="text-zinc-500">username: admin / password: admin</span>
-          </p>
-        </div>
       </motion.div>
     </div>
   );
