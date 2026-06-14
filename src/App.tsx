@@ -23,6 +23,8 @@ import {
 import Lenis from 'lenis';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { api } from './lib/api';
+import AdminIndex from './components/Admin';
 
 // Utility 
 function cn(...inputs: ClassValue[]) {
@@ -75,6 +77,7 @@ interface Work {
   client?: string;
   year?: string;
   role?: string;
+  sections?: any[];
 }
 
 // Works Data
@@ -659,8 +662,21 @@ function Home() {
     return () => document.removeEventListener('keydown', h);
   }, []);
 
-  const categories = useMemo(() => Array.from(new Set(WORKS.map(w => w.category))), []);
-  const filteredWorks = useMemo(() => WORKS.filter(w => !selectedCategory || w.category === selectedCategory), [selectedCategory]);
+  const [works, setWorks] = useState<Work[]>(WORKS);
+
+  useEffect(() => {
+    let active = true;
+    api.getProjects().then(projs => {
+      const published = projs.filter(p => p.status === 'published');
+      if (active && published.length > 0) {
+        setWorks(published);
+      }
+    }).catch(err => console.warn('Dynamic projects load error:', err));
+    return () => { active = false; };
+  }, []);
+
+  const categories = useMemo(() => Array.from(new Set(works.map(w => w.category))), [works]);
+  const filteredWorks = useMemo(() => works.filter(w => !selectedCategory || w.category === selectedCategory), [selectedCategory, works]);
   const visibleWorks = useMemo(() => isExpanded ? filteredWorks : filteredWorks.slice(0, 6), [isExpanded, filteredWorks]);
 
   const validateEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
@@ -1106,13 +1122,32 @@ function Home() {
 
 function WorkDetail() {
   const { id } = useParams();
-  const work = WORKS.find(w => w.id === Number(id));
+  const [works, setWorks] = useState<Work[]>(WORKS);
+  const [work, setWork] = useState<Work | undefined>(() => WORKS.find(w => String(w.id) === String(id)));
   const containerRef = useRef<HTMLDivElement>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
   const triggerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const reduced = usePrefersReducedMotion();
+
+  useEffect(() => {
+    let active = true;
+    api.getProjects().then(projs => {
+      if (active && projs && projs.length > 0) {
+        setWorks(projs);
+        const found = projs.find(w => String(w.id) === String(id));
+        if (found) {
+          setWork(found);
+          // Increment views asynchronously on mount
+          api.getProject(found.id, true).catch(() => {});
+        }
+      }
+    }).catch(err => {
+      console.warn('Failed to load project details dynamically:', err);
+    });
+    return () => { active = false; };
+  }, [id]);
 
   usePageMeta(
     work ? `${work.name} — Jake Amponsah | ${work.category}` : 'Work not found — Jake Amponsah',
@@ -1172,7 +1207,7 @@ function WorkDetail() {
     );
   }
 
-  const nextWork = WORKS.find(w => w.id === (work.id % WORKS.length) + 1) || WORKS[0];
+  const nextWork = works.find(w => w.id === (work.id % works.length) + 1) || works[0];
 
   return (
     <div ref={containerRef} className="bg-black text-white min-h-screen">
@@ -1232,6 +1267,53 @@ function WorkDetail() {
             </article>
           </div>
         </section>
+
+        {/* Dynamic Case Study Custom Sections */}
+        {work.sections && work.sections.length > 0 && (
+          <section className="py-24 px-6 border-t border-white/5 bg-zinc-950/20" aria-label="Dynamic Case Study Blocks">
+            <div className="max-w-7xl mx-auto space-y-32">
+              {work.sections.map((sec: any) => {
+                if (sec.type === 'text') {
+                  return (
+                    <div key={sec.id} className="max-w-3xl mx-auto space-y-6">
+                      {sec.content.textHeader && (
+                        <h3 className="text-xs font-mono uppercase tracking-[0.2em] text-zinc-400">{sec.content.textHeader}</h3>
+                      )}
+                      <p className="text-lg opacity-85 leading-relaxed font-light whitespace-pre-line">{sec.content.textBody}</p>
+                    </div>
+                  );
+                } else if (sec.type === 'side-by-side') {
+                  return (
+                    <div key={sec.id} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                      {sec.content.images?.map((imgUrl: string, idx: number) => {
+                        if (!imgUrl) return null;
+                        return (
+                          <div key={idx} className="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900 border border-white/5">
+                            <MediaLoader src={imgUrl} alt={`Case study side detail ${idx + 1}`} className="w-full h-full" mediaClassName="object-cover w-full h-full" />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                } else if (sec.type === 'asymmetric-split') {
+                  const layout = sec.content.layoutType || 'asymmetric-left';
+                  const isLeftDom = layout === 'asymmetric-left';
+                  return (
+                    <div key={sec.id} className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
+                      <div className={`${isLeftDom ? 'md:col-span-8 aspect-[16/10]' : 'md:col-span-4 aspect-[3/4]'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5`}>
+                        <MediaLoader src={sec.content.images?.[0] || ''} alt="Case study primary segment" className="w-full h-full" mediaClassName="object-cover w-full h-full" />
+                      </div>
+                      <div className={`${isLeftDom ? 'md:col-span-4 aspect-[3/4]' : 'md:col-span-8 aspect-[16/10]'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5`}>
+                        <MediaLoader src={sec.content.images?.[1] || ''} alt="Case study supporting segment" className="w-full h-full" mediaClassName="object-cover w-full h-full" />
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Gallery */}
         <section className="py-24 px-6 bg-zinc-950 overflow-hidden" aria-labelledby="gallery-heading"
@@ -1366,6 +1448,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/work/:id" element={<WorkDetail />} />
+        <Route path="/admin" element={<AdminIndex />} />
       </Routes>
     </BrowserRouter>
   );

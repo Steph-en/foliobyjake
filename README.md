@@ -1,61 +1,20 @@
-# folio
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-Portfolio app for **Jake Amponsah** (multi-disciplinary designer based in Accra, Ghana).
+# Run and deploy your AI Studio app
 
-## Requirements
+This contains everything you need to run your app locally.
 
-- Node.js (LTS recommended)
+View your app in AI Studio: https://ai.studio/apps/9541b555-e217-487d-b68d-a8fca2fb14f1
 
-## Run locally
+## Run Locally
+
+**Prerequisites:**  Node.js
+
 
 1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Start the dev server:
-   ```bash
-   npm run dev
-   ```
-
-By default, the dev server runs with:
-
-- Host: `0.0.0.0`
-- Port: `3000`
-
-## Development scripts
-
-- Start dev server: `npm run dev`
-- Typecheck (no emit): `npm run lint`
-
-## Build
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Preview production build
-
-Serve the production build locally:
-
-```bash
-npm run preview
-```
-
-## Clean
-
-Remove build output (if present):
-
-```bash
-npm run clean
-```
-
-## Deploy
-
-This project is a Vite app. For most static hosts (Vercel/Netlify/etc.), use:
-
-1. `npm install`
-2. `npm run build`
-
-Then serve the generated `dist/` directory.
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

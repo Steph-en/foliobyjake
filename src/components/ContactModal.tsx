@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import emailjs from '@emailjs/browser';
+import { api } from '../lib/api';
 
 interface ContactModalProps {
   ref?: React.Ref<HTMLDivElement>;
@@ -67,6 +68,10 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
 
       if (response.status === 200) {
         setShowSuccess(true);
+        
+        // Increment system analytics contact submissions
+        api.incrementContactCount().catch(err => console.warn('Failed to register contact metric:', err));
+
         // Reset form after success
         setFormData({ name: '', email: '', service: '', message: '' });
         setIsFilled({});
@@ -319,4 +324,3 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
 };
 
 export default ContactModal;
-
