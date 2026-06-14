@@ -359,7 +359,7 @@ export default function MediaManager() {
                   </div>
                   <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-400"
+                      className="h-full bg-linear-to-r from-emerald-500 to-teal-400"
                       initial={{ width: 0 }}
                       animate={{ width: `${uploadProgress}%` }}
                       transition={{ type: 'spring', stiffness: 80, damping: 15 }}
@@ -384,7 +384,7 @@ export default function MediaManager() {
               >
                 {isUploading ? (
                   <>
-                    <div className="animate-spin rounded-full h-3 w-3 border-2 border-zinc-600 border-t-white animate-pulse" />
+                    <div className="animate-pulse rounded-full h-3 w-3 border-2 border-zinc-600 border-t-white" />
                     Uploading...
                   </>
                 ) : (
@@ -399,9 +399,9 @@ export default function MediaManager() {
 
           {/* Divider line block */}
           <div className="flex items-center gap-2 my-8">
-            <div className="flex-grow h-px bg-zinc-900" />
+            <div className="grow h-px bg-zinc-900" />
             <span className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase">OR REGISTRATION LINK</span>
-            <div className="flex-grow h-px bg-zinc-900" />
+            <div className="grow h-px bg-zinc-900" />
           </div>
 
           {/* SECTION B: Remote URL Registration */}

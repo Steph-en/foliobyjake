@@ -114,7 +114,7 @@ function SortableGalleryItem({ url, index, onRemove }: { url: string; index: num
         </div>
       </div>
       <div className="p-2 flex items-center justify-between text-[9px] font-mono text-zinc-500 bg-zinc-950">
-        <span className="truncate max-w-[80px]" title={url}>{index + 1}. {url.substring(url.lastIndexOf('/') + 1)}</span>
+        <span className="truncate max-w-20" title={url}>{index + 1}. {url.substring(url.lastIndexOf('/') + 1)}</span>
         <button
           type="button"
           onClick={onRemove}
@@ -262,7 +262,7 @@ function FileUploaderField({ label, value, onChange, placeholder, type, id }: Fi
           </div>
           <div className="h-1 w-full bg-zinc-900 rounded-full overflow-hidden border border-zinc-850">
             <div
-              className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-150"
+              className="h-full bg-linear-to-r from-emerald-500 to-teal-400 transition-all duration-150"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -757,7 +757,7 @@ export default function ProjectEditor({ projectId, onBack, onSaved }: ProjectEdi
                   value={newGalleryUrl}
                   onChange={(e) => setNewGalleryUrl(e.target.value)}
                   placeholder="https://res.cloudinary.com/degd6ahfu/..."
-                  className="flex-grow bg-zinc-900 border border-zinc-800 rounded-xl py-2.5 px-4 text-xs font-mono focus:outline-none"
+                  className="grow bg-zinc-900 border border-zinc-800 rounded-xl py-2.5 px-4 text-xs font-mono focus:outline-none"
                 />
                 <button
                   type="button"
@@ -796,7 +796,7 @@ export default function ProjectEditor({ projectId, onBack, onSaved }: ProjectEdi
                   </div>
                   <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden border border-zinc-850">
                     <div
-                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-150"
+                      className="h-full bg-linear-to-r from-emerald-500 to-teal-400 transition-all duration-150"
                       style={{ width: `${galleryUploadProgress}%` }}
                     />
                   </div>

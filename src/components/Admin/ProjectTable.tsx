@@ -267,7 +267,7 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
 
       {/* Main projects listings listing */}
       <div className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[700px]">
+        <table className="w-full text-left border-collapse min-w-175">
           <thead>
             <tr className="border-b border-zinc-900 font-mono text-[9px] uppercase tracking-wider text-zinc-500">
               <th className="py-4 pl-6 pr-4 w-12 align-middle">
@@ -342,7 +342,7 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
                     <div className="space-y-1 text-[10px]">
                       {item.client && <p><span className="text-zinc-600">CLIENT:</span> {item.client}</p>}
                       {item.year && <p><span className="text-zinc-600">YEAR:</span> {item.year}</p>}
-                      {item.role && <p className="truncate max-w-[150px]"><span className="text-zinc-600">ROLE:</span> {item.role}</p>}
+                      {item.role && <p className="truncate max-w-37.5"><span className="text-zinc-600">ROLE:</span> {item.role}</p>}
                     </div>
                   </td>
 

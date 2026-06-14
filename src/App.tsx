@@ -1043,7 +1043,7 @@ function WorkDetail() {
                       {sec.content.images?.map((imgUrl: string, idx: number) => {
                         if (!imgUrl) return null;
                         return (
-                          <div key={idx} className="aspect-[4/3] rounded-xl overflow-hidden bg-zinc-900 border border-white/5">
+                          <div key={idx} className="aspect-4/3 rounded-xl overflow-hidden bg-zinc-900 border border-white/5">
                             <MediaLoader src={imgUrl} alt={`Case study side detail ${idx + 1}`} className="w-full h-full" mediaClassName="object-cover w-full h-full" />
                           </div>
                         );
@@ -1055,10 +1055,10 @@ function WorkDetail() {
                   const isLeftDom = layout === 'asymmetric-left';
                   return (
                     <div key={sec.id} className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
-                      <div className={`${isLeftDom ? 'md:col-span-8 aspect-[16/10]' : 'md:col-span-4 aspect-[3/4]'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5`}>
+                      <div className={`${isLeftDom ? 'md:col-span-8 aspect-16/10' : 'md:col-span-4 aspect-3/4'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5`}>
                         <MediaLoader src={sec.content.images?.[0] || ''} alt="Case study primary segment" className="w-full h-full" mediaClassName="object-cover w-full h-full" />
                       </div>
-                      <div className={`${isLeftDom ? 'md:col-span-4 aspect-[3/4]' : 'md:col-span-8 aspect-[16/10]'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5`}>
+                      <div className={`${isLeftDom ? 'md:col-span-4 aspect-3/4' : 'md:col-span-8 aspect-16/10'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5`}>
                         <MediaLoader src={sec.content.images?.[1] || ''} alt="Case study supporting segment" className="w-full h-full" mediaClassName="object-cover w-full h-full" />
                       </div>
                     </div>

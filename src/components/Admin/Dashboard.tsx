@@ -127,7 +127,7 @@ export default function Dashboard({ onNavigateToTab }: DashboardProps) {
         {/* area views over time */}
         <div className="lg:col-span-2 bg-zinc-950 border border-zinc-900 rounded-2xl p-6 relative overflow-hidden">
           <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-6">Views Traffic Dynamics</h3>
-          <div className="h-[280px]">
+          <div className="h-70">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={analytics?.viewsOverTime || []}>
                 <defs>
@@ -153,7 +153,7 @@ export default function Dashboard({ onNavigateToTab }: DashboardProps) {
         {/* Bar chart - Project Popularity */}
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6">
           <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-6">Popular Projects</h3>
-          <div className="h-[280px]">
+          <div className="h-70">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={analytics?.projectViews || []} layout="vertical" margin={{ left: -10, right: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#18181b" horizontal={false} />
@@ -180,7 +180,7 @@ export default function Dashboard({ onNavigateToTab }: DashboardProps) {
         {/* Category breakdown bar Chart */}
         <div className="lg:col-span-1 bg-zinc-950 border border-zinc-900 rounded-2xl p-6">
           <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-6 font-semibold">Category Views Allocation</h3>
-          <div className="h-[180px]">
+          <div className="h-44">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={analytics?.categoryViews || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#18181b" vertical={false} />

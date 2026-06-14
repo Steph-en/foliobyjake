@@ -41,7 +41,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         transition={{ duration: 0.6 }}
         className="w-full max-w-md bg-zinc-950/80 border border-zinc-900 rounded-2xl p-8 backdrop-blur-md shadow-2xl relative overflow-hidden"
       >
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-zinc-800 to-transparent" />
         
         <div className="text-center mb-8">
           <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-zinc-500">Jake Amponsah Admin</span>
