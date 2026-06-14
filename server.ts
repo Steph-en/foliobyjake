@@ -2,20 +2,23 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import multer from "multer";
-import { createServer as createViteServer } from "vite";
+import { fileURLToPath } from "url";
 import { Category, Project, ProjectStatus, AnalyticsSummary, MediaAsset, CaseStudySection } from "./src/types";
 import dotenv from "dotenv";
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 app.use(express.json());
 
-const DB_DIR = path.join(process.cwd(), "data");
+const DB_DIR = path.join(__dirname, "data");
 const DB_FILE = path.join(DB_DIR, "db.json");
-const UPLOADS_DIR = path.join(process.cwd(), "uploads");
+const UPLOADS_DIR = path.join(__dirname, "uploads");
 
 // Ensure directories exist
 try {
@@ -353,7 +356,11 @@ if (fs.existsSync(DB_FILE)) {
     console.warn("Failed to read db.json, using defaults:", err);
   }
 } else {
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+  } catch (err) {
+    console.warn("Unable to write db.json during seeding (expected in serverless/read-only env):", err);
+  }
 }
 
 function saveDb() {
@@ -652,6 +659,7 @@ app.get("/api/analytics", (req, res) => {
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     // Development Middleware mode for Vite HMR
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { 
         middlewareMode: true,
