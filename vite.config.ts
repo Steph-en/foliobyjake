@@ -20,6 +20,9 @@ export default defineConfig(({ mode }) => {
       // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       historyApiFallback: true,
+      watch: {
+        ignored: ['**/data/**', '**/uploads/**']
+      }
     },
     build: {
       rollupOptions: {

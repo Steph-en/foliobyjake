@@ -639,7 +639,12 @@ async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     // Development Middleware mode for Vite HMR
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { 
+        middlewareMode: true,
+        watch: {
+          ignored: ['**/data/**', '**/uploads/**']
+        }
+      },
       appType: "spa",
     });
     app.use(vite.middlewares);
