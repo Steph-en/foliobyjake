@@ -18,11 +18,15 @@ const DB_FILE = path.join(DB_DIR, "db.json");
 const UPLOADS_DIR = path.join(process.cwd(), "uploads");
 
 // Ensure directories exist
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
-}
-if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+try {
+  if (!fs.existsSync(DB_DIR)) {
+    fs.mkdirSync(DB_DIR, { recursive: true });
+  }
+  if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+  }
+} catch (err) {
+  console.log("Could not pre-create local directories (non-fatal, possibly read-only host):", err);
 }
 
 // Serve uploaded files statically at /uploads
@@ -353,7 +357,11 @@ if (fs.existsSync(DB_FILE)) {
 }
 
 function saveDb() {
-  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+  } catch (err) {
+    console.warn("Unable to write db.json: changes won't persist across serverless instances.", err);
+  }
 }
 
 // ───── API ROUTES ─────
@@ -668,4 +676,8 @@ async function startServer() {
   });
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export default app;
