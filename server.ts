@@ -4,9 +4,12 @@ import fs from "fs";
 import multer from "multer";
 import { createServer as createViteServer } from "vite";
 import { Category, Project, ProjectStatus, AnalyticsSummary, MediaAsset, CaseStudySection } from "./src/types";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 app.use(express.json());
 
@@ -358,7 +361,10 @@ function saveDb() {
 // Auth Mock login
 app.post("/api/auth/login", (req, res) => {
   const { username, password } = req.body;
-  if (username === "admin" && password === "admin") {
+  const expectedUsername = process.env.USERNAME || "admin";
+  const expectedPassword = process.env.PASSWORD || "admin";
+
+  if (username === expectedUsername && password === expectedPassword) {
     res.json({ success: true, token: "mock-jwt-token-jake-cm-system" });
   } else {
     res.status(401).json({ success: false, message: "Invalid username or password" });
