@@ -1,12 +1,30 @@
 import axios from 'axios';
 import { Category, Project, AnalyticsSummary, MediaAsset, ProjectStatus } from '../types';
 
+const getEnv = (key: string): string | undefined => {
+  return (import.meta as any).env?.[key];
+};
+
 const client = axios.create({
-  baseURL: '/api',
+  baseURL: getEnv('VITE_API_URL') || '/api',
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
 });
+
+// Check environment variables status
+export const validateClientEnv = () => {
+  const missing: string[] = [];
+  // VITE_API_URL is treated as a required key by configuration
+  if (!getEnv('VITE_API_URL')) {
+    missing.push('VITE_API_URL');
+  }
+  return {
+    isValid: missing.length === 0,
+    missing,
+  };
+};
 
 // Attach optional mock-jwt auth token if stored in localStorage
 client.interceptors.request.use((config) => {

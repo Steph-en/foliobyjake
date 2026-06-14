@@ -23,7 +23,7 @@ import {
 import Lenis from 'lenis';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { api } from './lib/api';
+import { api, validateClientEnv } from './lib/api';
 import AdminIndex from './components/Admin';
 
 // Utility 
@@ -418,15 +418,33 @@ function Home() {
   }, []);
 
   const [works, setWorks] = useState<Work[]>(WORKS);
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [envStatus, setEnvStatus] = useState<{ isValid: boolean; missing: string[] }>(() => validateClientEnv());
 
   useEffect(() => {
     let active = true;
+    
+    const env = validateClientEnv();
+    if (!env.isValid) {
+      setEnvStatus(env);
+    }
+
     api.getProjects().then(projs => {
       const published = projs.filter(p => p.status === 'published');
       if (active && published.length > 0) {
         setWorks(published);
       }
-    }).catch(err => console.warn('Dynamic projects load error:', err));
+      if (active) {
+        setApiError(null);
+      }
+    }).catch(err => {
+      console.error('Dynamic projects load error:', err);
+      if (active) {
+        const status = err.response?.status;
+        const msg = err.response?.data?.error?.message || err.message;
+        setApiError(`Server API Error (${status || '500'}): ${msg || 'Failed to fetch resource from server.'}`);
+      }
+    });
     return () => { active = false; };
   }, []);
 
@@ -667,6 +685,36 @@ function Home() {
               </button>
             ))}
           </div>
+
+          {/* Environment variables check notification */}
+          {!envStatus.isValid && (
+            <div className="mb-12 max-w-4xl mx-auto p-6 bg-amber-950/20 border border-amber-900 text-amber-200 rounded-xl flex flex-col gap-2 font-mono text-xs text-left">
+              <div className="flex items-center gap-2 font-bold uppercase tracking-wider text-amber-405">
+                <span>⚠️ Missing Required Configuration</span>
+              </div>
+              <p>The client application requires configuration key(s) to function correctly:</p>
+              <ul className="list-disc list-inside mt-1 font-bold text-amber-300">
+                {envStatus.missing.map(key => <li key={key}>{key}</li>)}
+              </ul>
+              <p className="mt-2 text-[10px] opacity-85">Please ensure these variables are defined in your deployment configuration programmatically.</p>
+            </div>
+          )}
+
+          {/* API Loading errors panel */}
+          {apiError && (
+            <div className="mb-12 max-w-4xl mx-auto p-6 bg-red-950/20 border border-red-900 text-red-200 rounded-xl flex flex-col gap-3 font-mono text-xs text-left">
+              <div className="flex items-center gap-2 font-bold uppercase tracking-wider text-red-405">
+                <span>⛔ Server Connection Error</span>
+              </div>
+              <p className="font-sans font-medium text-red-300">{apiError}</p>
+              <div className="pt-2 border-t border-red-900/40 text-[10px] opacity-80 flex flex-col gap-1">
+                <span className="uppercase font-bold text-red-400">Troubleshooting Notes:</span>
+                <span>• Inspect server build logs to find specific uncaught syntax or path errors.</span>
+                <span>• For local environments, check that the backend server is running and listening on port 3000.</span>
+                <span>• The application is currently displaying cached local offline project backups, so the portfolio is still browsable.</span>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 work-grid">
             {visibleWorks.map(work => (

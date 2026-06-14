@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { api } from '../../lib/api';
+import { api, validateClientEnv } from '../../lib/api';
 import { Lock, User, ArrowRight, ShieldAlert } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -12,6 +12,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [envCheck] = useState(() => validateClientEnv());
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,10 +25,11 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         localStorage.setItem('admin_token', res.token);
         onLoginSuccess(res.token);
       } else {
-        setError(res.message || 'Invalid username or password');
+        setError(res.message || 'Invalid username or password. If this error persists, check server console for 500 crashes.');
       }
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+    } catch (err: any) {
+      console.error('Login dynamic error:', err);
+      setError(`Server connection error: ${err.message || 'Check if API URL is reachable.'}`);
     } finally {
       setLoading(false);
     }
@@ -49,14 +51,28 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           <p className="text-xs text-zinc-400 mt-2 font-mono">Log in to manage portfolio content securely.</p>
         </div>
 
+        {!envCheck.isValid && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-6 p-4 bg-amber-950/30 border border-amber-900 text-amber-400 rounded-lg text-[11px] flex flex-col gap-1 font-mono text-left"
+          >
+            <span className="font-bold uppercase tracking-wider text-amber-500">⚠️ Configuration Warning:</span>
+            <span>Client variable <strong>VITE_API_URL</strong> is missing. Using relative routing <code>/api</code> fallback.</span>
+          </motion.div>
+        )}
+
         {error && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-6 p-4 bg-red-950/40 border border-red-900 text-red-400 rounded-lg text-xs flex items-center gap-3 font-mono"
+            className="mb-6 p-4 bg-red-950/40 border border-red-900 text-red-400 rounded-lg text-xs flex items-start gap-3 font-mono text-left"
           >
-            <ShieldAlert size={16} className="shrink-0" />
-            <span>{error}</span>
+            <ShieldAlert size={16} className="shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold uppercase block text-red-500 mb-1">⛔ System Error</span>
+              <span>{error}</span>
+            </div>
           </motion.div>
         )}
 

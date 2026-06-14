@@ -2,23 +2,19 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import multer from "multer";
-import { fileURLToPath } from "url";
 import { Category, Project, ProjectStatus, AnalyticsSummary, MediaAsset, CaseStudySection } from "./src/types";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 app.use(express.json());
 
-const DB_DIR = path.join(__dirname, "data");
+const DB_DIR = path.join(process.cwd(), "data");
 const DB_FILE = path.join(DB_DIR, "db.json");
-const UPLOADS_DIR = path.join(__dirname, "uploads");
+const UPLOADS_DIR = path.join(process.cwd(), "uploads");
 
 // Ensure directories exist
 try {
@@ -351,7 +347,10 @@ let db: LocalDatabase = {
 
 if (fs.existsSync(DB_FILE)) {
   try {
-    db = JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
+    const rawData = fs.readFileSync(DB_FILE, "utf-8");
+    if (rawData && rawData.trim()) {
+      db = JSON.parse(rawData);
+    }
   } catch (err) {
     console.warn("Failed to read db.json, using defaults:", err);
   }
@@ -361,6 +360,28 @@ if (fs.existsSync(DB_FILE)) {
   } catch (err) {
     console.warn("Unable to write db.json during seeding (expected in serverless/read-only env):", err);
   }
+}
+
+// Rigorous safety safeguards to prevent undefined attributes crashing the server
+if (!db || typeof db !== "object") {
+  db = {
+    projects: INITIAL_WORKS,
+    categories: INITIAL_CATEGORIES,
+    media: INITIAL_MEDIA,
+    contactsCount: 14
+  };
+}
+if (!Array.isArray(db.projects)) {
+  db.projects = INITIAL_WORKS;
+}
+if (!Array.isArray(db.categories)) {
+  db.categories = INITIAL_CATEGORIES;
+}
+if (!Array.isArray(db.media)) {
+  db.media = INITIAL_MEDIA;
+}
+if (typeof db.contactsCount !== "number") {
+  db.contactsCount = 14;
 }
 
 function saveDb() {
@@ -376,8 +397,8 @@ function saveDb() {
 // Auth Mock login
 app.post("/api/auth/login", (req, res) => {
   const { username, password } = req.body;
-  const expectedUsername = process.env.USERNAME || "";
-  const expectedPassword = process.env.PASSWORD || "";
+  const expectedUsername = process.env.USERNAME || "admin";
+  const expectedPassword = process.env.PASSWORD || "admin";
 
   if (username === expectedUsername && password === expectedPassword) {
     res.json({ success: true, token: "mock-jwt-token-jake-cm-system" });
@@ -653,6 +674,18 @@ app.get("/api/analytics", (req, res) => {
   };
 
   res.json(summary);
+});
+
+// Global Error Handler Middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error("Critical express error captured:", err);
+  res.status(err.status || 500).json({
+    error: {
+      code: String(err.status || 500),
+      message: err.message || "An internal database or router error has occurred.",
+      details: err.stack || ""
+    }
+  });
 });
 
 // Vite & Static file hosting configuration
