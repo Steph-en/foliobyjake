@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { api, validateClientEnv } from '../../lib/api';
+import { api } from '../../lib/api';
 import { Lock, User, ArrowRight, ShieldAlert } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -12,7 +12,6 @@ export default function Login({ onLoginSuccess }: LoginProps) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [envCheck] = useState(() => validateClientEnv());
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,17 +49,6 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           <h1 className="text-3xl font-display tracking-tighter mt-2 uppercase">CMS CONTROL PORTAL</h1>
           <p className="text-xs text-zinc-400 mt-2 font-mono">Log in to manage portfolio content securely.</p>
         </div>
-
-        {!envCheck.isValid && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-6 p-4 bg-amber-950/30 border border-amber-900 text-amber-400 rounded-lg text-[11px] flex flex-col gap-1 font-mono text-left"
-          >
-            <span className="font-bold uppercase tracking-wider text-amber-500">⚠️ Configuration Warning:</span>
-            <span>Client variable <strong>VITE_API_URL</strong> is missing. Using relative routing <code>/api</code> fallback.</span>
-          </motion.div>
-        )}
 
         {error && (
           <motion.div

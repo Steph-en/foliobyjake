@@ -13,6 +13,7 @@ import { useGSAP } from '@gsap/react';
 import {
   X, ArrowRight, Instagram, ExternalLink,
   ChevronLeft, ChevronRight, ArrowUp, Menu,
+  Sun, Moon, Palette,
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import { motion, AnimatePresence } from 'motion/react';
@@ -182,6 +183,103 @@ function usePageMeta(title: string, description: string) {
     const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
     if (meta) meta.content = description;
   }, [title, description]);
+}
+
+/** Theme-switching Hook utilizing CSS Custom Variables */
+function useTheme() {
+  const [theme, setTheme] = useState<'dark' | 'studio'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('portfolio-theme');
+      if (saved === 'studio' || saved === 'dark') return saved;
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('portfolio-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'dark' ? 'studio' : 'dark');
+  }, []);
+
+  return [theme, toggleTheme] as const;
+}
+
+/** Custom mouse-following cursor component with mix-blend-difference and click/hover scales */
+function CustomCursor() {
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    if (!cursor) return;
+
+    const onMouseMove = (e: MouseEvent) => {
+      // Direct positioning for silky-smooth lag-free rendering
+      cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+    };
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target) return;
+      const isClickable = 
+        target.closest('a') || 
+        target.closest('button') || 
+        target.closest('[role="button"]') ||
+        target.classList.contains('clickable-item') ||
+        target.closest('.clickable-item');
+      setIsHovered(!!isClickable);
+    };
+
+    const handleMouseDown = () => setIsMouseDown(true);
+    const handleMouseUp = () => setIsMouseDown(false);
+    const handleMouseLeave = () => setIsVisible(false);
+    const handleMouseEnter = () => setIsVisible(true);
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseover', handleMouseOver);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseenter', handleMouseEnter);
+
+    // Make visible only on initial mouse move
+    const handleInitialMove = () => {
+      setIsVisible(true);
+      window.removeEventListener('mousemove', handleInitialMove);
+    };
+    window.addEventListener('mousemove', handleInitialMove);
+
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseover', handleMouseOver);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      window.removeEventListener('mousemove', handleInitialMove);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={cursorRef}
+      className={cn(
+        "fixed top-0 left-0 pointer-events-none z-220 rounded-full bg-white opacity-0 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out will-change-transform mix-blend-difference hidden md:block",
+        isVisible ? "opacity-100" : "opacity-0",
+        isHovered 
+          ? "w-14 h-14 bg-white/20 border border-white/40 scale-100" 
+          : isMouseDown 
+            ? "w-3 h-3 bg-white scale-75" 
+            : "w-5 h-5 bg-white scale-100"
+      )}
+      style={{ left: 0, top: 0 }}
+    />
+  );
 }
 
 // Media Helpers 
@@ -370,6 +468,7 @@ function ModalPoster({ mainImage, mainVideo, name }: { mainImage?: string; mainV
 
 // Home
 function Home() {
+  const [theme, toggleTheme] = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -417,15 +516,9 @@ function Home() {
 
   const [works, setWorks] = useState<Work[]>(WORKS);
   const [apiError, setApiError] = useState<string | null>(null);
-  const [envStatus, setEnvStatus] = useState<{ isValid: boolean; missing: string[] }>(() => validateClientEnv());
 
   useEffect(() => {
     let active = true;
-    
-    const env = validateClientEnv();
-    if (!env.isValid) {
-      setEnvStatus(env);
-    }
 
     api.getProjects().then(projs => {
       if (Array.isArray(projs)) {
@@ -501,7 +594,7 @@ function Home() {
   const menuId = 'mobile-nav-menu';
 
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-x-hidden bg-black text-white">
+    <div ref={containerRef} className="relative min-h-screen overflow-x-hidden bg-brand-bg text-brand-text transition-colors duration-500">
 
       {/* Intro overlay */}
       {!isIntroComplete && (
@@ -513,9 +606,24 @@ function Home() {
       {/* ─ Header / Nav */}
       <header>
         <nav
-          className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 mix-blend-difference"
+          className={cn(
+            "fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 transition-all duration-300",
+            theme === 'dark' 
+              ? "mix-blend-difference text-white" 
+              : "bg-brand-bg/75 backdrop-blur-md border-b border-brand-border/10 text-brand-text shadow-sm"
+          )}
           aria-label="Primary navigation"
         >
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="nav-item flex items-center gap-2 text-xs font-mono uppercase tracking-widest hover:opacity-60 transition-opacity focus:outline-none focus:ring-1 focus:ring-brand-text rounded-md p-1 z-50 relative"
+            aria-label={`Switch to ${theme === 'dark' ? 'studio' : 'high-contrast dark'} theme`}
+          >
+            {theme === 'dark' ? <Palette size={14} aria-hidden="true" /> : <Sun size={14} aria-hidden="true" />}
+            <span className="hidden sm:inline">{theme === 'dark' ? 'Studio' : 'Contrast'}</span>
+          </button>
+
           <a
             ref={logoRef}
             href="/"
@@ -541,7 +649,10 @@ function Home() {
 
           {/* Mobile hamburger */}
           <button
-            className="flex md:hidden items-center justify-center p-2 ml-auto nav-item focus:outline-none focus:ring-2 focus:ring-white rounded"
+            className={cn(
+              "flex md:hidden items-center justify-center p-2 ml-auto nav-item focus:outline-none rounded",
+              theme === 'dark' ? "focus:ring-2 focus:ring-white" : "focus:ring-2 focus:ring-brand-text"
+            )}
             onClick={() => setIsMenuOpen(v => !v)}
             aria-controls={menuId}
             aria-expanded={isMenuOpen}
@@ -687,20 +798,6 @@ function Home() {
               </button>
             ))}
           </div>
-
-          {/* Environment variables check notification */}
-          {!envStatus.isValid && (
-            <div className="mb-12 max-w-4xl mx-auto p-6 bg-amber-950/20 border border-amber-900 text-amber-200 rounded-xl flex flex-col gap-2 font-mono text-xs text-left">
-              <div className="flex items-center gap-2 font-bold uppercase tracking-wider text-amber-405">
-                <span>⚠️ Missing Required Configuration</span>
-              </div>
-              <p>The client application requires configuration key(s) to function correctly:</p>
-              <ul className="list-disc list-inside mt-1 font-bold text-amber-300">
-                {envStatus.missing.map(key => <li key={key}>{key}</li>)}
-              </ul>
-              <p className="mt-2 text-[10px] opacity-85">Please ensure these variables are defined in your deployment configuration programmatically.</p>
-            </div>
-          )}
 
           {/* API Loading errors panel */}
           {apiError && (
@@ -926,6 +1023,7 @@ function Home() {
 // WorkDetail
 
 function WorkDetail() {
+  const [theme, toggleTheme] = useTheme();
   const { id } = useParams();
   const [works, setWorks] = useState<Work[]>(WORKS);
   const [work, setWork] = useState<Work | undefined>(() => WORKS.find(w => String(w.id) === String(id)));
@@ -1015,14 +1113,34 @@ function WorkDetail() {
   const nextWork = works.find(w => w.id === (work.id % works.length) + 1) || works[0];
 
   return (
-    <div ref={containerRef} className="bg-black text-white min-h-screen">
+    <div ref={containerRef} className="bg-brand-bg text-brand-text min-h-screen transition-colors duration-500">
       <header>
-        <nav className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-4 mix-blend-difference"
-          aria-label="Project navigation">
+        <nav
+          className={cn(
+            "fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-4 transition-all duration-300",
+            theme === 'dark' 
+              ? "mix-blend-difference text-white" 
+              : "bg-brand-bg/75 backdrop-blur-md border-b border-brand-border/10 text-brand-text shadow-sm"
+          )}
+          aria-label="Project navigation"
+        >
           <Link to="/" className="text-2xl font-display tracking-tighter focus:outline-none focus:underline">PORTFOLIO</Link>
-          <Link to="/" className="flex items-center gap-2 text-xs uppercase tracking-widest font-bold hover:opacity-60 transition-opacity focus:outline-none focus:underline" aria-label="Back to all works">
-            <ChevronLeft size={16} aria-hidden="true" /> Back to Works
-          </Link>
+          
+          <div className="flex items-center gap-6">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest hover:opacity-60 transition-opacity focus:outline-none focus:ring-1 focus:ring-brand-text rounded-md p-1 z-50 relative"
+              aria-label={`Switch to ${theme === 'dark' ? 'studio' : 'high-contrast dark'} theme`}
+            >
+              {theme === 'dark' ? <Palette size={14} aria-hidden="true" /> : <Sun size={14} aria-hidden="true" />}
+              <span className="hidden sm:inline">{theme === 'dark' ? 'Studio' : 'Contrast'}</span>
+            </button>
+
+            <Link to="/" className="flex items-center gap-2 text-xs uppercase tracking-widest font-bold hover:opacity-60 transition-opacity focus:outline-none focus:underline" aria-label="Back to all works">
+              <ChevronLeft size={16} aria-hidden="true" /> Back to Works
+            </Link>
+          </div>
         </nav>
       </header>
 
@@ -1250,6 +1368,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <CustomCursor />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/work/:id" element={<WorkDetail />} />

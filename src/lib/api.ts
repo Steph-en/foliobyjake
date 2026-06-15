@@ -5,8 +5,19 @@ const getEnv = (key: string): string | undefined => {
   return (import.meta as any).env?.[key];
 };
 
+const getBaseURL = (): string => {
+  const envVal = getEnv('VITE_API_URL');
+  if (!envVal) return '/api';
+  
+  const trimmed = envVal.trim().replace(/\/$/, '');
+  if (trimmed.endsWith('/api')) {
+    return trimmed;
+  }
+  return `${trimmed}/api`;
+};
+
 const client = axios.create({
-  baseURL: getEnv('VITE_API_URL') || '/api',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
