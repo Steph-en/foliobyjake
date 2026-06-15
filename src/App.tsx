@@ -488,7 +488,15 @@ function Home() {
       setIsIntroComplete(true);
       return;
     }
+
+    // Guard: avoid GSAP warnings when projects haven't rendered yet.
+    // The .work-card elements are populated asynchronously from /api/projects.
+    if (!document.querySelector('.work-card')) {
+      return;
+    }
+
     const intro = gsap.timeline({ onComplete: () => setIsIntroComplete(true) });
+
     intro
       .set('.intro-logo', { opacity: 0, scale: 1.5, y: 50 })
       .to('.intro-logo', { opacity: 1, y: 0, duration: 1.5, ease: 'power4.out' })
