@@ -8,32 +8,46 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+// ── CORS Middleware (CRITICAL for Vercel deployments) ──
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    'https://www.foliobyjake.com',
+    'https://foliobyjake.com',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+    // Allow all Vercel preview deployments
+    /^https:\/\/.*\.vercel\.app$/
+  ].filter(Boolean);
+
+  const origin = req.headers.origin || '';
+  const isAllowed = allowedOrigins.some(allowed => {
+    if (typeof allowed === 'string') return origin === allowed;
+    return allowed?.test(origin);
+  });
+
+  if (isAllowed || process.env.NODE_ENV === 'development') {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
 
 app.use(express.json());
 
-// CORS Middleware to allow cross-origin requests (crucial for custom domains and preview deployments)
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-  } else {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-  }
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, X-Requested-With");
-  
-  if (req.method === "OPTIONS") {
-    res.sendStatus(200);
-    return;
-  }
-  next();
-});
-
 // Log all incoming requests to Express
 app.use((req, res, next) => {
-  console.log(`[Express Admin CMS] ${req.method} ${req.url} (Headers: ${JSON.stringify(req.headers['user-agent'])})`);
+  console.log(`[Express Admin CMS] ${req.method} ${req.url}`);
   next();
 });
 

@@ -7,7 +7,11 @@ const getEnv = (key: string): string | undefined => {
 
 const getBaseURL = (): string => {
   const envVal = getEnv('VITE_API_URL');
-  if (!envVal) return '/api';
+  
+  // If VITE_API_URL is empty or not set, use relative path (recommended for same-origin requests)
+  if (!envVal || envVal.trim() === '') {
+    return '/api';
+  }
   
   const trimmed = envVal.trim().replace(/\/$/, '');
   if (trimmed.endsWith('/api')) {
@@ -22,9 +26,11 @@ const client = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
+  // Allow credentials for same-origin requests
+  withCredentials: true,
 });
 
-// Check environment variables status (all are optional asco-hosted /api is the standard robust fallback)
+// Check environment variables status (all are optional as co-hosted /api is the standard robust fallback)
 export const validateClientEnv = () => {
   return {
     isValid: true,
@@ -41,6 +47,23 @@ client.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Better error handling
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 404) {
+      console.error(`[API Error] 404 Not Found: ${error.config?.url}`);
+    }
+    if (error.response?.status === 500) {
+      console.error(`[API Error] 500 Server Error: ${error.config?.url}`);
+    }
+    if (!error.response) {
+      console.error(`[API Error] Network Error: ${error.message} for ${error.config?.url}`);
+    }
+    throw error;
+  }
+);
 
 export const api = {
   // Authentication
