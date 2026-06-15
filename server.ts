@@ -13,6 +13,7 @@ const PORT = Number(process.env.PORT || 3000);
 // ── CORS Middleware (CRITICAL for Vercel deployments) ──
 app.use((req, res, next) => {
   const allowedOrigins = [
+    'https://foliobyjake-gamma.vercel.app/',
     'https://www.foliobyjake.com',
     'https://foliobyjake.com',
     'http://localhost:3000',
