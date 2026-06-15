@@ -58,7 +58,7 @@ const Skeleton = ({ className }: { className?: string }) => (
 );
 
 // GSAP Setup
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger);
 
 // Types 
 interface Work {
@@ -210,7 +210,7 @@ const MediaLoader = memo(function MediaLoader({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const inView = useInView(wrapperRef as React.RefObject<Element>, '300px');
-  const shouldLoad = priority || inView;
+  const shouldLoad = true; // Always load optimized Cloudinary media to eliminate loading-skeleton flicker
   const isVid = isVideo(src);
   const optimizedSrc = isVid ? src : cldImage(src, transforms);
   const lqipSrc = isVid ? '' : cldLqip(src);
@@ -280,15 +280,13 @@ const PreviewVideo = memo(function PreviewVideo({
           <Skeleton className="w-10 h-10 rounded-full" />
         </div>
       )}
-      {inView && (
-        <video ref={videoRef} src={directUrl}
-          className={cn('w-full h-full object-cover transition-opacity duration-700', isLoaded ? 'opacity-100' : 'opacity-0')}
-          playsInline loop muted preload="metadata"
-          onLoadedData={() => setIsLoaded(true)}
-          aria-hidden="true"
-          title={`${name} preview`}
-        />
-      )}
+      <video ref={videoRef} src={directUrl}
+        className={cn('w-full h-full object-cover transition-opacity duration-700', isLoaded ? 'opacity-100' : 'opacity-0')}
+        playsInline loop muted preload="metadata"
+        onLoadedData={() => setIsLoaded(true)}
+        aria-hidden="true"
+        title={`${name} preview`}
+      />
     </div>
   );
 });
@@ -430,9 +428,13 @@ function Home() {
     }
 
     api.getProjects().then(projs => {
-      const published = projs.filter(p => p.status === 'published');
-      if (active && published.length > 0) {
-        setWorks(published);
+      if (Array.isArray(projs)) {
+        const published = projs.filter(p => p.status === 'published');
+        if (active && published.length > 0) {
+          setWorks(published);
+        }
+      } else {
+        throw new Error('Invalid server response: projects list is not an array.');
       }
       if (active) {
         setApiError(null);

@@ -8,9 +8,15 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const PORT = 3000;
 
 app.use(express.json());
+
+// Log all incoming requests to Express
+app.use((req, res, next) => {
+  console.log(`[Express Admin CMS] ${req.method} ${req.url} (Headers: ${JSON.stringify(req.headers['user-agent'])})`);
+  next();
+});
 
 const DB_DIR = path.join(process.cwd(), "data");
 const DB_FILE = path.join(DB_DIR, "db.json");

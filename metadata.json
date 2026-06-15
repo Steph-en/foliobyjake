@@ -1,5 +1,8 @@
 {
   "name": "Jake Amponsah Portfolio",
   "description": "A high-end, immersive portfolio for Jake Amponsah, a multi-disciplinary designer and digital artist.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

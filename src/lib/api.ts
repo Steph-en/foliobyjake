@@ -13,21 +13,17 @@ const client = axios.create({
   },
 });
 
-// Check environment variables status
+// Check environment variables status (all are optional asco-hosted /api is the standard robust fallback)
 export const validateClientEnv = () => {
-  const missing: string[] = [];
-  // VITE_API_URL is treated as a required key by configuration
-  if (!getEnv('VITE_API_URL')) {
-    missing.push('VITE_API_URL');
-  }
   return {
-    isValid: missing.length === 0,
-    missing,
+    isValid: true,
+    missing: [] as string[],
   };
 };
 
 // Attach optional mock-jwt auth token if stored in localStorage
 client.interceptors.request.use((config) => {
+  console.log(`[API Client] Requesting: ${config.method?.toUpperCase()} ${config.baseURL || ''}${config.url}`);
   const token = localStorage.getItem('admin_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -49,6 +45,9 @@ export const api = {
   // Categories
   getCategories: async (): Promise<Category[]> => {
     const { data } = await client.get('/categories');
+    if (!Array.isArray(data)) {
+      throw new Error(data?.error?.message || 'Invalid server response: categories list is not an array.');
+    }
     return data;
   },
   createCategory: async (name: string): Promise<Category> => {
@@ -67,6 +66,9 @@ export const api = {
   // Projects
   getProjects: async (isAdmin = false): Promise<Project[]> => {
     const { data } = await client.get('/projects', { params: { view: isAdmin ? 'admin' : undefined } });
+    if (!Array.isArray(data)) {
+      throw new Error(data?.error?.message || 'Invalid server response: projects list is not an array.');
+    }
     return data;
   },
   getProject: async (id: number, incrementView = false): Promise<Project> => {
@@ -93,6 +95,9 @@ export const api = {
   // Media
   getMedia: async (): Promise<MediaAsset[]> => {
     const { data } = await client.get('/media');
+    if (!Array.isArray(data)) {
+      throw new Error(data?.error?.message || 'Invalid server response: media list is not an array.');
+    }
     return data;
   },
   uploadMedia: async (media: { url: string; name: string; type?: 'image' | 'video' }): Promise<MediaAsset> => {
