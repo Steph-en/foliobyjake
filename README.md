@@ -38,7 +38,7 @@ Define a `.env` file at the root of your project using `.env.example` as a templ
 
 ```env
 # Server Port (Hardcoded internal fallback)
-PORT=3000
+PORT=
 
 # Cloudinary Storage Configuration
 VITE_CLOUDINARY_CLOUD_NAME=
