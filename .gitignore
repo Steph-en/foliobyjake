@@ -6,14 +6,23 @@ build/
 dist/
 coverage/
 
-# Caches / Vite
+# Caches / Vite / IDE
 .vite/
+.eslintcache
+*.tsbuildinfo
+.vscode/
+.idea/
+
+# Dynamic persistence & Uploader
+data/
+uploads/
 
 # Logs
 *.log
 
 # OS
 .DS_Store
+Thumbs.db
 
 # Environment variables
 .env*

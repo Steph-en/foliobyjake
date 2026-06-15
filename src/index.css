@@ -58,10 +58,6 @@
     font-family: var(--font-sans);
   }
 
-
-
-
-
   ::selection {
     background-color: var(--selection-bg);
     color: var(--selection-text);
