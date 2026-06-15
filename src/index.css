@@ -38,19 +38,6 @@
   --selection-text: #000000;
 }
 
-[data-theme="studio"] {
-  --bg-primary: #f5f2eb;
-  --bg-secondary: #eae4d9;
-  --bg-tertiary: #ebdcb9;
-  --text-primary: #1a1510;
-  --text-secondary: #5a5043;
-  --text-muted: #8d806d;
-  --border-primary: rgba(26, 21, 16, 0.18);
-  --border-secondary: rgba(26, 21, 16, 0.08);
-  --selection-bg: #1a1510;
-  --selection-text: #f5f2eb;
-}
-
 @layer base {
   body {
     background-color: var(--bg-primary);
@@ -61,25 +48,6 @@
   ::selection {
     background-color: var(--selection-bg);
     color: var(--selection-text);
-  }
-
-  /* Transition colors smoothly when data-theme toggles */
-  body,
-  header,
-  footer,
-  nav,
-  section,
-  main,
-  article,
-  div,
-  p,
-  span,
-  h1, h2, h3, h4, h5, h6,
-  a,
-  button,
-  input,
-  textarea {
-    transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, text-decoration-color 0.4s ease, fill 0.4s ease, stroke 0.4s ease;
   }
 
   h1 {
@@ -95,60 +63,6 @@
     font-family: var(--font-display);
     @apply uppercase tracking-tighter;
   }
-}
-
-/* Studio Theme Class Overrides */
-html[data-theme="studio"] body {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-html[data-theme="studio"] .bg-black {
-  background-color: var(--bg-primary);
-}
-
-html[data-theme="studio"] .bg-zinc-950 {
-  background-color: var(--bg-secondary);
-}
-
-html[data-theme="studio"] .bg-zinc-900 {
-  background-color: var(--bg-tertiary);
-}
-
-html[data-theme="studio"] .text-white {
-  color: var(--text-primary);
-}
-
-html[data-theme="studio"] .text-zinc-300,
-html[data-theme="studio"] .text-zinc-400 {
-  color: var(--text-secondary);
-}
-
-html[data-theme="studio"] .text-zinc-500 {
-  color: var(--text-muted);
-}
-
-html[data-theme="studio"] .border-white\/5 {
-  border-color: var(--border-secondary);
-}
-
-html[data-theme="studio"] .border-white\/10 {
-  border-color: var(--border-primary);
-}
-
-html[data-theme="studio"] .border-zinc-800 {
-  border-color: var(--border-primary);
-}
-
-/* Ensure Lightbox and Intro remain pure high-contrast black/white */
-html[data-theme="studio"] [role="dialog"].bg-black\/98,
-html[data-theme="studio"] .intro-overlay {
-  background-color: #000000 !important;
-  color: #ffffff !important;
-}
-
-html[data-theme="studio"] .intro-overlay p {
-  color: #ffffff !important;
 }
 
 .lenis.lenis-smooth {

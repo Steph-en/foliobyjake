@@ -13,7 +13,6 @@ import { useGSAP } from '@gsap/react';
 import {
   X, ArrowRight, Instagram, ExternalLink,
   ChevronLeft, ChevronRight, ArrowUp, Menu,
-  Sun, Moon, Palette,
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
 import { motion, AnimatePresence } from 'motion/react';
@@ -185,27 +184,7 @@ function usePageMeta(title: string, description: string) {
   }, [title, description]);
 }
 
-/** Theme-switching Hook utilizing CSS Custom Variables */
-function useTheme() {
-  const [theme, setTheme] = useState<'dark' | 'studio'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('portfolio-theme');
-      if (saved === 'studio' || saved === 'dark') return saved;
-    }
-    return 'dark';
-  });
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('portfolio-theme', theme);
-  }, [theme]);
-
-  const toggleTheme = useCallback(() => {
-    setTheme(prev => prev === 'dark' ? 'studio' : 'dark');
-  }, []);
-
-  return [theme, toggleTheme] as const;
-}
 
 // Media Helpers  
 function isVideo(url: string) {
@@ -393,7 +372,6 @@ function ModalPoster({ mainImage, mainVideo, name }: { mainImage?: string; mainV
 
 // Home
 function Home() {
-  const [theme, toggleTheme] = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -531,31 +509,9 @@ function Home() {
       {/* ─ Header / Nav */}
       <header>
         <nav
-          className={cn(
-            "fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 transition-all duration-300",
-            theme === 'dark' 
-              ? "mix-blend-difference text-white" 
-              : "bg-brand-bg/75 backdrop-blur-md border-b border-brand-border/10 text-brand-text shadow-sm"
-          )}
+          className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 mix-blend-difference text-white"
           aria-label="Primary navigation"
         >
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
-            className="nav-item group flex items-center gap-2 text-xs font-mono uppercase tracking-widest border border-current/15 hover:border-current/40 hover:bg-current/5 rounded-full px-3.5 py-1.5 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-brand-text z-50 relative cursor-pointer"
-            aria-label={`Switch to ${theme === 'dark' ? 'studio' : 'high-contrast dark'} theme`}
-          >
-            <motion.div
-              animate={{ rotate: theme === 'dark' ? 0 : 180 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className="flex items-center justify-center text-current"
-            >
-              {theme === 'dark' ? <Palette size={13} aria-hidden="true" /> : <Sun size={13} aria-hidden="true" />}
-            </motion.div>
-            <span className="hidden sm:inline font-semibold">{theme === 'dark' ? 'Studio' : 'Contrast'}</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-current opacity-80" />
-          </button>
-
           <a
             ref={logoRef}
             href="/"
@@ -581,10 +537,7 @@ function Home() {
 
           {/* Mobile hamburger */}
           <button
-            className={cn(
-              "flex md:hidden items-center justify-center p-2 ml-auto nav-item focus:outline-none rounded",
-              theme === 'dark' ? "focus:ring-2 focus:ring-white" : "focus:ring-2 focus:ring-brand-text"
-            )}
+            className="flex md:hidden items-center justify-center p-2 ml-auto nav-item focus:outline-none rounded focus:ring-2 focus:ring-white"
             onClick={() => setIsMenuOpen(v => !v)}
             aria-controls={menuId}
             aria-expanded={isMenuOpen}
@@ -955,7 +908,6 @@ function Home() {
 // WorkDetail
 
 function WorkDetail() {
-  const [theme, toggleTheme] = useTheme();
   const { id } = useParams();
   const [works, setWorks] = useState<Work[]>(WORKS);
   const [work, setWork] = useState<Work | undefined>(() => WORKS.find(w => String(w.id) === String(id)));
@@ -1048,27 +1000,12 @@ function WorkDetail() {
     <div ref={containerRef} className="bg-brand-bg text-brand-text min-h-screen transition-colors duration-500">
       <header>
         <nav
-          className={cn(
-            "fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-4 transition-all duration-300",
-            theme === 'dark' 
-              ? "mix-blend-difference text-white" 
-              : "bg-brand-bg/75 backdrop-blur-md border-b border-brand-border/10 text-brand-text shadow-sm"
-          )}
+          className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 py-4 mix-blend-difference text-white"
           aria-label="Project navigation"
         >
           <Link to="/" className="text-2xl font-display tracking-tighter focus:outline-none focus:underline">PORTFOLIO</Link>
           
           <div className="flex items-center gap-6">
-            {/* Theme Toggle Button */}
-            <button
-              onClick={toggleTheme}
-              className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest hover:opacity-60 transition-opacity focus:outline-none focus:ring-1 focus:ring-brand-text rounded-md p-1 z-50 relative"
-              aria-label={`Switch to ${theme === 'dark' ? 'studio' : 'high-contrast dark'} theme`}
-            >
-              {theme === 'dark' ? <Palette size={14} aria-hidden="true" /> : <Sun size={14} aria-hidden="true" />}
-              <span className="hidden sm:inline">{theme === 'dark' ? 'Studio' : 'Contrast'}</span>
-            </button>
-
             <Link to="/" className="flex items-center gap-2 text-xs uppercase tracking-widest font-bold hover:opacity-60 transition-opacity focus:outline-none focus:underline" aria-label="Back to all works">
               <ChevronLeft size={16} aria-hidden="true" /> Back to Works
             </Link>
