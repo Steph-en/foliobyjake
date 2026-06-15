@@ -25,3 +25,4 @@ api/*.ts
 data/
 uploads/
 
+package-lock.json
