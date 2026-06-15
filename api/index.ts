@@ -13,8 +13,7 @@ import express from "express";
 let app: express.Express;
 
 try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const mod = require("../server");
+    const mod = require("../server.cjs");
     app = mod?.default ?? mod;
 } catch (e) {
     // Fallback Express app to avoid hard crashes.
@@ -25,4 +24,5 @@ try {
 }
 
 export default app;
+
 
