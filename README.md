@@ -36,6 +36,18 @@ A bespoke, high-performance web platform built with **React**, **Vite**, **Expre
 
 Define a `.env` file at the root of your project using `.env.example` as a template:
 
+```env
+# Server Port (Hardcoded internal fallback)
+PORT=3000
+
+# Cloudinary Storage Configuration
+VITE_CLOUDINARY_CLOUD_NAME=
+
+# Supabase Configurations (Optional for external modules)
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+```
+
 ---
 
 ## 🚀 Quick Start Guide
