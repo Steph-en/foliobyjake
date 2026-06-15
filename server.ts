@@ -12,6 +12,25 @@ const PORT = 3000;
 
 app.use(express.json());
 
+// CORS Middleware to allow cross-origin requests (crucial for custom domains and preview deployments)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+  } else {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, X-Requested-With");
+  
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200);
+    return;
+  }
+  next();
+});
+
 // Log all incoming requests to Express
 app.use((req, res, next) => {
   console.log(`[Express Admin CMS] ${req.method} ${req.url} (Headers: ${JSON.stringify(req.headers['user-agent'])})`);
