@@ -207,82 +207,7 @@ function useTheme() {
   return [theme, toggleTheme] as const;
 }
 
-/** Custom mouse-following cursor component with mix-blend-difference and click/hover scales */
-function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const cursor = cursorRef.current;
-    if (!cursor) return;
-
-    const onMouseMove = (e: MouseEvent) => {
-      // Direct positioning for silky-smooth lag-free rendering
-      cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-    };
-
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target) return;
-      const isClickable = 
-        target.closest('a') || 
-        target.closest('button') || 
-        target.closest('[role="button"]') ||
-        target.classList.contains('clickable-item') ||
-        target.closest('.clickable-item');
-      setIsHovered(!!isClickable);
-    };
-
-    const handleMouseDown = () => setIsMouseDown(true);
-    const handleMouseUp = () => setIsMouseDown(false);
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
-
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('mouseover', handleMouseOver);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
-
-    // Make visible only on initial mouse move
-    const handleInitialMove = () => {
-      setIsVisible(true);
-      window.removeEventListener('mousemove', handleInitialMove);
-    };
-    window.addEventListener('mousemove', handleInitialMove);
-
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-      window.removeEventListener('mousemove', handleInitialMove);
-    };
-  }, []);
-
-  return (
-    <div
-      ref={cursorRef}
-      className={cn(
-        "fixed top-0 left-0 pointer-events-none z-220 rounded-full bg-white opacity-0 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ease-out will-change-transform mix-blend-difference hidden md:block",
-        isVisible ? "opacity-100" : "opacity-0",
-        isHovered 
-          ? "w-14 h-14 bg-white/20 border border-white/40 scale-100" 
-          : isMouseDown 
-            ? "w-3 h-3 bg-white scale-75" 
-            : "w-5 h-5 bg-white scale-100"
-      )}
-      style={{ left: 0, top: 0 }}
-    />
-  );
-}
-
-// Media Helpers 
+// Media Helpers  
 function isVideo(url: string) {
   return url.includes('/video/') || /\.(mp4|webm|mov|avi)$/i.test(url);
 }
@@ -617,11 +542,18 @@ function Home() {
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="nav-item flex items-center gap-2 text-xs font-mono uppercase tracking-widest hover:opacity-60 transition-opacity focus:outline-none focus:ring-1 focus:ring-brand-text rounded-md p-1 z-50 relative"
+            className="nav-item group flex items-center gap-2 text-xs font-mono uppercase tracking-widest border border-current/15 hover:border-current/40 hover:bg-current/5 rounded-full px-3.5 py-1.5 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-brand-text z-50 relative cursor-pointer"
             aria-label={`Switch to ${theme === 'dark' ? 'studio' : 'high-contrast dark'} theme`}
           >
-            {theme === 'dark' ? <Palette size={14} aria-hidden="true" /> : <Sun size={14} aria-hidden="true" />}
-            <span className="hidden sm:inline">{theme === 'dark' ? 'Studio' : 'Contrast'}</span>
+            <motion.div
+              animate={{ rotate: theme === 'dark' ? 0 : 180 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="flex items-center justify-center text-current"
+            >
+              {theme === 'dark' ? <Palette size={13} aria-hidden="true" /> : <Sun size={13} aria-hidden="true" />}
+            </motion.div>
+            <span className="hidden sm:inline font-semibold">{theme === 'dark' ? 'Studio' : 'Contrast'}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-current opacity-80" />
           </button>
 
           <a
@@ -1368,7 +1300,6 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <CustomCursor />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/work/:id" element={<WorkDetail />} />

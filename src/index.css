@@ -58,12 +58,9 @@
     font-family: var(--font-sans);
   }
 
-  /* Hide default cursor on desktop screens */
-  @media (min-width: 768px) {
-    body, a, button, [role="button"], input, textarea, select {
-      cursor: none !important;
-    }
-  }
+
+
+
 
   ::selection {
     background-color: var(--selection-bg);

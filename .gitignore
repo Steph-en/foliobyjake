@@ -18,11 +18,3 @@ coverage/
 # Environment variables
 .env*
 !.env.example
-
-# Local app data
-metadata.json
-api/*.ts
-data/
-uploads/
-
-package-lock.json

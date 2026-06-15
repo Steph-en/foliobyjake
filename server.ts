@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT || 3000);
 
 // ── CORS Middleware (CRITICAL for Vercel deployments) ──
 app.use((req, res, next) => {
@@ -45,9 +45,23 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// Log all incoming requests to Express
+// Log all incoming requests to Express and handle Serverless URL rewrites
 app.use((req, res, next) => {
   console.log(`[Express Admin CMS] ${req.method} ${req.url}`);
+  
+  // Vercel serverless routing edge case workaround:
+  // If the request was made to /api/projects, Vercel routes to the lambda api/index.ts,
+  // which might pass req.url to Express as /projects (stripping /api).
+  // If req.url doesn't start with /api and matches a registered API namespace, we prepend /api so it matches perfectly.
+  const apiPaths = ["/projects", "/categories", "/media", "/auth", "/contacts", "/analytics"];
+  const isApiPath = apiPaths.some(p => req.url && req.url.startsWith(p));
+  
+  if (isApiPath && !req.url.startsWith("/api")) {
+    const originalUrl = req.url;
+    req.url = "/api" + (originalUrl.startsWith("/") ? "" : "/") + originalUrl;
+    console.log(`[Serverless Compatible Router] Rewrote: ${originalUrl} -> ${req.url}`);
+  }
+  
   next();
 });
 
@@ -182,6 +196,179 @@ const INITIAL_WORKS: Project[] = [
     seoOgImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442003/bannner_r79veh.jpg',
     sections: []
   },
+  {
+    id: 3,
+    name: 'Scolpta (Ashesi Career Fair)',
+    slug: 'scolpta-ashesi',
+    category: 'Graphic Design',
+    previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/c_fill,w_1920,h_1080/v1774425611/Artboard_1_fxrrrq.jpg',
+    description: 'A BRAND IDENTITY AND EXPERIENTIAL DESIGN PROJECT FOR A GEN Z–FOCUSED CAREER FAIR ACTIVATION.',
+    longDescription: 'This project involved creating a bold and unconventional visual identity for Scolpta\'s career fair presence. The concept "Think Upside Down" challenged traditional corporate communication by introducing a playful and disruptive design language rooted in Y2K aesthetics and Gen Z culture.',
+    gallery: [
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425610/Artboard_2_copy_10_sqyv8y.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774440404/setup__c86oxu.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774440405/stup_2_xidnzf.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/board_1_rb71ut.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425613/Artboard_9_sye9mn.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/_MG_8714_na4lgt.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/Artboard_5_wqyf7l.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425613/Artboard_12_kx71wy.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425617/View_3_b0zaay.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425611/Artboard_4_ugglwp.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425612/Artboard_8_odb620.jpg',
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425613/Artboard_11_pnj5gj.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774440404/scolpta_logo__xyssqt.png',
+    ],
+    client: 'Scolpta',
+    year: '2026',
+    role: 'Brand Identity & Experiential Designer',
+    status: 'published',
+    isFeatured: true,
+    views: 955,
+    seoTitle: 'Scolpta Ashesi Career Fair Brand & Experiential Design - Jake Amponsah',
+    seoDescription: 'Diving into the disruptive and bold Y2K-inspired Gen Z brand identity and experiential design system created for the Scolpta campaign at the Ashesi Career Fair.',
+    seoKeywords: 'Scolpta, Ashesi Career Fair, Experiential Design, Gen Z Branding, Y2K Aesthetic, Brand Identity, Accra Graphic Design, Disruptive Design',
+    seoOgImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg',
+    sections: []
+  },
+  {
+    id: 4,
+    name: 'VANT',
+    slug: 'vant-branding',
+    category: 'Graphic Design',
+    previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628837/cover_portrait_4x-100_pz4u6u.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628826/Artboard_1_4x-100_jl5nih.jpg',
+    description: 'A BRAND IDENTITY PROJECT FOR A CONTEMPORARY FASHION LABEL BUILT AROUND PERSPECTIVE, RESTRAINT, AND QUIET CONFIDENCE.',
+    longDescription: 'This project translates the idea of vantage into a refined visual system centered on structure and restraint. Using New York typography and a restrained black, white, and ash palette, the identity emphasises balance, contrast, and composure. VANT is not about noise — it is about perspective.',
+    gallery: [
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628830/Artboard_8_4x-100_yyxc4i.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628826/Artboard_2_copy_4x-100_rhhmfx.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628826/Artboard_2_4x-100_cqpzrz.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628828/Artboard_5_4x-100_szeqcb.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628838/Artboard_10_4x-100_tbkaui.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628827/Artboard_3_4x-100_mbfpxb.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628832/Artboard_10_copy_4x-100_mxi6x4.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628836/Artboard_15_4x-100_ubxvlg.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628833/Artboard_9_4x-100_fuyvwl.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628834/Artboard_12_4x-100_esw5tq.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628828/Artboard_6_4x-100_ckuqie.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628833/Artboard_11_4x-100_rxoc56.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628836/Artboard_17_4x-100_ji8yq2.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628838/Artboard_16_4x-100_axeqyi.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628836/Artboard_14_4x-100_z32uu4.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628834/Artboard_13_4x-100_lvrzvs.jpg',
+    ],
+    client: 'VANT',
+    year: '2026',
+    role: 'Brand Identity Designer',
+    status: 'published',
+    isFeatured: false,
+    views: 420,
+    seoTitle: 'VANT Contemporary Fashion Label Brand Identity - Jake Amponsah',
+    seoDescription: 'A refined case study showcasing the minimalist visual system, NY typography selection, and restraint styled for the VANT contemporary fashion label.',
+    seoKeywords: 'VANT, Fashion Branding, Minimalist Graphic Design, Visual Identity, NYC Style Typography, Editorial Web Design, Quiet Luxury Brand',
+    seoOgImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774628837/cover_portrait_4x-100_pz4u6u.jpg',
+    sections: []
+  },
+  {
+    id: 5,
+    name: 'Main Squeeze',
+    slug: 'main-squeeze',
+    category: 'Graphic Design',
+    previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633759/COVER_b61g2a.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633765/MAIN_SQUEEZE_4x-100_or8fag.jpg',
+    description: 'A BRAND IDENTITY PROJECT FOR A MODERN BEVERAGE BRAND, FOCUSED ON FRESHNESS, ENERGY, AND BOLD VISUAL APPEAL.',
+    longDescription: 'A branding project for Main Squeeze, a beverage brand focused on freshness and energy. The direction leaned into bold typography and clean layouts while feeling consistent and recognisable across packaging and promo materials.',
+    gallery: [
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633759/Artboard_5_4x-100_ho8lbg.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633761/IMG_2335_hfuvwr.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633763/IMG_2340_fc4pik.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633757/Artboard_12_4x-100_vol3br.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633760/IMG_2336_uauhwv.png',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633758/Artboard_4_4x-100_jkpmai.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633763/IMG_2341_tp0vik.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633763/IMG_2339_agzarn.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633755/Artboard_3_4x-100_emzslj.jpg',
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774633772/99B98ED4-9383-4541-BDB8-42831F66F7C9_gbqdog.mp4',
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774633758/c2f141b513704558b8fea924c221e12b_nc29m1.mp4',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633755/Artboard_2_4x-100_yodrxg.jpg',
+    ],
+    client: 'Ms Jo',
+    year: '2023',
+    role: 'Brand Identity Designer',
+    status: 'published',
+    isFeatured: false,
+    views: 532,
+    seoTitle: 'Main Squeeze Beverage Brand Identity & Packaging - Jake Amponsah',
+    seoDescription: 'A vibrant, bold beverage brand identity and packaging design case study for Main Squeeze, centering high-energy typography and clean layout aesthetics.',
+    seoKeywords: 'Main Squeeze, Beverage Packaging, Brand Identity, Bold Typography, Product Design, Graphic Design Portfolio, Creative Juice Brand',
+    seoOgImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774633759/COVER_b61g2a.jpg',
+    sections: []
+  },
+  {
+    id: 6,
+    name: 'Stackz',
+    slug: 'stackz',
+    category: 'Graphic Design',
+    previewImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774642493/Artboard_10_4x-100_copy_wmgwyw.jpg',
+    heroImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640756/Artboard_1_4x-100_tzpe6t.jpg',
+    description: 'BRAND IDENTITY (AVAILABLE FOR SALE)',
+    longDescription: 'A self-initiated branding project for Stackz, a pastry brand inspired by a family-style tradition of stacked desserts. The project is currently available for sale, including full brand identity and concept.',
+    gallery: [
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640780/Artboard_14_4x-100_otsrtp.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640733/Artboard_8_4x-100_s59olb.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640740/Artboard_5_4x-100_zsgqvx.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640773/Artboard_11_4x-100_efloea.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640745/Artboard_10_4x-100_q9u1cn.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640745/Artboard_9_4x-100_nasrxc.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640797/Artboard_2_4x-100_x6rcrh.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640727/Artboard_3_4x-100_kttlbi.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640739/Artboard_6_4x-100_vmrz4z.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640798/Artboard_13_4x-100_h9s6rd.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640738/Artboard_4_4x-100_thdhcr.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640737/Artboard_7_4x-100_hw61a9.jpg',
+      'https://res.cloudinary.com/degd6ahfu/image/upload/v1774640777/Artboard_12_4x-100_k7l5ry.jpg',
+    ],
+    client: 'Self Initiated',
+    year: '2024',
+    role: 'Brand Identity Designer',
+    status: 'published',
+    isFeatured: false,
+    views: 311,
+    seoTitle: 'Stackz Pastry Brand Brand Identity for Sale - Jake Amponsah',
+    seoDescription: 'A self-initiated premium branding identity concept designed for Stackz, a pastry brand showcasing stacked dessert structures and warm, family-style heritage aesthetics.',
+    seoKeywords: 'Stackz, Pastry Branding, Brand Identity for Sale, Bakery Visual Identity, Creative Logo Design, Packaging Concepts, Jake Amponsah',
+    seoOgImage: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774642493/Artboard_10_4x-100_copy_wmgwyw.jpg',
+    sections: []
+  },
+  {
+    id: 7,
+    name: 'Motion Collection',
+    slug: 'motion-graphics',
+    category: 'Motion Graphics',
+    previewVideo: 'https://player.cloudinary.com/embed/?cloud_name=degd6ahfu&public_id=work_with_us_motion_3.0_vgu5uv',
+    heroVideo: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+    description: 'A COLLECTION OF MOTION-DRIVEN VISUALS DESIGNED TO BRING BRANDS AND IDEAS TO LIFE THROUGH DYNAMIC STORYTELLING.',
+    longDescription: 'This body of work explores the intersection of design and movement, transforming static visuals into engaging, immersive experiences through typography-driven animations and brand-focused motion systems.',
+    gallery: [
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+      'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446446/work_with_us_motion_3.0_vgu5uv.mp4',
+    ],
+    client: 'Personal Project',
+    year: '2026',
+    role: 'Motion Designer',
+    status: 'published',
+    isFeatured: true,
+    views: 742,
+    seoTitle: 'Motion Collection Showcase: Typography & Visual Kinetics - Jake Amponsah',
+    seoDescription: 'Explore a selective collection of high-fidelity, typography-driven brand motion designs, animated system loops, and immersive modern video storytelling.',
+    seoKeywords: 'Motion Graphics, 2D Animation, Kinetic Typography, Video Reels, Brand Motion Systems, Visual Storytelling, Creative Motion Portfolio',
+    seoOgImage: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4',
+    sections: []
+  }
 ];
 
 const INITIAL_CATEGORIES: Category[] = [
@@ -192,6 +379,8 @@ const INITIAL_CATEGORIES: Category[] = [
 const INITIAL_MEDIA: MediaAsset[] = [
   { id: 'm1', url: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774576064/1_ovs88o.jpg', name: 'Youth Conference Hero', type: 'image', size: '1.2 MB', createdAt: new Date().toISOString() },
   { id: 'm2', url: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774442003/bannner_r79veh.jpg', name: 'UAI Banner', type: 'image', size: '840 KB', createdAt: new Date().toISOString() },
+  { id: 'm3', url: 'https://res.cloudinary.com/degd6ahfu/image/upload/v1774425614/Artboard_13_lthkd6.jpg', name: 'Scolpta Poster', type: 'image', size: '1.4 MB', createdAt: new Date().toISOString() },
+  { id: 'm4', url: 'https://res.cloudinary.com/degd6ahfu/video/upload/v1774446445/album_art_1x1_iqrlul.mp4', name: 'Logo Motion Loop', type: 'video', size: '4.8 MB', createdAt: new Date().toISOString() },
 ];
 
 interface LocalDatabase {
@@ -201,30 +390,22 @@ interface LocalDatabase {
   contactsCount: number;
 }
 
-// Initialize database with defaults
+// Read database from file, or seed it if not found
 let db: LocalDatabase = {
   projects: INITIAL_WORKS,
   categories: INITIAL_CATEGORIES,
   media: INITIAL_MEDIA,
-  contactsCount: 14
+  contactsCount: 14 // Starting counter
 };
 
-// Read database from file or use defaults
 if (fs.existsSync(DB_FILE)) {
   try {
     const rawData = fs.readFileSync(DB_FILE, "utf-8");
     if (rawData && rawData.trim()) {
-      const parsed = JSON.parse(rawData);
-      db = parsed;
+      db = JSON.parse(rawData);
     }
   } catch (err) {
     console.warn("Failed to read db.json, using defaults:", err);
-    db = {
-      projects: INITIAL_WORKS,
-      categories: INITIAL_CATEGORIES,
-      media: INITIAL_MEDIA,
-      contactsCount: 14
-    };
   }
 } else {
   try {
@@ -234,40 +415,30 @@ if (fs.existsSync(DB_FILE)) {
   }
 }
 
-// Ensure database structure is valid
-function validateDatabase() {
-  if (!db || typeof db !== "object") {
-    console.warn("[DB Validation] Database is invalid, resetting to defaults");
-    db = {
-      projects: INITIAL_WORKS,
-      categories: INITIAL_CATEGORIES,
-      media: INITIAL_MEDIA,
-      contactsCount: 14
-    };
-  }
-  if (!Array.isArray(db.projects)) {
-    console.warn("[DB Validation] db.projects is not an array, resetting");
-    db.projects = INITIAL_WORKS;
-  }
-  if (!Array.isArray(db.categories)) {
-    console.warn("[DB Validation] db.categories is not an array, resetting");
-    db.categories = INITIAL_CATEGORIES;
-  }
-  if (!Array.isArray(db.media)) {
-    console.warn("[DB Validation] db.media is not an array, resetting");
-    db.media = INITIAL_MEDIA;
-  }
-  if (typeof db.contactsCount !== "number") {
-    db.contactsCount = 14;
-  }
+// Rigorous safety safeguards to prevent undefined attributes crashing the server
+if (!db || typeof db !== "object") {
+  db = {
+    projects: INITIAL_WORKS,
+    categories: INITIAL_CATEGORIES,
+    media: INITIAL_MEDIA,
+    contactsCount: 14
+  };
 }
-
-// Validate on startup
-validateDatabase();
+if (!Array.isArray(db.projects)) {
+  db.projects = INITIAL_WORKS;
+}
+if (!Array.isArray(db.categories)) {
+  db.categories = INITIAL_CATEGORIES;
+}
+if (!Array.isArray(db.media)) {
+  db.media = INITIAL_MEDIA;
+}
+if (typeof db.contactsCount !== "number") {
+  db.contactsCount = 14;
+}
 
 function saveDb() {
   try {
-    validateDatabase();
     fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
   } catch (err) {
     console.warn("Unable to write db.json: changes won't persist across serverless instances.", err);
@@ -291,13 +462,7 @@ app.post("/api/auth/login", (req, res) => {
 
 // Categories Endpoints
 app.get("/api/categories", (req, res) => {
-  try {
-    validateDatabase();
-    res.json(db.categories);
-  } catch (err) {
-    console.error("[API Error] /api/categories failed:", err);
-    res.status(500).json({ error: { message: "Failed to fetch categories" } });
-  }
+  res.json(db.categories);
 });
 
 app.post("/api/categories", (req, res) => {
@@ -338,172 +503,122 @@ app.delete("/api/categories/:id", (req, res) => {
   res.json({ success: true });
 });
 
-// Projects Endpoints - FIXED
+// Projects Endpoints
 app.get("/api/projects", (req, res) => {
-  try {
-    validateDatabase();
-    const { view } = req.query;
-    
-    // Ensure db.projects is an array
-    if (!Array.isArray(db.projects)) {
-      console.warn("[API] db.projects is not an array, resetting to defaults");
-      db.projects = INITIAL_WORKS;
-      saveDb();
-    }
-    
-    const result = view === "admin" 
-      ? db.projects 
-      : db.projects.filter(p => p.status === "published");
-    
-    res.json(result);
-  } catch (err) {
-    console.error("[API Error] /api/projects failed:", err);
-    res.status(500).json({ 
-      error: { 
-        message: "Failed to fetch projects",
-        code: "PROJECTS_FETCH_ERROR"
-      } 
-    });
+  const { view } = req.query; // 'admin' exposes draft/archived
+  if (view === "admin") {
+    res.json(db.projects);
+  } else {
+    res.json(db.projects.filter(p => p.status === "published"));
   }
 });
 
 app.get("/api/projects/:id", (req, res) => {
-  try {
-    const projectId = Number(req.params.id);
-    const inc = req.query.increment === "true";
+  const projectId = Number(req.params.id);
+  const inc = req.query.increment === "true";
 
-    const project = db.projects.find(p => p.id === projectId);
-    if (!project) return res.status(404).json({ error: "Project not found" });
+  const project = db.projects.find(p => p.id === projectId);
+  if (!project) return res.status(404).json({ error: "Project not found" });
 
-    if (inc) {
-      project.views = (project.views || 0) + 1;
-      saveDb();
-    }
-
-    res.json(project);
-  } catch (err) {
-    console.error("[API Error] /api/projects/:id failed:", err);
-    res.status(500).json({ error: { message: "Failed to fetch project" } });
+  if (inc) {
+    project.views = (project.views || 0) + 1;
+    saveDb();
   }
+
+  res.json(project);
 });
 
 app.post("/api/projects", (req, res) => {
-  try {
-    const newProjectData = req.body;
-    if (!newProjectData.name) {
-      return res.status(400).json({ error: "Project name is required" });
-    }
-
-    const newId = db.projects.length > 0 ? Math.max(...db.projects.map(p => p.id)) + 1 : 1;
-    const slug = newProjectData.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
-    const newProj: Project = {
-      id: newId,
-      name: newProjectData.name,
-      slug: newProjectData.slug || slug,
-      category: newProjectData.category || "Graphic Design",
-      description: newProjectData.description || "",
-      longDescription: newProjectData.longDescription || "",
-      client: newProjectData.client || "",
-      year: newProjectData.year || "",
-      role: newProjectData.role || "",
-      previewImage: newProjectData.previewImage || "",
-      previewVideo: newProjectData.previewVideo || "",
-      heroImage: newProjectData.heroImage || "",
-      heroVideo: newProjectData.heroVideo || "",
-      gallery: newProjectData.gallery || [],
-      status: newProjectData.status || "draft",
-      isFeatured: !!newProjectData.isFeatured,
-      views: 0,
-      seoTitle: newProjectData.seoTitle || "",
-      seoDescription: newProjectData.seoDescription || "",
-      seoKeywords: newProjectData.seoKeywords || "",
-      sections: newProjectData.sections || [],
-      createdAt: new Date().toISOString()
-    };
-
-    db.projects.push(newProj);
-    saveDb();
-    res.status(201).json(newProj);
-  } catch (err) {
-    console.error("[API Error] /api/projects POST failed:", err);
-    res.status(500).json({ error: { message: "Failed to create project" } });
+  const newProjectData = req.body;
+  if (!newProjectData.name) {
+    return res.status(400).json({ error: "Project name is required" });
   }
+
+  const newId = db.projects.length > 0 ? Math.max(...db.projects.map(p => p.id)) + 1 : 1;
+  const slug = newProjectData.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+  const newProj: Project = {
+    id: newId,
+    name: newProjectData.name,
+    slug: newProjectData.slug || slug,
+    category: newProjectData.category || "Graphic Design",
+    description: newProjectData.description || "",
+    longDescription: newProjectData.longDescription || "",
+    client: newProjectData.client || "",
+    year: newProjectData.year || "",
+    role: newProjectData.role || "",
+    previewImage: newProjectData.previewImage || "",
+    previewVideo: newProjectData.previewVideo || "",
+    heroImage: newProjectData.heroImage || "",
+    heroVideo: newProjectData.heroVideo || "",
+    gallery: newProjectData.gallery || [],
+    status: newProjectData.status || "draft",
+    isFeatured: !!newProjectData.isFeatured,
+    views: 0,
+    seoTitle: newProjectData.seoTitle || "",
+    seoDescription: newProjectData.seoDescription || "",
+    seoKeywords: newProjectData.seoKeywords || "",
+    sections: newProjectData.sections || [],
+    createdAt: new Date().toISOString()
+  };
+
+  db.projects.push(newProj);
+  saveDb();
+  res.status(201).json(newProj);
 });
 
 app.put("/api/projects/:id", (req, res) => {
-  try {
-    const projectId = Number(req.params.id);
-    const updatedData = req.body;
+  const projectId = Number(req.params.id);
+  const updatedData = req.body;
 
-    const projectIdx = db.projects.findIndex(p => p.id === projectId);
-    if (projectIdx === -1) return res.status(404).json({ error: "Project not found" });
+  const projectIdx = db.projects.findIndex(p => p.id === projectId);
+  if (projectIdx === -1) return res.status(404).json({ error: "Project not found" });
 
-    db.projects[projectIdx] = {
-      ...db.projects[projectIdx],
-      ...updatedData,
-      id: projectId
-    };
+  db.projects[projectIdx] = {
+    ...db.projects[projectIdx],
+    ...updatedData,
+    id: projectId // Keep ID immutable
+  };
 
-    saveDb();
-    res.json(db.projects[projectIdx]);
-  } catch (err) {
-    console.error("[API Error] /api/projects/:id PUT failed:", err);
-    res.status(500).json({ error: { message: "Failed to update project" } });
-  }
+  saveDb();
+  res.json(db.projects[projectIdx]);
 });
 
 app.post("/api/projects/:id/duplicate", (req, res) => {
-  try {
-    const projectId = Number(req.params.id);
-    const original = db.projects.find(p => p.id === projectId);
-    if (!original) return res.status(404).json({ error: "Project not found" });
+  const projectId = Number(req.params.id);
+  const original = db.projects.find(p => p.id === projectId);
+  if (!original) return res.status(404).json({ error: "Project not found" });
 
-    const newId = db.projects.length > 0 ? Math.max(...db.projects.map(p => p.id)) + 1 : 1;
-    const duplicateProj: Project = {
-      ...original,
-      id: newId,
-      name: `${original.name} (Copy)`,
-      slug: `${original.slug}-copy-${newId}`,
-      isFeatured: false,
-      views: 0,
-      status: "draft",
-      createdAt: new Date().toISOString()
-    };
+  const newId = db.projects.length > 0 ? Math.max(...db.projects.map(p => p.id)) + 1 : 1;
+  const duplicateProj: Project = {
+    ...original,
+    id: newId,
+    name: `${original.name} (Copy)`,
+    slug: `${original.slug}-copy-${newId}`,
+    isFeatured: false,
+    views: 0,
+    status: "draft",
+    createdAt: new Date().toISOString()
+  };
 
-    db.projects.push(duplicateProj);
-    saveDb();
-    res.status(201).json(duplicateProj);
-  } catch (err) {
-    console.error("[API Error] /api/projects/:id/duplicate failed:", err);
-    res.status(500).json({ error: { message: "Failed to duplicate project" } });
-  }
+  db.projects.push(duplicateProj);
+  saveDb();
+  res.status(201).json(duplicateProj);
 });
 
 app.delete("/api/projects/:id", (req, res) => {
-  try {
-    const projectId = Number(req.params.id);
-    const projectIdx = db.projects.findIndex(p => p.id === projectId);
-    if (projectIdx === -1) return res.status(404).json({ error: "Project not found" });
+  const projectId = Number(req.params.id);
+  const projectIdx = db.projects.findIndex(p => p.id === projectId);
+  if (projectIdx === -1) return res.status(404).json({ error: "Project not found" });
 
-    db.projects.splice(projectIdx, 1);
-    saveDb();
-    res.json({ success: true });
-  } catch (err) {
-    console.error("[API Error] /api/projects/:id DELETE failed:", err);
-    res.status(500).json({ error: { message: "Failed to delete project" } });
-  }
+  db.projects.splice(projectIdx, 1);
+  saveDb();
+  res.json({ success: true });
 });
 
 // Media Library Endpoints
 app.get("/api/media", (req, res) => {
-  try {
-    validateDatabase();
-    res.json(db.media);
-  } catch (err) {
-    console.error("[API Error] /api/media failed:", err);
-    res.status(500).json({ error: { message: "Failed to fetch media" } });
-  }
+  res.json(db.media);
 });
 
 app.post("/api/media", (req, res) => {
@@ -561,7 +676,7 @@ app.delete("/api/media/:id", (req, res) => {
   res.json({ success: true });
 });
 
-// Increment Contact counting
+// increment Contact counting directly
 app.post("/api/contacts/increment", (req, res) => {
   db.contactsCount = (db.contactsCount || 0) + 1;
   saveDb();
@@ -570,52 +685,48 @@ app.post("/api/contacts/increment", (req, res) => {
 
 // Analytics Dashboard Endpoint
 app.get("/api/analytics", (req, res) => {
-  try {
-    validateDatabase();
-    const totalProjects = db.projects.length;
-    const featuredProjects = db.projects.filter(p => p.isFeatured).length;
-    const totalViews = db.projects.reduce((sum, p) => sum + (p.views || 0), 0);
+  const totalProjects = db.projects.length;
+  const featuredProjects = db.projects.filter(p => p.isFeatured).length;
+  const totalViews = db.projects.reduce((sum, p) => sum + (p.views || 0), 0);
 
-    const categoryViewsMap: Record<string, number> = {};
-    db.projects.forEach(p => {
-      categoryViewsMap[p.category] = (categoryViewsMap[p.category] || 0) + (p.views || 0);
-    });
+  // Group by category helper
+  const categoryViewsMap: Record<string, number> = {};
+  db.projects.forEach(p => {
+    categoryViewsMap[p.category] = (categoryViewsMap[p.category] || 0) + (p.views || 0);
+  });
 
-    const categoryViews = Object.entries(categoryViewsMap).map(([category, views]) => ({
-      category,
-      views
-    }));
+  const categoryViews = Object.entries(categoryViewsMap).map(([category, views]) => ({
+    category,
+    views
+  }));
 
-    const projectViews = db.projects
-      .map(p => ({ name: p.name, views: p.views || 0 }))
-      .sort((a, b) => b.views - a.views)
-      .slice(0, 5);
+  const projectViews = db.projects
+    .map(p => ({ name: p.name, views: p.views || 0 }))
+    .sort((a, b) => b.views - a.views)
+    .slice(0, 5);
 
-    const viewsOverTime = [
-      { date: "Mon", views: Math.floor(totalViews * 0.12) },
-      { date: "Tue", views: Math.floor(totalViews * 0.14) },
-      { date: "Wed", views: Math.floor(totalViews * 0.18) },
-      { date: "Thu", views: Math.floor(totalViews * 0.22) },
-      { date: "Fri", views: Math.floor(totalViews * 0.16) },
-      { date: "Sat", views: Math.floor(totalViews * 0.10) },
-      { date: "Sun", views: Math.floor(totalViews * 0.08) }
-    ];
+  // Views over time data
+  const viewsOverTime = [
+    { date: "Mon", views: Math.floor(totalViews * 0.12) },
+    { date: "Tue", views: Math.floor(totalViews * 0.14) },
+    { date: "Wed", views: Math.floor(totalViews * 0.18) },
+    { date: "Thu", views: Math.floor(totalViews * 0.22) },
+    { date: "Fri", views: Math.floor(totalViews * 0.16) },
+    { date: "Sat", views: Math.floor(totalViews * 0.10) },
+    { date: "Sun", views: Math.floor(totalViews * 0.08) }
+  ];
 
-    const summary: AnalyticsSummary = {
-      totalProjects,
-      featuredProjects,
-      totalViews,
-      contactRequests: db.contactsCount,
-      viewsOverTime,
-      projectViews,
-      categoryViews
-    };
+  const summary: AnalyticsSummary = {
+    totalProjects,
+    featuredProjects,
+    totalViews,
+    contactRequests: db.contactsCount,
+    viewsOverTime,
+    projectViews,
+    categoryViews
+  };
 
-    res.json(summary);
-  } catch (err) {
-    console.error("[API Error] /api/analytics failed:", err);
-    res.status(500).json({ error: { message: "Failed to fetch analytics" } });
-  }
+  res.json(summary);
 });
 
 // Global Error Handler Middleware
@@ -625,7 +736,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     error: {
       code: String(err.status || 500),
       message: err.message || "An internal database or router error has occurred.",
-      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+      details: err.stack || ""
     }
   });
 });
@@ -633,6 +744,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 // Vite & Static file hosting configuration
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
+    // Development Middleware mode for Vite HMR
     const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { 
@@ -645,6 +757,7 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
+    // Serve production bundle
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
@@ -653,8 +766,7 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`✅ CMS Backend running on port ${PORT}`);
-    console.log(`📊 Database initialized with ${db.projects.length} projects`);
+    console.log(`CMS Back-end Server running on port ${PORT}`);
   });
 }
 
