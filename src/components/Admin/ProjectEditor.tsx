@@ -29,6 +29,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { smartUpload } from '../../lib/uploadHandler';
 
 // Zod schema based on our strict specification mandates
 const sectionSchema = z.object({
@@ -181,31 +182,35 @@ function FileUploaderField({ label, value, onChange, placeholder, type, id }: Fi
     return { isValid: true };
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setError('');
-    setProgress(0);
+  const handleGalleryFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGalleryError('');
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const validation = validateFile(file);
+      const validation = validateGalleryFile(file);
       if (!validation.isValid) {
-        setError(validation.error || 'Invalid file selection.');
-        if (fileInputRef.current) fileInputRef.current.value = '';
+        setGalleryError(validation.error || 'Invalid file.');
+        if (galleryFileInputRef.current) galleryFileInputRef.current.value = '';
         return;
       }
 
-      setIsUploading(true);
+      setIsGalleryUploading(true);
       try {
         const displayName = file.name;
-        const asset = await api.uploadMediaFile(file, displayName, (percent) => {
-          setProgress(percent);
+        const { url } = await smartUpload(file, displayName, (percent) => {
+          setGalleryUploadProgress(percent);
         });
-        onChange(asset.url);
+
+        if (galleryItems.includes(url)) {
+          setGalleryError('This file is already in the gallery.');
+        } else {
+          setValue('gallery', [...galleryItems, url]);
+        }
       } catch (err: any) {
-        setError(err.response?.data?.error || 'Failed to upload file.');
+        setGalleryError(err.message || 'Upload failed.');
       } finally {
-        setIsUploading(false);
-        setProgress(0);
-        if (fileInputRef.current) fileInputRef.current.value = '';
+        setIsGalleryUploading(false);
+        setGalleryUploadProgress(0);
+        if (galleryFileInputRef.current) galleryFileInputRef.current.value = '';
       }
     }
   };

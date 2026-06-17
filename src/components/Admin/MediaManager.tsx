@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import ConfirmModal from './ConfirmModal';
+import { smartUpload, getUploadEnvironmentInfo } from '../../lib/uploadHandler';
 
 export default function MediaManager() {
   const [media, setMedia] = useState<MediaAsset[]>([]);
@@ -177,24 +178,41 @@ export default function MediaManager() {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
     setSuccess('');
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const validation = validateFile(file);
       if (!validation.isValid) {
-        setError(validation.error || 'Invalid file. Please select a supported image or video file under 50MB.');
+        setError(validation.error || 'Invalid file.');
         setSelectedFile(null);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
+        if (fileInputRef.current) fileInputRef.current.value = '';
         return;
       }
-      setSelectedFile(file);
-      if (!localAssetName) {
-        const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-        setLocalAssetName(baseName);
+
+      setIsUploading(true);
+      try {
+        const displayName = file.name;
+        const { url, type } = await smartUpload(file, displayName, (percent) => {
+          setUploadProgress(percent);
+        });
+
+        // Register in media library
+        await api.uploadMedia({ url, name: displayName, type });
+
+        setSelectedFile(null);
+        setLocalAssetName('');
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        setSuccess('Media uploaded successfully!');
+        fetchMedia();
+        setTimeout(() => setSuccess(''), 3000);
+      } catch (err: any) {
+        console.error('Upload error:', err);
+        setError(err.message || 'Upload failed.');
+      } finally {
+        setIsUploading(false);
+        setUploadProgress(0);
       }
     }
   };

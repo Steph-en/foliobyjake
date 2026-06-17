@@ -4,11 +4,90 @@ import fs from "fs";
 import multer from "multer";
 import { Category, Project, ProjectStatus, AnalyticsSummary, MediaAsset, CaseStudySection } from "./src/types";
 import dotenv from "dotenv";
+import fetch from 'node-fetch';
 
 dotenv.config();
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
+
+// Helper: Upload to Cloudinary from backend (server-side)
+async function uploadToCloudinaryBackend(fileBuffer: Buffer, filename: string, mimeType: string) {
+  const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${process.env.VITE_CLOUDINARY_CLOUD_NAME}/auto/upload`;
+  
+  const formData = new FormData();
+  formData.append('file', new Blob([fileBuffer], { type: mimeType }), filename);
+  formData.append('folder', 'portfolio-cms');
+  formData.append('public_id', filename.replace(/\s+/g, '-').toLowerCase());
+  formData.append('resource_type', 'auto');
+
+  try {
+    const response = await fetch(cloudinaryUrl, {
+      method: 'POST',
+      body: formData as any,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Cloudinary API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.secure_url;
+  } catch (err) {
+    console.error('Cloudinary backend upload failed:', err);
+    throw err;
+  }
+}
+
+// Update the POST /api/media/upload endpoint:
+app.post("/api/media/upload", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  try {
+    // On Vercel: always use Cloudinary
+    // Locally: try local first, then Cloudinary
+    let fileUrl: string;
+    const fileName = req.body.name || req.file.originalname;
+    const fileType = req.file.mimetype.startsWith("video/") ? "video" : "image";
+
+    if (process.env.VERCEL || process.env.FORCE_CLOUDINARY_UPLOADS === 'true') {
+      // Use Cloudinary for Vercel
+      fileUrl = await uploadToCloudinaryBackend(
+        req.file.buffer,
+        fileName,
+        req.file.mimetype
+      );
+    } else {
+      // Use local storage for development
+      fileUrl = `/uploads/${req.file.filename}`;
+    }
+
+    const sizeKb = Math.round(req.file.size / 1024);
+    const sizeStr = sizeKb >= 1024 ? `${(sizeKb / 1024).toFixed(1)} MB` : `${sizeKb} KB`;
+
+    const assetId = "m_" + Date.now();
+    const asset: MediaAsset = {
+      id: assetId,
+      url: fileUrl,
+      name: fileName,
+      type: fileType,
+      size: sizeStr,
+      createdAt: new Date().toISOString()
+    };
+
+    db.media.push(asset);
+    saveDb();
+    res.status(201).json(asset);
+  } catch (err) {
+    console.error('Media upload error:', err);
+    res.status(500).json({ 
+      error: "Failed to upload file. Try uploading to Cloudinary directly.",
+      details: err instanceof Error ? err.message : 'Unknown error'
+    });
+  }
+});
 
 // ── CORS Middleware (CRITICAL for Vercel deployments) ──
 app.use((req, res, next) => {
