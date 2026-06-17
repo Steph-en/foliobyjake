@@ -140,18 +140,6 @@ try {
 // Serve uploaded files statically at /uploads
 app.use("/uploads", express.static(UPLOADS_DIR));
 
-// Configure multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, UPLOADS_DIR);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
-  }
-});
-
 // Initial Works Preseeding
 const INITIAL_WORKS: Project[] = [
   {
