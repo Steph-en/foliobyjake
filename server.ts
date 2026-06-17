@@ -10,61 +10,8 @@ dotenv.config();
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
 
-// ✅ CONDITIONAL MULTER SETUP
-let upload: any = null;
-
-// Only set up multer for local development
-if (!process.env.VERCEL) {
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, UPLOADS_DIR);
-    },
-    filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      const ext = path.extname(file.originalname);
-      cb(null, file.fieldname + "-" + uniqueSuffix + ext);
-    }
-  });
-  upload = multer({ storage });
-}
-
-// ✅ SIMPLE LOCAL UPLOAD (works everywhere)
-app.post("/api/media/upload", (req, res, next) => {
-  // Block on Vercel
-  if (process.env.VERCEL || !upload) {
-    return res.status(503).json({ 
-      error: "File uploads not available. Use Cloudinary directly instead." 
-    });
-  }
-  
-  // Use multer on local/Gemini
-  upload.single("file")(req, res, next);
-}, (req, res) => {
-  // Handler only runs if multer succeeded
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-
-  const fileUrl = `/uploads/${req.file.filename}`;
-  const fileName = req.body.name || req.file.originalname;
-  const fileType = req.file.mimetype.startsWith("video/") ? "video" : "image";
-  const sizeKb = Math.round(req.file.size / 1024);
-  const sizeStr = sizeKb >= 1024 ? `${(sizeKb / 1024).toFixed(1)} MB` : `${sizeKb} KB`;
-
-  const assetId = "m_" + Date.now();
-  const asset: MediaAsset = {
-    id: assetId,
-    url: fileUrl,
-    name: fileName,
-    type: fileType,
-    size: sizeStr,
-    createdAt: new Date().toISOString()
-  };
-
-  db.media.push(asset);
-  saveDb();
-  res.status(201).json(asset);
-});
+// ── Vercel Detection ──
+const IS_VERCEL = !!process.env.VERCEL;
 
 // ── CORS Middleware (CRITICAL for Vercel deployments) ──
 app.use((req, res, next) => {
@@ -101,14 +48,11 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-// Log all incoming requests to Express and handle Serverless URL rewrites
+// Log all incoming requests
 app.use((req, res, next) => {
   console.log(`[Express Admin CMS] ${req.method} ${req.url}`);
   
-  // Vercel serverless routing edge case workaround:
-  // If the request was made to /api/projects, Vercel routes to the lambda api/index.ts,
-  // which might pass req.url to Express as /projects (stripping /api).
-  // If req.url doesn't start with /api and matches a registered API namespace, we prepend /api so it matches perfectly.
+  // Vercel serverless routing edge case workaround
   const apiPaths = ["/projects", "/categories", "/media", "/auth", "/contacts", "/analytics"];
   const isApiPath = apiPaths.some(p => req.url && req.url.startsWith(p));
   
@@ -121,26 +65,50 @@ app.use((req, res, next) => {
   next();
 });
 
+// ── Filesystem Paths ──
 const DB_DIR = path.join(process.cwd(), "data");
 const DB_FILE = path.join(DB_DIR, "db.json");
 const UPLOADS_DIR = path.join(process.cwd(), "uploads");
 
-// Ensure directories exist
-try {
-  if (!fs.existsSync(DB_DIR)) {
-    fs.mkdirSync(DB_DIR, { recursive: true });
+// ── Directory Creation (skip on Vercel) ──
+if (!IS_VERCEL) {
+  try {
+    if (!fs.existsSync(DB_DIR)) {
+      fs.mkdirSync(DB_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(UPLOADS_DIR)) {
+      fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    }
+  } catch (err) {
+    console.log("Could not pre-create local directories (non-fatal):", err);
   }
-  if (!fs.existsSync(UPLOADS_DIR)) {
-    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-  }
-} catch (err) {
-  console.log("Could not pre-create local directories (non-fatal, possibly read-only host):", err);
+} else {
+  console.log("✓ Running on Vercel (read-only filesystem) - using in-memory database");
 }
 
-// Serve uploaded files statically at /uploads
-app.use("/uploads", express.static(UPLOADS_DIR));
+// ── Serve Uploaded Files (local only) ──
+if (!IS_VERCEL) {
+  app.use("/uploads", express.static(UPLOADS_DIR));
+}
 
-// Initial Works Preseeding
+// ── Multer Configuration (conditional) ──
+let upload: any = null;
+
+if (!IS_VERCEL) {
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, UPLOADS_DIR);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      const ext = path.extname(file.originalname);
+      cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+    }
+  });
+  upload = multer({ storage });
+}
+
+// ── Initial Works Preseeding ──
 const INITIAL_WORKS: Project[] = [
   {
     id: 1,
@@ -433,15 +401,16 @@ interface LocalDatabase {
   contactsCount: number;
 }
 
-// Read database from file, or seed it if not found
+// ── Database Initialization ──
 let db: LocalDatabase = {
   projects: INITIAL_WORKS,
   categories: INITIAL_CATEGORIES,
   media: INITIAL_MEDIA,
-  contactsCount: 14 // Starting counter
+  contactsCount: 14
 };
 
-if (fs.existsSync(DB_FILE)) {
+// Load from file (local/Gemini only)
+if (!IS_VERCEL && fs.existsSync(DB_FILE)) {
   try {
     const rawData = fs.readFileSync(DB_FILE, "utf-8");
     if (rawData && rawData.trim()) {
@@ -450,15 +419,9 @@ if (fs.existsSync(DB_FILE)) {
   } catch (err) {
     console.warn("Failed to read db.json, using defaults:", err);
   }
-} else {
-  try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
-  } catch (err) {
-    console.warn("Unable to write db.json during seeding (expected in serverless/read-only env):", err);
-  }
 }
 
-// Rigorous safety safeguards to prevent undefined attributes crashing the server
+// Safety checks
 if (!db || typeof db !== "object") {
   db = {
     projects: INITIAL_WORKS,
@@ -467,24 +430,23 @@ if (!db || typeof db !== "object") {
     contactsCount: 14
   };
 }
-if (!Array.isArray(db.projects)) {
-  db.projects = INITIAL_WORKS;
-}
-if (!Array.isArray(db.categories)) {
-  db.categories = INITIAL_CATEGORIES;
-}
-if (!Array.isArray(db.media)) {
-  db.media = INITIAL_MEDIA;
-}
-if (typeof db.contactsCount !== "number") {
-  db.contactsCount = 14;
-}
+if (!Array.isArray(db.projects)) db.projects = INITIAL_WORKS;
+if (!Array.isArray(db.categories)) db.categories = INITIAL_CATEGORIES;
+if (!Array.isArray(db.media)) db.media = INITIAL_MEDIA;
+if (typeof db.contactsCount !== "number") db.contactsCount = 14;
 
+// ── Save Database Function ──
 function saveDb() {
+  // Skip persistence on Vercel
+  if (IS_VERCEL) {
+    console.log("ℹ Vercel: Changes exist only in memory (lost on restart)");
+    return;
+  }
+  
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
   } catch (err) {
-    console.warn("Unable to write db.json: changes won't persist across serverless instances.", err);
+    console.warn("Unable to write db.json: changes won't persist.", err);
   }
 }
 
@@ -493,8 +455,8 @@ function saveDb() {
 // Auth Mock login
 app.post("/api/auth/login", (req, res) => {
   const { username, password } = req.body;
-  const expectedUsername = process.env.USERNAME || "";
-  const expectedPassword = process.env.PASSWORD || "";
+  const expectedUsername = process.env.USERNAME || "admin";
+  const expectedPassword = process.env.PASSWORD || "admin";
 
   if (username === expectedUsername && password === expectedPassword) {
     res.json({ success: true, token: "mock-jwt-token-jake-cm-system" });
@@ -548,7 +510,7 @@ app.delete("/api/categories/:id", (req, res) => {
 
 // Projects Endpoints
 app.get("/api/projects", (req, res) => {
-  const { view } = req.query; // 'admin' exposes draft/archived
+  const { view } = req.query;
   if (view === "admin") {
     res.json(db.projects);
   } else {
@@ -620,7 +582,7 @@ app.put("/api/projects/:id", (req, res) => {
   db.projects[projectIdx] = {
     ...db.projects[projectIdx],
     ...updatedData,
-    id: projectId // Keep ID immutable
+    id: projectId
   };
 
   saveDb();
@@ -683,7 +645,19 @@ app.post("/api/media", (req, res) => {
   res.status(201).json(asset);
 });
 
-app.post("/api/media/upload", upload.single("file"), (req, res) => {
+// Media Upload Endpoint (conditional on environment)
+app.post("/api/media/upload", (req, res, next) => {
+  // Reject on Vercel
+  if (IS_VERCEL || !upload) {
+    return res.status(503).json({ 
+      error: "Local file uploads unavailable on this deployment. Please use Cloudinary URLs instead.",
+      hint: "Upload your files to Cloudinary and paste the secure_url here."
+    });
+  }
+  
+  // Process with multer on local/Gemini
+  upload.single("file")(req, res, next);
+}, (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
@@ -719,20 +693,19 @@ app.delete("/api/media/:id", (req, res) => {
   res.json({ success: true });
 });
 
-// increment Contact counting directly
+// Contact Counter
 app.post("/api/contacts/increment", (req, res) => {
   db.contactsCount = (db.contactsCount || 0) + 1;
   saveDb();
   res.json({ success: true, count: db.contactsCount });
 });
 
-// Analytics Dashboard Endpoint
+// Analytics Dashboard
 app.get("/api/analytics", (req, res) => {
   const totalProjects = db.projects.length;
   const featuredProjects = db.projects.filter(p => p.isFeatured).length;
   const totalViews = db.projects.reduce((sum, p) => sum + (p.views || 0), 0);
 
-  // Group by category helper
   const categoryViewsMap: Record<string, number> = {};
   db.projects.forEach(p => {
     categoryViewsMap[p.category] = (categoryViewsMap[p.category] || 0) + (p.views || 0);
@@ -748,7 +721,6 @@ app.get("/api/analytics", (req, res) => {
     .sort((a, b) => b.views - a.views)
     .slice(0, 5);
 
-  // Views over time data
   const viewsOverTime = [
     { date: "Mon", views: Math.floor(totalViews * 0.12) },
     { date: "Tue", views: Math.floor(totalViews * 0.14) },
@@ -772,22 +744,21 @@ app.get("/api/analytics", (req, res) => {
   res.json(summary);
 });
 
-// Global Error Handler Middleware
+// Global Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error("Critical express error captured:", err);
+  console.error("Error captured:", err);
   res.status(err.status || 500).json({
     error: {
       code: String(err.status || 500),
-      message: err.message || "An internal database or router error has occurred.",
-      details: err.stack || ""
+      message: err.message || "An internal server error occurred.",
+      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
     }
   });
 });
 
-// Vite & Static file hosting configuration
+// ── Vite & Static File Configuration ──
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
-    // Development Middleware mode for Vite HMR
     const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { 
@@ -800,7 +771,6 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    // Serve production bundle
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
@@ -809,7 +779,8 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`CMS Back-end Server running on port ${PORT}`);
+    console.log(`✓ Server running on port ${PORT}`);
+    console.log(`✓ Environment: ${IS_VERCEL ? 'Vercel (Serverless)' : 'Local/Development'}`);
   });
 }
 
