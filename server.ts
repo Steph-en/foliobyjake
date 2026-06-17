@@ -10,20 +10,41 @@ dotenv.config();
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
 
+// ✅ CONDITIONAL MULTER SETUP
+let upload: any = null;
+
+// Only set up multer for local development
+if (!process.env.VERCEL) {
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, UPLOADS_DIR);
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      const ext = path.extname(file.originalname);
+      cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+    }
+  });
+  upload = multer({ storage });
+}
+
 // ✅ SIMPLE LOCAL UPLOAD (works everywhere)
-app.post("/api/media/upload", upload.single("file"), (req, res) => {
+app.post("/api/media/upload", (req, res, next) => {
+  // Block on Vercel
+  if (process.env.VERCEL || !upload) {
+    return res.status(503).json({ 
+      error: "File uploads not available. Use Cloudinary directly instead." 
+    });
+  }
+  
+  // Use multer on local/Gemini
+  upload.single("file")(req, res, next);
+}, (req, res) => {
+  // Handler only runs if multer succeeded
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
-  // On Vercel: skip local storage, user should use Cloudinary directly
-  if (process.env.VERCEL) {
-    return res.status(400).json({ 
-      error: "Local file uploads not available on this deployment. Use Cloudinary uploads instead." 
-    });
-  }
-
-  // Local development: save to /uploads
   const fileUrl = `/uploads/${req.file.filename}`;
   const fileName = req.body.name || req.file.originalname;
   const fileType = req.file.mimetype.startsWith("video/") ? "video" : "image";
@@ -130,7 +151,6 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + "-" + uniqueSuffix + ext);
   }
 });
-const upload = multer({ storage });
 
 // Initial Works Preseeding
 const INITIAL_WORKS: Project[] = [
