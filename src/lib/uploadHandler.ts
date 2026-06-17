@@ -22,6 +22,7 @@ export const uploadToCloudinary = async (
   formData.append('folder', 'portfolio-cms');
   formData.append('public_id', displayName.replace(/\s+/g, '-').toLowerCase());
   formData.append('resource_type', 'auto'); // auto-detect image or video
+  formData.append('upload_preset', 'portfolio_uploads'); // Requires preset configured in Cloudinary
 
   try {
     const xhr = new XMLHttpRequest();
@@ -54,7 +55,7 @@ export const uploadToCloudinary = async (
       xhr.onerror = () => reject(new Error('Network error during upload'));
       xhr.ontimeout = () => reject(new Error('Upload timeout'));
 
-      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`);
+      xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`);
       xhr.send(formData);
     });
   } catch (error) {

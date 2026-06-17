@@ -1,1042 +1,650 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { api } from '../../lib/api';
-import { Project, Category, CaseStudySection, ProjectStatus } from '../../types';
-import {
-  X, Plus, ChevronLeft, Save, Star, Trash2, Eye, Layout, Type, Layers, Grid,
-  ArrowUp, ArrowDown, GripVertical, FileText, Image as ImageIcon, Sparkles, Check,
-  Upload, Film, ShieldAlert
-} from 'lucide-react';
-import { motion } from 'motion/react';
+import React, { useState, useEffect } from 'react';
+import { smartUpload } from '@/lib/uploadHandler';
+import { Trash2, Upload, Plus, Loader2, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 
-// Dnd Kit Imports
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
-  useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { smartUpload } from '../../lib/uploadHandler';
-
-// Zod schema based on our strict specification mandates
-const sectionSchema = z.object({
-  id: z.string(),
-  type: z.enum(['text', 'side-by-side', 'asymmetric-split']),
-  content: z.object({
-    textHeader: z.string().optional(),
-    textBody: z.string().optional(),
-    images: z.array(z.string()).optional(),
-    layoutType: z.enum(['asymmetric-left', 'asymmetric-right', 'equal']).optional(),
-  }),
-  order: z.number()
-});
-
-const projectEditSchema = z.object({
-  name: z.string().min(1, 'Project name is required'),
-  category: z.string().min(1, 'Please select a category'),
-  status: z.enum(['draft', 'published', 'archive']),
-  isFeatured: z.boolean().default(false),
-  client: z.string().optional(),
-  year: z.string().optional(),
-  role: z.string().optional(),
-  description: z.string().min(1, 'A short dynamic summary is required'),
-  longDescription: z.string().min(1, 'Full detailed overview is required'),
-  previewImage: z.string().optional(),
-  previewVideo: z.string().optional(),
-  heroImage: z.string().optional(),
-  heroVideo: z.string().optional(),
-  gallery: z.array(z.string()).default([]),
-  seoTitle: z.string().optional(),
-  seoDescription: z.string().optional(),
-  seoKeywords: z.string().optional(),
-  sections: z.array(sectionSchema).default([])
-});
-
-type ProjectFormValues = z.infer<typeof projectEditSchema>;
-
-interface ProjectEditorProps {
-  projectId: number | null; // Null means create new
-  onBack: () => void;
-  onSaved: () => void;
+interface Project {
+  id: number;
+  name: string;
+  slug: string;
+  category: string;
+  description: string;
+  longDescription: string;
+  client: string;
+  year: string;
+  role: string;
+  previewImage?: string;
+  previewVideo?: string;
+  heroImage?: string;
+  heroVideo?: string;
+  gallery: string[];
+  status: 'draft' | 'published';
+  isFeatured: boolean;
+  views: number;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  seoOgImage?: string;
+  sections?: any[];
 }
 
-// Draggable Sortable Gallery Item
-function SortableGalleryItem({ url, index, onRemove }: { url: string; index: number; onRemove: () => void }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: url });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zIndex: isDragging ? 50 : 'auto',
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  const isVid = url.toLowerCase().includes('/video/') || url.toLowerCase().endsWith('.mp4');
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="relative bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden aspect-square flex flex-col justify-between group"
-    >
-      <div className="flex-1 overflow-hidden relative flex items-center justify-center bg-black">
-        {isVid ? (
-          <video src={url} muted className="h-full w-full object-cover" />
-        ) : (
-          <img src={url} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
-        )}
-        <div
-          {...attributes}
-          {...listeners}
-          className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-move"
-          title="Drag and drop to sort thumbnail sequence"
-        >
-          <GripVertical size={20} className="text-white" />
-        </div>
-      </div>
-      <div className="p-2 flex items-center justify-between text-[9px] font-mono text-zinc-500 bg-zinc-950">
-        <span className="truncate max-w-20" title={url}>{index + 1}. {url.substring(url.lastIndexOf('/') + 1)}</span>
-        <button
-          type="button"
-          onClick={onRemove}
-          className="text-zinc-650 hover:text-red-500 cursor-pointer"
-        >
-          <Trash2 size={12} />
-        </button>
-      </div>
-    </div>
-  );
+interface EditorState {
+  loading: boolean;
+  saving: boolean;
+  uploadingGallery: boolean;
+  error: string;
+  success: string;
 }
 
-interface FileUploaderFieldProps {
-  label: string;
-  value: string;
-  onChange: (url: string) => void;
-  placeholder: string;
-  type: 'image' | 'video';
-  id: string;
+interface Props {
+  projectId?: number;
+  onSave?: (project: Project) => void;
+  onCancel?: () => void;
 }
 
-function FileUploaderField({ label, value, onChange, placeholder, type, id }: FileUploaderFieldProps) {
-  const [isUploading, setIsUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [error, setError] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const validateFile = (file: File): { isValid: boolean; error?: string } => {
-    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/bmp'];
-    const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
-    const allowedExtensions = type === 'image'
-      ? ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.bmp']
-      : ['.mp4', '.webm', '.ogg', '.mov'];
-
-    const fileType = file.type;
-    const fileName = file.name.toLowerCase();
-
-    const isImage = allowedImageTypes.includes(fileType) || fileType.startsWith('image/');
-    const isVideo = allowedVideoTypes.includes(fileType) || fileType.startsWith('video/');
-
-    if (type === 'image' && !isImage) {
-      return { isValid: false, error: 'Please select an image file (JPEG, PNG, WEBP, GIF, SVG, BMP).' };
-    }
-    if (type === 'video' && !isVideo) {
-      return { isValid: false, error: 'Please select a video file (MP4, WEBM, OGG, MOV).' };
-    }
-
-    const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
-    if (!hasValidExtension) {
-      return {
-        isValid: false,
-        error: `Invalid file extension. Please select a file ending with: ${allowedExtensions.join(', ')}`
-      };
-    }
-
-    const maxSize = 50 * 1024 * 1024; // 50MB
-    if (file.size > maxSize) {
-      return {
-        isValid: false,
-        error: `File is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Max limit is 50MB.`
-      };
-    }
-
-    return { isValid: true };
-  };
-
-  const handleGalleryFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGalleryError('');
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const validation = validateGalleryFile(file);
-      if (!validation.isValid) {
-        setGalleryError(validation.error || 'Invalid file.');
-        if (galleryFileInputRef.current) galleryFileInputRef.current.value = '';
-        return;
-      }
-
-      setIsGalleryUploading(true);
-      try {
-        const displayName = file.name;
-        const { url } = await smartUpload(file, displayName, (percent) => {
-          setGalleryUploadProgress(percent);
-        });
-
-        if (galleryItems.includes(url)) {
-          setGalleryError('This file is already in the gallery.');
-        } else {
-          setValue('gallery', [...galleryItems, url]);
-        }
-      } catch (err: any) {
-        setGalleryError(err.message || 'Upload failed.');
-      } finally {
-        setIsGalleryUploading(false);
-        setGalleryUploadProgress(0);
-        if (galleryFileInputRef.current) galleryFileInputRef.current.value = '';
-      }
-    }
-  };
-
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center sm:gap-2">
-        <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500">{label}</label>
-        <button
-          type="button"
-          disabled={isUploading}
-          onClick={() => fileInputRef.current?.click()}
-          className="text-[9px] font-mono uppercase tracking-wider text-zinc-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer focus:outline-none"
-        >
-          <Upload size={10} />
-          Local {type === 'image' ? 'Image' : 'Video'}
-        </button>
-      </div>
-
-      <div className="relative">
-        <input
-          type="text"
-          id={id}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 pl-4 pr-10 text-xs font-mono transition-colors"
-        />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-zinc-500">
-          {type === 'image' ? <ImageIcon size={12} /> : <Film size={12} />}
-        </div>
-      </div>
-
-      <input
-        type="file"
-        ref={fileInputRef}
-        accept={type === 'image' ? 'image/*' : 'video/*'}
-        onChange={handleFileChange}
-        className="hidden"
-      />
-
-      {error && (
-        <div className="text-[10px] text-red-500 font-mono flex items-center gap-1 animate-fade-in">
-          <ShieldAlert size={10} className="shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
-
-      {isUploading && (
-        <div className="space-y-1 font-mono text-[9px] animate-fade-in bg-zinc-950 p-2 border border-zinc-900 rounded-lg">
-          <div className="flex justify-between items-center text-zinc-400">
-            <span>Uploading local file...</span>
-            <span className="font-bold text-white">{progress}%</span>
-          </div>
-          <div className="h-1 w-full bg-zinc-900 rounded-full overflow-hidden border border-zinc-850">
-            <div
-              className="h-full bg-linear-to-r from-emerald-500 to-teal-400 transition-all duration-150"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function ProjectEditor({ projectId, onBack, onSaved }: ProjectEditorProps) {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'general' | 'media' | 'case-study' | 'seo'>('general');
-  const [newGalleryUrl, setNewGalleryUrl] = useState('');
-  const [galleryError, setGalleryError] = useState('');
-  
-  const galleryFileInputRef = useRef<HTMLInputElement>(null);
-  const [isGalleryUploading, setIsGalleryUploading] = useState(false);
-  const [galleryUploadProgress, setGalleryUploadProgress] = useState(0);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    watch,
-    formState: { errors, isSubmitting }
-  } = useForm<ProjectFormValues>({
-    resolver: zodResolver(projectEditSchema) as any,
-    defaultValues: {
-      name: '',
-      category: '',
-      status: 'draft',
-      isFeatured: false,
-      client: '',
-      year: '',
-      role: '',
-      description: '',
-      longDescription: '',
-      previewImage: '',
-      previewVideo: '',
-      heroImage: '',
-      heroVideo: '',
-      gallery: [],
-      seoTitle: '',
-      seoDescription: '',
-      seoKeywords: '',
-      sections: []
-    }
+export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
+  const [project, setProject] = useState<Project>({
+    id: 0,
+    name: '',
+    slug: '',
+    category: 'Graphic Design',
+    description: '',
+    longDescription: '',
+    client: '',
+    year: new Date().getFullYear().toString(),
+    role: '',
+    previewImage: '',
+    heroImage: '',
+    gallery: [],
+    status: 'draft',
+    isFeatured: false,
+    views: 0,
+    seoTitle: '',
+    seoDescription: '',
+    seoKeywords: '',
+    seoOgImage: ''
   });
 
-  const { fields: sectionFields, append: appendSection, remove: removeSection, move: moveSection } = useFieldArray({
-    control,
-    name: "sections"
+  const [categories, setCategories] = useState<string[]>([]);
+  const [state, setState] = useState<EditorState>({
+    loading: false,
+    saving: false,
+    uploadingGallery: false,
+    error: '',
+    success: ''
   });
 
-  const galleryItems = watch('gallery') || [];
-  const previewImage = watch('previewImage') || '';
-  const previewVideo = watch('previewVideo') || '';
-  const heroImage = watch('heroImage') || '';
-  const heroVideo = watch('heroVideo') || '';
-
+  // ── Load Project & Categories ──
   useEffect(() => {
-    const fetchResources = async () => {
+    const loadData = async () => {
       try {
-        const cats = await api.getCategories();
-        setCategories(cats);
+        setState(prev => ({ ...prev, loading: true }));
 
-        if (projectId !== null) {
-          const originalProj = await api.getProject(projectId);
-          // Set values into react hook form
-          setValue('name', originalProj.name);
-          setValue('category', originalProj.category);
-          setValue('status', originalProj.status);
-          setValue('isFeatured', originalProj.isFeatured || false);
-          setValue('client', originalProj.client || '');
-          setValue('year', originalProj.year || '');
-          setValue('role', originalProj.role || '');
-          setValue('description', originalProj.description || '');
-          setValue('longDescription', originalProj.longDescription || '');
-          setValue('previewImage', originalProj.previewImage || '');
-          setValue('previewVideo', originalProj.previewVideo || '');
-          setValue('heroImage', originalProj.heroImage || '');
-          setValue('heroVideo', originalProj.heroVideo || '');
-          setValue('gallery', originalProj.gallery || []);
-          setValue('seoTitle', originalProj.seoTitle || '');
-          setValue('seoDescription', originalProj.seoDescription || '');
-          setValue('seoKeywords', originalProj.seoKeywords || '');
-          setValue('sections', originalProj.sections || []);
-        } else {
-          // Pre-populate category
-          if (cats.length > 0) setValue('category', cats[0].name);
+        // Load categories
+        const catRes = await fetch('/api/categories');
+        if (catRes.ok) {
+          const cats = await catRes.json();
+          setCategories(cats.map((c: any) => c.name));
+        }
+
+        // Load project if editing
+        if (projectId) {
+          const projRes = await fetch(`/api/projects/${projectId}`);
+          if (projRes.ok) {
+            const proj = await projRes.json();
+            setProject(proj);
+          }
         }
       } catch (err) {
-        console.error(err);
+        setState(prev => ({
+          ...prev,
+          error: err instanceof Error ? err.message : 'Failed to load data'
+        }));
       } finally {
-        setLoading(false);
+        setState(prev => ({ ...prev, loading: false }));
       }
     };
 
-    fetchResources();
-  }, [projectId, setValue]);
+    loadData();
+  }, [projectId]);
 
-  const handleFormSave = async (data: ProjectFormValues) => {
+  // ── Generate slug from name ──
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
+
+  // ── Handle field changes ──
+  const updateField = (field: keyof Project, value: any) => {
+    setProject(prev => {
+      const updated = { ...prev, [field]: value };
+      // Auto-generate slug if name changes
+      if (field === 'name') {
+        updated.slug = generateSlug(value);
+      }
+      return updated;
+    });
+  };
+
+  // ── Handle gallery file upload ──
+  const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.[0];
+    if (!file) return;
+
+    setState(prev => ({ ...prev, uploadingGallery: true, error: '' }));
+
     try {
-      if (projectId !== null) {
-        await api.updateProject(projectId, data);
-      } else {
-        await api.createProject(data);
-      }
-      onSaved();
+      const displayName = `${project.name} - ${file.name.replace(/\.[^/.]+$/, '')}`;
+      console.log('[ProjectEditor] Gallery upload:', { filename: file.name, displayName });
+
+      const asset = await smartUpload(file, displayName);
+
+      setProject(prev => ({
+        ...prev,
+        gallery: [...prev.gallery, asset.url]
+      }));
+
+      setState(prev => ({
+        ...prev,
+        success: `✓ Added to gallery: ${asset.name}`
+      }));
+
+      setTimeout(() => setState(prev => ({ ...prev, success: '' })), 3000);
+      e.currentTarget.value = '';
     } catch (err) {
-      console.error(err);
+      const errorMessage = err instanceof Error ? err.message : 'Upload failed';
+      console.error('[ProjectEditor] Gallery upload error:', err);
+      setState(prev => ({
+        ...prev,
+        error: errorMessage
+      }));
+    } finally {
+      setState(prev => ({ ...prev, uploadingGallery: false }));
     }
   };
 
-  // Gallery actions
-  const validateGalleryFile = (file: File): { isValid: boolean; error?: string } => {
-    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/bmp'];
-    const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
-    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.bmp', '.mp4', '.webm', '.ogg', '.mov'];
+  // ── Handle preview image upload ──
+  const handlePreviewImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.[0];
+    if (!file) return;
 
-    const fileType = file.type;
-    const fileName = file.name.toLowerCase();
+    setState(prev => ({ ...prev, saving: true, error: '' }));
 
-    const isImage = allowedImageTypes.includes(fileType) || fileType.startsWith('image/');
-    const isVideo = allowedVideoTypes.includes(fileType) || fileType.startsWith('video/');
-
-    if (!isImage && !isVideo) {
-      return {
-        isValid: false,
-        error: 'Unsupported file type. Only formats like JPEG, PNG, WEBP, GIF, SVG, BMP, MP4, WEBM, OGG, and MOV are supported.'
-      };
+    try {
+      const asset = await smartUpload(file, `${project.name} - Preview`);
+      updateField('previewImage', asset.url);
+      setState(prev => ({
+        ...prev,
+        success: '✓ Preview image updated'
+      }));
+      setTimeout(() => setState(prev => ({ ...prev, success: '' })), 2000);
+      e.currentTarget.value = '';
+    } catch (err) {
+      setState(prev => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Upload failed'
+      }));
+    } finally {
+      setState(prev => ({ ...prev, saving: false }));
     }
-
-    const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(ext));
-    if (!hasValidExtension) {
-      return {
-        isValid: false,
-        error: `Unsupported extension. Supported extensions: ${allowedExtensions.join(', ')}`
-      };
-    }
-
-    const maxSize = 50 * 1024 * 1024; // 50MB
-    if (file.size > maxSize) {
-      return {
-        isValid: false,
-        error: `File is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Max limit is 50MB.`
-      };
-    }
-
-    return { isValid: true };
   };
 
-  const handleGalleryFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGalleryError('');
-    setGalleryUploadProgress(0);
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const validation = validateGalleryFile(file);
-      if (!validation.isValid) {
-        setGalleryError(validation.error || 'Invalid file selection.');
-        if (galleryFileInputRef.current) galleryFileInputRef.current.value = '';
-        return;
-      }
+  // ── Handle hero image upload ──
+  const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.[0];
+    if (!file) return;
 
-      setIsGalleryUploading(true);
-      try {
-        const displayName = file.name;
-        const asset = await api.uploadMediaFile(file, displayName, (percent) => {
-          setGalleryUploadProgress(percent);
-        });
-        if (galleryItems.includes(asset.url)) {
-          setGalleryError('This file is already added to the gallery collection.');
-        } else {
-          setValue('gallery', [...galleryItems, asset.url]);
+    setState(prev => ({ ...prev, saving: true, error: '' }));
+
+    try {
+      const asset = await smartUpload(file, `${project.name} - Hero`);
+      updateField('heroImage', asset.url);
+      setState(prev => ({
+        ...prev,
+        success: '✓ Hero image updated'
+      }));
+      setTimeout(() => setState(prev => ({ ...prev, success: '' })), 2000);
+      e.currentTarget.value = '';
+    } catch (err) {
+      setState(prev => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Upload failed'
+      }));
+    } finally {
+      setState(prev => ({ ...prev, saving: false }));
+    }
+  };
+
+  // ── Save project ──
+  const handleSave = async () => {
+    if (!project.name.trim()) {
+      setState(prev => ({
+        ...prev,
+        error: 'Project name is required'
+      }));
+      return;
+    }
+
+    setState(prev => ({ ...prev, saving: true, error: '' }));
+
+    try {
+      const method = projectId ? 'PUT' : 'POST';
+      const endpoint = projectId ? `/api/projects/${projectId}` : '/api/projects';
+
+      const response = await fetch(endpoint, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(project)
+      });
+
+      if (response.ok) {
+        const savedProject = await response.json();
+        setState(prev => ({
+          ...prev,
+          success: `✓ Project ${projectId ? 'updated' : 'created'} successfully`
+        }));
+
+        if (onSave) {
+          onSave(savedProject);
         }
-      } catch (err: any) {
-        setGalleryError(err.response?.data?.error || 'Failed to upload gallery asset.');
-      } finally {
-        setIsGalleryUploading(false);
-        setGalleryUploadProgress(0);
-        if (galleryFileInputRef.current) galleryFileInputRef.current.value = '';
+
+        setTimeout(() => setState(prev => ({ ...prev, success: '' })), 2000);
+      } else {
+        throw new Error('Failed to save project');
       }
+    } catch (err) {
+      setState(prev => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Save failed'
+      }));
+    } finally {
+      setState(prev => ({ ...prev, saving: false }));
     }
   };
 
-  const addGalleryImage = () => {
-    setGalleryError('');
-    if (!newGalleryUrl.trim()) return;
-    if (!newGalleryUrl.startsWith('http://') && !newGalleryUrl.startsWith('https://')) {
-      setGalleryError('Absolute URL required (starting with https:// or http://)');
-      return;
-    }
-    if (galleryItems.includes(newGalleryUrl.trim())) {
-      setGalleryError('URL is already registered in the gallery queue.');
-      return;
-    }
-
-    setValue('gallery', [...galleryItems, newGalleryUrl.trim()]);
-    setNewGalleryUrl('');
-  };
-
-  const removeGalleryImage = (indexToRemove: number) => {
-    setValue('gallery', galleryItems.filter((_, idx) => idx !== indexToRemove));
-  };
-
-  const handleDragEndGallery = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    const oldIndex = galleryItems.indexOf(active.id as string);
-    const newIndex = galleryItems.indexOf(over.id as string);
-
-    if (oldIndex !== -1 && newIndex !== -1) {
-      const reordered = arrayMove(galleryItems, oldIndex, newIndex);
-      setValue('gallery', reordered);
-    }
-  };
-
-  // Sections actions
-  const addCaseStudySection = (type: 'text' | 'side-by-side' | 'asymmetric-split') => {
-    const order = sectionFields.length + 1;
-    const defaultSec: CaseStudySection = {
-      id: 'sec_' + Date.now(),
-      type,
-      content: {
-        textHeader: '',
-        textBody: '',
-        images: type === 'text' ? [] : ['', ''],
-        layoutType: type === 'asymmetric-split' ? 'asymmetric-left' : 'equal'
-      },
-      order
-    };
-    appendSection(defaultSec);
-  };
-
-  if (loading) {
+  if (state.loading) {
     return (
-      <div className="flex justify-center p-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-4 border-white border-t-transparent" />
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="text-center">
+          <Loader2 className="animate-spin text-blue-400 mx-auto mb-4" size={40} />
+          <p className="text-slate-400">Loading project...</p>
+        </div>
       </div>
     );
   }
 
-  const tabs = [
-    { id: 'general', label: 'Primary Details' },
-    { id: 'media', label: 'Video & Image Ports' },
-    { id: 'case-study', label: 'Dynamic Content Blocks' },
-    { id: 'seo', label: 'SEO Configs' }
-  ];
-
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-fade-in text-zinc-200">
-      
-      {/* Upper header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-6 border-b border-zinc-900">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={onBack}
-            className="p-2.5 bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white rounded-xl transition-colors cursor-pointer"
-            aria-label="Back to project lists catalog"
-          >
-            <ChevronLeft size={16} />
-          </button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="mb-8 flex justify-between items-center">
           <div>
-            <h2 className="text-2xl uppercase tracking-tight font-display">
-              {projectId !== null ? 'UPDATE SPECIFICATION' : 'NEW PROJECT COMPILER'}
-            </h2>
-            <p className="text-xs text-zinc-500 mt-1 font-mono">
-              {projectId !== null ? `Re-factoring active records: #${projectId}` : 'Formulatizing a new catalog item'}
+            <h1 className="text-4xl font-bold text-white mb-2">
+              {projectId ? 'Edit Project' : 'Create Project'}
+            </h1>
+            <p className="text-slate-400">
+              {projectId ? 'Update your project details' : 'Add a new portfolio project'}
             </p>
           </div>
-        </div>
-        <button
-          onClick={handleSubmit(handleFormSave)}
-          disabled={isSubmitting}
-          className="px-6 py-3 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors flex items-center gap-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-white disabled:pointer-events-none"
-        >
-          {isSubmitting ? (
-            <span className="inline-block animate-spin h-3.5 w-3.5 border-2 border-black border-t-transparent rounded-full" />
-          ) : (
-            <>
-              <Save size={14} />
-              Compile & Save
-            </>
+          {onCancel && (
+            <button
+              onClick={onCancel}
+              className="px-6 py-2 text-slate-400 hover:text-slate-300 transition-colors"
+            >
+              ✕
+            </button>
           )}
-        </button>
-      </div>
+        </div>
 
-      {/* Tabs list navigation bar */}
-      <div className="flex border-b border-zinc-900 overflow-x-auto gap-1">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`px-6 py-3.5 text-xs font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap shrink-0 ${
-              activeTab === tab.id
-                ? 'border-white text-white bg-zinc-900/45'
-                : 'border-transparent text-zinc-500 hover:text-zinc-350 cursor-pointer'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+        {/* Messages */}
+        {state.error && (
+          <div className="mb-6 p-4 bg-red-900/20 border border-red-700 rounded-lg flex items-center gap-3 text-red-300">
+            <AlertCircle size={20} />
+            {state.error}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit(handleFormSave)} className="space-y-8 bg-zinc-950 p-6 sm:p-8 rounded-2xl border border-zinc-900">
-        
-        {/* ───── TAB 1: GENERAL INFO ───── */}
-        {activeTab === 'general' && (
-          <div className="space-y-6">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-400">Section 1: General Parameters</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
+        {state.success && (
+          <div className="mb-6 p-4 bg-green-900/20 border border-green-700 rounded-lg flex items-center gap-3 text-green-300">
+            <CheckCircle size={20} />
+            {state.success}
+          </div>
+        )}
+
+        {/* Form */}
+        <div className="bg-slate-800 rounded-lg border border-slate-700 p-8 space-y-8">
+          {/* Basic Info */}
+          <section>
+            <h2 className="text-xl font-bold text-white mb-6">Basic Information</h2>
+            <div className="space-y-4">
               <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-505 mb-2">Project Name *</label>
+                <label className="block text-white font-medium mb-2">Project Name *</label>
                 <input
                   type="text"
-                  required
-                  {...register('name')}
-                  placeholder="e.g. Spectral Exhibition Branding"
-                  className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors"
+                  value={project.name}
+                  onChange={e => updateField('name', e.target.value)}
+                  placeholder="e.g., Brand Identity Project"
+                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                {errors.name && <p className="text-red-500 font-mono text-[10px] mt-1">{errors.name.message}</p>}
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-2">Category *</label>
-                <select
-                  required
-                  {...register('category')}
-                  className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors text-white"
-                >
-                  <option value="">Choose category...</option>
-                  {categories.map(c => (
-                    <option key={c.id} value={c.name} className="bg-zinc-900">{c.name}</option>
-                  ))}
-                </select>
-                {errors.category && <p className="text-red-500 font-mono text-[10px] mt-1">{errors.category.message}</p>}
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-2">Publish Status</label>
-                <select
-                  required
-                  {...register('status')}
-                  className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors text-white"
-                >
-                  <option value="draft" className="bg-zinc-900">Draft (Unlisted)</option>
-                  <option value="published" className="bg-zinc-900">Published (Visible on site)</option>
-                  <option value="archive" className="bg-zinc-900">Archived (Stored history)</option>
-                </select>
-              </div>
-
-              <div className="flex items-center h-full pt-6 pl-2">
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    {...register('isFeatured')}
-                    className="h-4 w-4 bg-zinc-900 border border-zinc-800 rounded focus:ring-0 checked:bg-white checked:border-white transition-colors"
-                  />
-                  <div>
-                    <span className="text-xs uppercase font-bold tracking-wider">Features list inclusion</span>
-                    <p className="text-[10px] text-zinc-550 font-mono mt-0.5">Toggle representation in homepage highlights</p>
-                  </div>
-                </label>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-505 mb-2">Client name</label>
+                <label className="block text-white font-medium mb-2">Slug</label>
                 <input
                   type="text"
-                  {...register('client')}
-                  placeholder="e.g. Ashesi University"
-                  className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors"
+                  value={project.slug}
+                  onChange={e => updateField('slug', e.target.value)}
+                  placeholder="project-slug"
+                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
                 />
+                <p className="text-slate-500 text-xs mt-1">Auto-generated from project name</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-505 mb-2">Year</label>
-                  <input
-                    type="text"
-                    {...register('year')}
-                    placeholder="e.g. 2026"
-                    className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-505 mb-2">Role/Position</label>
-                  <input
-                    type="text"
-                    {...register('role')}
-                    placeholder="e.g. Interactive Stylist"
-                    className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors"
-                  />
-                </div>
-              </div>
-
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-2">Dynamic Intro Summary *</label>
-              <textarea
-                required
-                {...register('description')}
-                rows={2}
-                placeholder="A high-contrast capitalize summary presented in the portfolio grids cards..."
-                className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors uppercase font-mono"
-              />
-              {errors.description && <p className="text-red-500 font-mono text-[10px] mt-1">{errors.description.message}</p>}
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-2">Detailed Context & Overview *</label>
-              <textarea
-                required
-                {...register('longDescription')}
-                rows={5}
-                placeholder="Elaborated project documentation details..."
-                className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors"
-              />
-              {errors.longDescription && <p className="text-red-500 font-mono text-[10px] mt-1">{errors.longDescription.message}</p>}
-            </div>
-
-          </div>
-        )}
-
-        {/* ───── TAB 2: MEDIA PORTS ───── */}
-        {activeTab === 'media' && (
-          <div className="space-y-8">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-400">Section 2: Asset Links Hooking</h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              <FileUploaderField
-                label="Fallback Image URL"
-                id="previewImage"
-                value={previewImage}
-                onChange={(url) => setValue('previewImage', url)}
-                placeholder="https://res.cloudinary.com/.../img.png"
-                type="image"
-              />
-
-              <FileUploaderField
-                label="Grid Video Loop URL (Optional)"
-                id="previewVideo"
-                value={previewVideo}
-                onChange={(url) => setValue('previewVideo', url)}
-                placeholder="https://res.cloudinary.com/.../video.mp4"
-                type="video"
-              />
-
-              <FileUploaderField
-                label="Hero Image URL (Landscape)"
-                id="heroImage"
-                value={heroImage}
-                onChange={(url) => setValue('heroImage', url)}
-                placeholder="https://res.cloudinary.com/.../large-banner.png"
-                type="image"
-              />
-
-              <FileUploaderField
-                label="Hero Video Reel (Optional)"
-                id="heroVideo"
-                value={heroVideo}
-                onChange={(url) => setValue('heroVideo', url)}
-                placeholder="https://res.cloudinary.com/.../hero-loop.mp4"
-                type="video"
-              />
-
-            </div>
-
-            {/* Gallery sorting block (DND KIT) */}
-            <div className="border-t border-zinc-900 pt-8 space-y-4">
-              <div>
-                <h4 className="text-xs uppercase tracking-wider text-white">Project Grid Gallery Collection</h4>
-                <p className="text-[10px] text-zinc-500 font-mono mt-1">Add, remove, and drag cards to configure display order.</p>
-              </div>
-
-              {/* Add item bar */}
-              <div className="flex flex-col sm:flex-row gap-2 max-w-2xl">
-                <input
-                  type="text"
-                  value={newGalleryUrl}
-                  onChange={(e) => setNewGalleryUrl(e.target.value)}
-                  placeholder="https://res.cloudinary.com/degd6ahfu/..."
-                  className="grow bg-zinc-900 border border-zinc-800 rounded-xl py-2.5 px-4 text-xs font-mono focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={addGalleryImage}
-                  className="px-4 py-2 bg-white text-black text-xs font-bold uppercase rounded-xl hover:bg-zinc-200 transition-colors cursor-pointer shrink-0"
-                >
-                  Add Item Link
-                </button>
-                <button
-                  type="button"
-                  disabled={isGalleryUploading}
-                  onClick={() => galleryFileInputRef.current?.click()}
-                  className="px-4 py-2 bg-zinc-900 border border-zinc-800 text-white text-xs font-bold uppercase rounded-xl hover:bg-zinc-850 transition-colors cursor-pointer shrink-0 flex items-center justify-center gap-1.5 focus:outline-none"
-                >
-                  <Upload size={12} />
-                  Upload File
-                </button>
-              </div>
-
-              <input
-                type="file"
-                ref={galleryFileInputRef}
-                accept="image/*,video/*"
-                onChange={handleGalleryFileChange}
-                className="hidden"
-              />
-
-              {isGalleryUploading && (
-                <div className="space-y-1.5 font-mono text-[10px] animate-fade-in bg-zinc-950 p-3 border border-zinc-900 rounded-xl max-w-xl">
-                  <div className="flex justify-between items-center text-zinc-400">
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      Uploading asset to storage...
-                    </span>
-                    <span className="font-bold text-white">{galleryUploadProgress}%</span>
-                  </div>
-                  <div className="h-1.5 w-full bg-zinc-900 rounded-full overflow-hidden border border-zinc-850">
-                    <div
-                      className="h-full bg-linear-to-r from-emerald-500 to-teal-400 transition-all duration-150"
-                      style={{ width: `${galleryUploadProgress}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {galleryError && <p className="text-red-500 font-mono text-[10px]">{galleryError}</p>}
-
-              {/* Dnd Drag area */}
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEndGallery}
-              >
-                <SortableContext
-                  items={galleryItems}
-                  strategy={rectSortingStrategy}
-                >
-                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4 pt-4">
-                    {galleryItems.map((url, idx) => (
-                      <SortableGalleryItem
-                        key={url}
-                        url={url}
-                        index={idx}
-                        onRemove={() => removeGalleryImage(idx)}
-                      />
+                  <label className="block text-white font-medium mb-2">Category</label>
+                  <select
+                    value={project.category}
+                    onChange={e => updateField('category', e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
                     ))}
-
-                    {galleryItems.length === 0 && (
-                      <div className="col-span-full py-10 border-2 border-dashed border-zinc-900 rounded-2xl flex flex-col items-center justify-center text-zinc-650 text-xs font-mono uppercase tracking-widest">
-                        <span>The design gallery is currently empty.</span>
-                      </div>
-                    )}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            </div>
-
-          </div>
-        )}
-
-        {/* ───── TAB 3: DYNAMIC CASE STUDIES ───── */}
-        {activeTab === 'case-study' && (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-400">Section 3: Custom Page Assembly Builder</h3>
-                <p className="text-[10px] text-zinc-550 font-mono mt-1">Mix typography nodes, side-by-side splits & asymmetrical spans</p>
-              </div>
-
-              {/* Block creation options */}
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => addCaseStudySection('text')}
-                  className="px-3 py-2 bg-zinc-900 border border-zinc-800 text-[10px] uppercase font-mono tracking-wider hover:text-white rounded-xl flex items-center gap-1 cursor-pointer"
-                >
-                  <Type size={11} />
-                  + Text Node
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addCaseStudySection('side-by-side')}
-                  className="px-3 py-2 bg-zinc-900 border border-zinc-800 text-[10px] uppercase font-mono tracking-wider hover:text-white rounded-xl flex items-center gap-1 cursor-pointer"
-                >
-                  <Grid size={11} />
-                  + Side-by-Side
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addCaseStudySection('asymmetric-split')}
-                  className="px-3 py-2 bg-zinc-900 border border-zinc-800 text-[10px] uppercase font-mono tracking-wider hover:text-white rounded-xl flex items-center gap-1 cursor-pointer"
-                >
-                  <Layout size={11} />
-                  + Odd Split
-                </button>
-              </div>
-            </div>
-
-            {/* List of active sections editors */}
-            <div className="space-y-6 pt-4">
-              {sectionFields.map((field, idx) => {
-                const sType = watch(`sections.${idx}.type`);
-                return (
-                  <div key={field.id} className="p-6 bg-zinc-900/50 border border-zinc-900 rounded-2xl space-y-4 relative">
-                    
-                    {/* Upper title header in case block card */}
-                    <div className="flex justify-between items-center pb-3 border-b border-zinc-900">
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 flex items-center gap-2">
-                        <FileText size={12} />
-                        Block #{idx + 1} ({sType.replace('-', ' ')})
-                      </span>
-                      
-                      {/* Controls sorting/trash */}
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => idx > 0 && moveSection(idx, idx - 1)}
-                          className="p-1.5 hover:bg-zinc-800 text-zinc-500 hover:text-white rounded"
-                        >
-                          <ArrowUp size={12} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => idx < sectionFields.length - 1 && moveSection(idx, idx + 1)}
-                          className="p-1.5 hover:bg-zinc-800 text-zinc-500 hover:text-white rounded"
-                        >
-                          <ArrowDown size={12} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeSection(idx)}
-                          className="p-1.5 hover:bg-red-950/40 text-zinc-500 hover:text-red-500 rounded"
-                        >
-                          <Trash2 size={12} />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Inputs based on section type */}
-                    {sType === 'text' ? (
-                      <div className="grid grid-cols-1 gap-4">
-                        <div>
-                          <label className="block text-[9px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Header Accent</label>
-                          <input
-                            type="text"
-                            {...register(`sections.${idx}.content.textHeader`)}
-                            className="w-full bg-zinc-950 border border-zinc-900 rounded-lg py-1.5 px-3 text-xs focus:outline-none focus:border-zinc-800 uppercase"
-                            placeholder="e.g. VISUAL DIALOGUES"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[9px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Markdown Paragraph Block</label>
-                          <textarea
-                            {...register(`sections.${idx}.content.textBody`)}
-                            rows={4}
-                            className="w-full bg-zinc-950 border border-zinc-900 rounded-lg py-2 px-3 text-xs focus:outline-none focus:border-zinc-800"
-                            placeholder="Enter the case study details here..."
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-[9px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Left/First Media URL</label>
-                            <input
-                              type="text"
-                              {...register(`sections.${idx}.content.images.0` as any)}
-                              className="w-full bg-zinc-950 border border-zinc-900 rounded-lg py-1.5 px-3 text-xs font-mono focus:outline-none"
-                              placeholder="https://res.cloudinary.com/.../img1.jpg"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[9px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Right/Second Media URL</label>
-                            <input
-                              type="text"
-                              {...register(`sections.${idx}.content.images.1` as any)}
-                              className="w-full bg-zinc-950 border border-zinc-900 rounded-lg py-1.5 px-3 text-xs font-mono focus:outline-none"
-                              placeholder="https://res.cloudinary.com/.../img2.jpg"
-                            />
-                          </div>
-                        </div>
-
-                        {sType === 'asymmetric-split' && (
-                          <div>
-                            <label className="block text-[9px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Span Ratio Allocation</label>
-                            <select
-                              {...register(`sections.${idx}.content.layoutType`)}
-                              className="bg-zinc-950 border border-zinc-900 rounded-lg py-1 px-2 text-[10px] text-zinc-400 font-mono outline-none"
-                            >
-                              <option value="asymmetric-left">2/3 (Left Media Area) - 1/3 (Right Media)</option>
-                              <option value="asymmetric-right">1/3 (Left Media) - 2/3 (Right Media Area)</option>
-                            </select>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                  </div>
-                );
-              })}
-
-              {sectionFields.length === 0 && (
-                <div className="py-16 bg-zinc-950/40 border-2 border-dashed border-zinc-900 rounded-3xl text-center flex flex-col items-center justify-center font-mono text-xs uppercase tracking-widest text-zinc-650">
-                  <span>No custom modular layouts are defined currently.</span>
-                  <span className="text-[10px] mt-2 block italic text-zinc-700">Add blocks from the options above.</span>
+                  </select>
                 </div>
-              )}
+
+                <div>
+                  <label className="block text-white font-medium mb-2">Year</label>
+                  <input
+                    type="text"
+                    value={project.year}
+                    onChange={e => updateField('year', e.target.value)}
+                    placeholder="2025"
+                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-white font-medium mb-2">Client</label>
+                  <input
+                    type="text"
+                    value={project.client}
+                    onChange={e => updateField('client', e.target.value)}
+                    placeholder="Client name"
+                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-white font-medium mb-2">Your Role</label>
+                  <input
+                    type="text"
+                    value={project.role}
+                    onChange={e => updateField('role', e.target.value)}
+                    placeholder="e.g., Lead Designer"
+                    className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
             </div>
+          </section>
 
-          </div>
-        )}
-
-        {/* ───── TAB 4: SEO METADATA ───── */}
-        {activeTab === 'seo' && (
-          <div className="space-y-6">
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-400">Section 4: Search Engine Optimization Configurations</h3>
-
+          {/* Descriptions */}
+          <section>
+            <h2 className="text-xl font-bold text-white mb-6">Descriptions</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-2">SEO Custom Page Title</label>
-                <input
-                  type="text"
-                  {...register('seoTitle')}
-                  placeholder="Jake Amponsah — Case Study Catalog Layout"
-                  className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-2">Meta Description</label>
+                <label className="block text-white font-medium mb-2">Short Description</label>
                 <textarea
-                  {...register('seoDescription')}
+                  value={project.description}
+                  onChange={e => updateField('description', e.target.value)}
+                  placeholder="Brief overview (shown in listings)"
                   rows={3}
-                  placeholder="Search indices description blurb. Recommended length: under 160 characters..."
-                  className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs transition-colors"
+                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 mb-2">SEO Target Keywords (comma-separated)</label>
-                <input
-                  type="text"
-                  {...register('seoKeywords')}
-                  placeholder="Branding, Art Direction, Motion Renders, West Africa"
-                  className="w-full bg-zinc-900 border border-zinc-800 focus:border-white rounded-xl py-2.5 px-4 text-xs font-mono transition-colors"
+                <label className="block text-white font-medium mb-2">Long Description</label>
+                <textarea
+                  value={project.longDescription}
+                  onChange={e => updateField('longDescription', e.target.value)}
+                  placeholder="Detailed project description (shown on project page)"
+                  rows={5}
+                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
               </div>
             </div>
+          </section>
 
-          </div>
-        )}
+          {/* Images */}
+          <section>
+            <h2 className="text-xl font-bold text-white mb-6">Images</h2>
+            <div className="space-y-6">
+              {/* Preview Image */}
+              <div>
+                <label className="block text-white font-medium mb-3">Preview Image (Listing Thumbnail)</label>
+                {project.previewImage && (
+                  <div className="mb-4 relative w-48 h-32 rounded-lg overflow-hidden border border-slate-600">
+                    <img
+                      src={project.previewImage}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => updateField('previewImage', '')}
+                      className="absolute top-2 right-2 p-1 bg-red-600 rounded hover:bg-red-700 text-white"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
+                <label className="block">
+                  <div className="border-2 border-dashed border-slate-600 rounded-lg p-4 text-center hover:border-blue-500 transition-colors cursor-pointer">
+                    <Upload className="mx-auto mb-2 text-slate-400" size={24} />
+                    <p className="text-slate-300 text-sm">
+                      {state.saving ? 'Uploading...' : 'Click to upload preview image'}
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    onChange={handlePreviewImageUpload}
+                    accept="image/*"
+                    disabled={state.saving}
+                    className="hidden"
+                  />
+                </label>
+              </div>
 
-      </form>
+              {/* Hero Image */}
+              <div>
+                <label className="block text-white font-medium mb-3">Hero Image (Project Page)</label>
+                {project.heroImage && (
+                  <div className="mb-4 relative w-full h-48 rounded-lg overflow-hidden border border-slate-600">
+                    <img
+                      src={project.heroImage}
+                      alt="Hero"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => updateField('heroImage', '')}
+                      className="absolute top-2 right-2 p-1 bg-red-600 rounded hover:bg-red-700 text-white"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
+                <label className="block">
+                  <div className="border-2 border-dashed border-slate-600 rounded-lg p-4 text-center hover:border-blue-500 transition-colors cursor-pointer">
+                    <Upload className="mx-auto mb-2 text-slate-400" size={24} />
+                    <p className="text-slate-300 text-sm">
+                      {state.saving ? 'Uploading...' : 'Click to upload hero image'}
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    onChange={handleHeroImageUpload}
+                    accept="image/*"
+                    disabled={state.saving}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          </section>
+
+          {/* Gallery */}
+          <section>
+            <h2 className="text-xl font-bold text-white mb-6">Gallery</h2>
+
+            {project.gallery.length > 0 && (
+              <div className="mb-6 grid grid-cols-3 gap-4">
+                {project.gallery.map((url, idx) => (
+                  <div key={idx} className="relative rounded-lg overflow-hidden border border-slate-600 aspect-video">
+                    {url.includes('/video/') || url.endsWith('.mp4') ? (
+                      <video src={url} className="w-full h-full object-cover" />
+                    ) : (
+                      <img src={url} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                    )}
+                    <button
+                      onClick={() =>
+                        updateField(
+                          'gallery',
+                          project.gallery.filter((_, i) => i !== idx)
+                        )
+                      }
+                      className="absolute top-2 right-2 p-1 bg-red-600 rounded hover:bg-red-700 text-white"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <label className="block">
+              <div className="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors cursor-pointer">
+                <Plus className="mx-auto mb-2 text-slate-400" size={24} />
+                <p className="text-slate-300 text-sm">
+                  {state.uploadingGallery ? 'Uploading...' : 'Click to add gallery images'}
+                </p>
+              </div>
+              <input
+                type="file"
+                onChange={handleGalleryUpload}
+                accept="image/*,video/*"
+                disabled={state.uploadingGallery}
+                className="hidden"
+              />
+            </label>
+          </section>
+
+          {/* SEO */}
+          <section>
+            <h2 className="text-xl font-bold text-white mb-6">SEO</h2>
+            <div className="space-y-4">
+              <input
+                type="text"
+                value={project.seoTitle}
+                onChange={e => updateField('seoTitle', e.target.value)}
+                placeholder="SEO Title"
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <textarea
+                value={project.seoDescription}
+                onChange={e => updateField('seoDescription', e.target.value)}
+                placeholder="SEO Meta Description"
+                rows={2}
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              />
+              <input
+                type="text"
+                value={project.seoKeywords}
+                onChange={e => updateField('seoKeywords', e.target.value)}
+                placeholder="SEO Keywords (comma-separated)"
+                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </section>
+
+          {/* Status */}
+          <section>
+            <h2 className="text-xl font-bold text-white mb-6">Status</h2>
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={project.status === 'published'}
+                    onChange={e =>
+                      updateField('status', e.target.checked ? 'published' : 'draft')
+                    }
+                    className="w-4 h-4 rounded border-slate-600 text-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-white font-medium">
+                    {project.status === 'published' ? (
+                      <>
+                        <Eye className="inline mr-2" size={16} /> Published
+                      </>
+                    ) : (
+                      <>
+                        <EyeOff className="inline mr-2" size={16} /> Draft
+                      </>
+                    )}
+                  </span>
+                </label>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={project.isFeatured}
+                    onChange={e => updateField('isFeatured', e.target.checked)}
+                    className="w-4 h-4 rounded border-slate-600 text-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-white font-medium">⭐ Featured Project</span>
+                </label>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="mt-8 flex gap-4 justify-end">
+          {onCancel && (
+            <button
+              onClick={onCancel}
+              className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+          <button
+            onClick={handleSave}
+            disabled={state.saving || !project.name.trim()}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 text-white font-medium rounded-lg transition-colors"
+          >
+            {state.saving ? (
+              <>
+                <Loader2 className="animate-spin" size={18} />
+                Saving...
+              </>
+            ) : (
+              <>
+                <CheckCircle size={18} />
+                {projectId ? 'Update Project' : 'Create Project'}
+              </>
+            )}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
+
+export default ProjectEditor;
