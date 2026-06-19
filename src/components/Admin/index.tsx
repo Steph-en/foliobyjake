@@ -183,9 +183,12 @@ export default function AdminIndex() {
           )}
           {activeTab === 'project-editor' && (
             <ProjectEditor
-              projectId={editingProjectId}
-              onBack={() => setActiveTab('projects')}
-              onSaved={() => {
+              projectId={editingProjectId || undefined}
+              onCancel={() => {
+                setActiveTab('projects');
+                setEditingProjectId(null);
+              }}
+              onSave={() => {
                 setActiveTab('projects');
                 setEditingProjectId(null);
               }}

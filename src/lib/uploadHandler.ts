@@ -5,8 +5,8 @@
  * - Consistent behavior across all environments
  */
 
-const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'degd6ahfu';
-const FORCE_CLOUDINARY = import.meta.env.VITE_FORCE_CLOUDINARY_UPLOADS === 'true';
+const CLOUDINARY_CLOUD_NAME = (import.meta as any).env?.VITE_CLOUDINARY_CLOUD_NAME || 'degd6ahfu';
+const FORCE_CLOUDINARY = (import.meta as any).env?.VITE_FORCE_CLOUDINARY_UPLOADS === 'true';
 const VERCEL = !!process.env.VERCEL || window.location.hostname.includes('vercel.app');
 
 /**

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { smartUpload, getUploadEnvironmentInfo } from '../../lib/uploadHandler';
-import { Trash2, Upload, Link as LinkIcon, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Trash2, Upload, Link as LinkIcon, Loader2, AlertCircle, CheckCircle, Search, ExternalLink, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
 
 interface MediaAsset {
   id: string;
@@ -17,20 +17,9 @@ interface UploadState {
   progress: number;
 }
 
-interface TabType {
-  id: 'upload' | 'url' | 'library';
-  label: string;
-}
-
-const TABS: TabType[] = [
-  { id: 'upload', label: 'Upload File' },
-  { id: 'url', label: 'Add URL' },
-  { id: 'library', label: 'Media Library' }
-];
-
 export function MediaManager() {
-  const [activeTab, setActiveTab] = useState<'upload' | 'url' | 'library'>('library');
   const [media, setMedia] = useState<MediaAsset[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [uploadState, setUploadState] = useState<UploadState>({
     isLoading: false,
     error: '',
@@ -217,263 +206,289 @@ export function MediaManager() {
     }
   };
 
-  // ── Get Thumbnail URL ──
-  const getThumbnail = (asset: MediaAsset) => {
-    if (asset.type === 'image') {
-      return asset.url;
-    }
-    // For videos, try to get a thumbnail from Cloudinary or show a placeholder
-    if (asset.url.includes('cloudinary')) {
-      return asset.url.replace('/video/', '/image/').replace(/\.[^.]+$/, '.jpg');
-    }
-    return undefined;
-  };
+  // ── Filtered Media based on user input search query ──
+  const filteredMedia = media.filter(asset => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return true;
+    return (
+      asset.name?.toLowerCase().includes(query) ||
+      asset.url?.toLowerCase().includes(query) ||
+      asset.type?.toLowerCase().includes(query)
+    );
+  });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Media Manager</h1>
-          <p className="text-slate-400">Upload and manage your portfolio assets</p>
+    <div className="space-y-8 animate-fade-in text-zinc-100 font-sans min-h-screen bg-black pb-12">
+      {/* 1. Header Layout */}
+      <div className="pb-6 border-b border-zinc-900/80">
+        <h1 className="text-3xl font-bold uppercase tracking-tight text-white font-sans">ASSETS MANAGER</h1>
+        <p className="text-xs text-zinc-500 mt-1 font-sans">
+          Curate optimized Cloudinary videos, image hooks, and mock templates
+        </p>
+      </div>
+
+      {/* Success Notification */}
+      {successMessage && (
+        <div className="p-3 bg-emerald-950/20 border border-emerald-900/30 rounded-xl flex items-center gap-2.5 text-emerald-400 text-xs font-mono">
+          <CheckCircle size={14} className="shrink-0" />
+          <span>{successMessage}</span>
         </div>
+      )}
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-slate-700">
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 font-medium transition-all border-b-2 ${
-                activeTab === tab.id
-                  ? 'border-blue-500 text-blue-400'
-                  : 'border-transparent text-slate-400 hover:text-slate-300'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      {/* Error Notification */}
+      {uploadState.error && (
+        <div className="p-3 bg-red-950/20 border border-red-900/30 rounded-xl flex items-center gap-2.5 text-red-400 text-xs font-mono">
+          <AlertCircle size={14} className="shrink-0" />
+          <span>{uploadState.error}</span>
         </div>
+      )}
 
-        {/* Success Message */}
-        {successMessage && (
-          <div className="mb-6 p-4 bg-green-900/20 border border-green-700 rounded-lg flex items-center gap-3 text-green-300">
-            <CheckCircle size={20} />
-            {successMessage}
-          </div>
-        )}
-
-        {/* Error Message */}
-        {uploadState.error && (
-          <div className="mb-6 p-4 bg-red-900/20 border border-red-700 rounded-lg flex items-center gap-3 text-red-300">
-            <AlertCircle size={20} />
-            {uploadState.error}
-          </div>
-        )}
-
-        {/* ── TAB: Upload File ── */}
-        {activeTab === 'upload' && (
-          <div className="bg-slate-800 rounded-lg p-8 border border-slate-700">
-            <div className="max-w-2xl">
-              <label className="block mb-4">
-                <span className="text-white font-medium mb-2 block">Asset Name (optional)</span>
-                <input
-                  type="text"
-                  value={nameInput}
-                  onChange={e => setNameInput(e.target.value)}
-                  placeholder="e.g., Hero Image, Logo Animation"
-                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </label>
-
-              <label className="block">
-                <span className="text-white font-medium mb-4 block">Choose File</span>
-                <div className="relative">
-                  <input
-                    type="file"
-                    onChange={handleFileUpload}
-                    disabled={uploadState.isLoading}
-                    accept="image/*,video/*"
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
-                  />
-                  <div className="border-2 border-dashed border-slate-600 rounded-lg p-8 text-center hover:border-blue-500 transition-colors">
-                    <Upload className="mx-auto mb-4 text-slate-400" size={40} />
-                    <p className="text-white font-medium mb-1">
-                      {uploadState.isLoading ? 'Uploading...' : 'Click to upload or drag and drop'}
-                    </p>
-                    <p className="text-slate-400 text-sm">PNG, JPG, GIF, MP4, MOV (max 100MB)</p>
-                  </div>
-                </div>
-              </label>
-
-              {uploadState.isLoading && (
-                <div className="mt-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Loader2 className="animate-spin text-blue-400" size={20} />
-                    <span className="text-slate-300">Uploading {uploadState.progress}%</span>
-                  </div>
-                  <div className="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-blue-500 h-full transition-all"
-                      style={{ width: `${uploadState.progress}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ── TAB: Add URL ── */}
-        {activeTab === 'url' && (
-          <div className="bg-slate-800 rounded-lg p-8 border border-slate-700">
-            <div className="max-w-2xl">
-              <label className="block mb-4">
-                <span className="text-white font-medium mb-2 block">Asset Name</span>
-                <input
-                  type="text"
-                  value={nameInput}
-                  onChange={e => setNameInput(e.target.value)}
-                  placeholder="e.g., Cloudinary Image"
-                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </label>
-
-              <label className="block mb-6">
-                <span className="text-white font-medium mb-2 block">Asset URL</span>
-                <input
-                  type="url"
-                  value={urlInput}
-                  onChange={e => setUrlInput(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </label>
-
-              <button
-                onClick={handleAddUrl}
-                disabled={uploadState.isLoading || !urlInput.trim() || !nameInput.trim()}
-                className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 text-white font-medium rounded-lg transition-colors"
-              >
-                {uploadState.isLoading ? (
-                  <>
-                    <Loader2 className="animate-spin" size={18} />
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <LinkIcon size={18} />
-                    Add to Library
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ── TAB: Media Library ── */}
-        {activeTab === 'library' && (
+      {/* 2. Main Double-Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Left Column: ADD NEW MEDIA ASSET form */}
+        <div className="lg:col-span-4 bg-[#09090b] border border-zinc-900 rounded-3xl p-6 space-y-6">
           <div>
-            {mediaLoading ? (
-              <div className="text-center py-12">
-                <Loader2 className="animate-spin text-blue-400 mx-auto mb-4" size={40} />
-                <p className="text-slate-400">Loading media library...</p>
+            <h2 className="text-xs font-bold font-mono tracking-widest text-zinc-200 uppercase">ADD NEW MEDIA ASSET</h2>
+            <p className="text-[10px] text-zinc-500 mt-1.5 leading-relaxed">
+              Upload local image/video files, or register external URL references to curate your dynamic library.
+            </p>
+          </div>
+
+          {/* Section 1: UPLOAD LOCAL FILE */}
+          <div className="space-y-3">
+            <div className="text-[10px] font-mono tracking-widest text-zinc-400 uppercase flex items-center gap-1.5">
+              <span>📤</span>
+              <span>1. UPLOAD LOCAL FILE</span>
+            </div>
+
+            <div className="relative group">
+              {/* Invisible file input covering the area */}
+              <input
+                type="file"
+                onChange={handleFileUpload}
+                disabled={uploadState.isLoading}
+                accept="image/*,video/*"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-20"
+              />
+              
+              {/* Box dropzone */}
+              <div className="border border-dashed border-zinc-800 bg-[#121214]/20 rounded-2xl p-7 text-center group-hover:border-zinc-700 transition-colors relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-[#121214] border border-zinc-900 flex items-center justify-center mx-auto mb-3">
+                  <Upload className="text-zinc-500" size={16} />
+                </div>
+                <p className="text-zinc-200 text-xs font-semibold">Click to upload or drag & drop</p>
+                <p className="text-[9px] font-mono text-zinc-505 mt-1 tracking-wider uppercase">SUPPORTS IMAGE / VIDEO FORMATS</p>
               </div>
-            ) : media.length === 0 ? (
-              <div className="bg-slate-800 rounded-lg p-12 text-center border border-slate-700">
-                <Upload className="mx-auto mb-4 text-slate-500" size={40} />
-                <p className="text-slate-400 text-lg">No media uploaded yet</p>
-                <p className="text-slate-500 mt-2">Use the Upload or Add URL tabs to get started</p>
+
+              {/* Upload Button */}
+              <div className="w-full border border-zinc-800 hover:border-zinc-700 bg-transparent text-zinc-400 font-mono tracking-widest text-[9px] uppercase py-3 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer mt-3 relative z-10">
+                <Upload size={12} className="text-zinc-500" />
+                <span>UPLOAD FILE</span>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {media.map(asset => (
+            </div>
+
+            {/* Spinner Progress bar if uploading */}
+            {uploadState.isLoading && (
+              <div className="space-y-2 pt-2">
+                <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-400">
+                  <Loader2 className="animate-spin text-white" size={12} />
+                  <span>Configuring assets directory...</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Separation Divider */}
+          <div className="flex items-center gap-3 text-[9px] font-mono tracking-widest text-zinc-600 uppercase select-none">
+            <span className="h-[1px] flex-grow bg-zinc-900" />
+            <span>OR REGISTRATION LINK</span>
+            <span className="h-[1px] flex-grow bg-zinc-900" />
+          </div>
+
+          {/* Section 2: IMPORT LINK */}
+          <div className="space-y-4">
+            <div className="text-[10px] font-mono tracking-widest text-zinc-400 uppercase flex items-center gap-1.5">
+              <span>🔗</span>
+              <span>2. IMPORT LINK</span>
+            </div>
+
+            {/* Field: Display Name */}
+            <div>
+              <label className="block text-[9px] font-mono tracking-widest text-zinc-500 mb-1.5 uppercase">DISPLAY NAME</label>
+              <input
+                type="text"
+                value={nameInput}
+                onChange={e => setNameInput(e.target.value)}
+                placeholder="e.g. Hero Motion Video"
+                className="w-full px-4 py-3 bg-[#121214] border border-zinc-900 rounded-xl text-zinc-200 placeholder-zinc-700 focus:border-zinc-700 focus:outline-none transition-colors text-xs font-mono"
+              />
+            </div>
+
+            {/* Field: Absolute File URL */}
+            <div>
+              <label className="block text-[9px] font-mono tracking-widest text-zinc-500 mb-1.5 uppercase">ABSOLUTE FILE URL</label>
+              <input
+                type="url"
+                value={urlInput}
+                onChange={e => setUrlInput(e.target.value)}
+                placeholder="https://res.cloudinary.com/..."
+                className="w-full px-4 py-3 bg-[#121214] border border-zinc-900 rounded-xl text-zinc-200 placeholder-zinc-700 focus:border-zinc-700 focus:outline-none transition-colors text-xs font-mono"
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <button
+              onClick={handleAddUrl}
+              disabled={uploadState.isLoading || !urlInput.trim() || !nameInput.trim()}
+              className="w-full bg-white text-black hover:bg-zinc-250 disabled:opacity-30 disabled:hover:bg-white text-xs font-bold uppercase tracking-widest py-3.5 px-4 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 font-sans"
+            >
+              <span>+ REGISTER ASSET</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Right Column: Search Box & Dynamic Cards Grid */}
+        <div className="lg:col-span-8 space-y-6">
+          
+          {/* A. Search Filtering Input */}
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-4 h-4" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Filter assets by name, extension or source URL..."
+              className="w-full pl-11 pr-4 py-3.5 bg-[#09090b] border border-zinc-900 rounded-xl text-zinc-100 placeholder-zinc-600 focus:border-zinc-700 focus:outline-none transition-colors text-xs font-mono"
+            />
+          </div>
+
+          {/* B. Media Grid / Empty / Loader Container */}
+          {mediaLoading ? (
+            <div className="text-center py-24 flex flex-col items-center gap-4 bg-[#09090b]/40 border border-zinc-900 rounded-3xl">
+              <div className="animate-spin rounded-full h-8 w-8 border-2 border-white/90 border-t-transparent" />
+              <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Retrieving media collections from directory...</p>
+            </div>
+          ) : filteredMedia.length === 0 ? (
+            <div className="bg-[#09090b]/40 border border-zinc-900 rounded-3xl p-20 text-center space-y-3">
+              <Upload className="mx-auto text-zinc-700" size={32} />
+              <p className="text-zinc-400 text-xs font-mono uppercase tracking-widest">No matching assets found</p>
+              <p className="text-zinc-650 text-xs">Verify your filters or upload a new record on the side panel</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredMedia.map(asset => {
+                const isVideo = asset.type === 'video';
+                return (
                   <div
                     key={asset.id}
-                    className="bg-slate-800 rounded-lg overflow-hidden border border-slate-700 hover:border-slate-600 transition-all group"
+                    className="bg-[#09090b] border border-[#141418] rounded-2xl p-3.5 hover:border-zinc-800 transition-all group relative flex flex-col justify-between"
                   >
-                    {/* Thumbnail */}
-                    <div className="relative aspect-video bg-slate-900 overflow-hidden">
-                      {asset.type === 'image' ? (
-                        <img
-                          src={asset.url}
-                          alt={asset.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        />
-                      ) : (
-                        <video
-                          src={asset.url}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        />
-                      )}
-                      {asset.type === 'video' && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 group-hover:bg-black/60 transition-colors">
-                          <div className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center">
-                            <div className="w-0 h-0 border-l-6 border-r-3 border-t-4 border-b-4 border-l-white border-r-transparent border-t-transparent border-b-transparent ml-1" />
-                          </div>
+                    <div>
+                      {/* Responsive Frame container */}
+                      <div className="relative aspect-video bg-black rounded-lg overflow-hidden border border-zinc-950 flex items-center justify-center">
+                        {/* Type badge tag on top left */}
+                        <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1 font-mono uppercase text-[8px] font-extrabold tracking-widest">
+                          {isVideo ? (
+                            <span className="bg-zinc-900/90 border border-zinc-800 text-cyan-400 px-2 py-1 rounded flex items-center gap-1 backdrop-blur-md">
+                              <VideoIcon size={8} /> VIDEO
+                            </span>
+                          ) : (
+                            <span className="bg-[#c4f822] text-black px-2 py-1 rounded flex items-center gap-1 font-black">
+                              <ImageIcon size={8} /> PHOTO
+                            </span>
+                          )}
                         </div>
-                      )}
-                    </div>
 
-                    {/* Info */}
-                    <div className="p-4">
-                      <h3 className="text-white font-medium truncate mb-1">{asset.name}</h3>
-                      <p className="text-slate-400 text-sm mb-3">
-                        {asset.type === 'image' ? '🖼️ Image' : '🎥 Video'} • {asset.size}
-                      </p>
+                        {/* Preview Loader */}
+                        {isVideo ? (
+                          <video
+                            src={asset.url}
+                            preload="metadata"
+                            muted
+                            playsInline
+                            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
+                          />
+                        ) : (
+                          <img
+                            src={asset.url}
+                            alt={asset.name}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
+                          />
+                        )}
 
-                      {/* URL Copy */}
-                      <input
-                        type="text"
-                        value={asset.url}
-                        readOnly
-                        className="w-full px-2 py-1.5 bg-slate-700 border border-slate-600 rounded text-slate-300 text-xs font-mono mb-3 focus:outline-none"
-                      />
+                        {/* Video custom center overlay indicator */}
+                        {isVideo && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/45 transition-colors duration-300">
+                            <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center bg-zinc-950/60 backdrop-blur-md">
+                              <span className="w-0 h-0 border-l-[6px] border-y-[4px] border-l-white border-y-transparent ml-0.5" />
+                            </div>
+                          </div>
+                        )}
+                      </div>
 
-                      {/* Actions */}
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() =>
-                            navigator.clipboard.writeText(asset.url).then(() =>
-                              setSuccessMessage('✓ URL copied')
-                            )
-                          }
-                          className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded transition-colors"
-                        >
-                          Copy URL
-                        </button>
-                        <button
-                          onClick={() =>
-                            window.open(asset.url, '_blank')
-                          }
-                          className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded transition-colors"
-                        >
-                          View
-                        </button>
-                        <button
-                          onClick={() => setDeleteConfirm(asset.id)}
-                          className="px-3 py-2 bg-red-900/30 hover:bg-red-900/60 text-red-400 rounded transition-colors"
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                      {/* Display Info */}
+                      <div className="mt-3.5 leading-snug">
+                        <h3 className="text-xs font-bold uppercase tracking-wide text-zinc-100 truncate px-1" title={asset.name}>
+                          {asset.name}
+                        </h3>
+                        <p className="text-[10px] font-mono text-zinc-500 truncate mt-0.5 px-1" title={asset.url}>
+                          {asset.url}
+                        </p>
                       </div>
                     </div>
 
-                    {/* Delete Confirmation */}
+                    {/* Operational controls */}
+                    <div className="flex gap-2 items-center mt-4 pt-2 border-t border-zinc-900/40">
+                      {/* Copy link option */}
+                      <button
+                        onClick={() => {
+                          const urlToCopy = asset.url;
+                          navigator.clipboard.writeText(urlToCopy).then(() => {
+                            setSuccessMessage('✓ URL copied to clipboard');
+                            setTimeout(() => setSuccessMessage(''), 2000);
+                          });
+                        }}
+                        className="flex-1 py-2 px-3 bg-[#121214] border border-zinc-900 text-zinc-400 hover:text-zinc-100 transition-colors cursor-pointer text-[9px] uppercase tracking-widest font-mono rounded-lg flex items-center justify-center gap-1.5"
+                      >
+                        <span>GET URL</span>
+                      </button>
+
+                      {/* External view option */}
+                      <button
+                        onClick={() => window.open(asset.url, '_blank')}
+                        className="w-9 h-9 border border-zinc-900 bg-[#121214] text-zinc-450 hover:text-white transition-colors cursor-pointer rounded-lg flex items-center justify-center"
+                        title="Open asset externally"
+                      >
+                        <ExternalLink size={12} />
+                      </button>
+
+                      {/* Permanent removal option */}
+                      <button
+                        onClick={() => setDeleteConfirm(asset.id)}
+                        className="w-9 h-9 border border-zinc-900 bg-[#121214] text-red-400/80 hover:text-red-400 hover:bg-red-950/20 hover:border-red-900 transition-colors cursor-pointer rounded-lg flex items-center justify-center"
+                        title="Delete asset from catalog"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+
+                    {/* Standard overlay confirm screen */}
                     {deleteConfirm === asset.id && (
-                      <div className="absolute inset-0 bg-black/80 flex items-center justify-center rounded-lg">
-                        <div className="bg-slate-900 p-4 rounded-lg border border-slate-700">
-                          <p className="text-white mb-4 font-medium">Delete "{asset.name}"?</p>
-                          <div className="flex gap-2">
+                      <div className="absolute inset-0 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 z-30 rounded-2xl">
+                        <div className="text-center space-y-4 max-w-[200px]">
+                          <p className="text-zinc-300 text-[10px] font-mono uppercase tracking-wider">Delete "{asset.name}"?</p>
+                          <div className="flex gap-2 justify-center">
                             <button
                               onClick={() => handleDelete(asset.id)}
-                              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded font-medium transition-colors"
+                              className="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white font-extrabold uppercase tracking-widest text-[9px] rounded-lg cursor-pointer"
                             >
-                              Delete
+                              Confirm
                             </button>
                             <button
                               onClick={() => setDeleteConfirm(null)}
-                              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded font-medium transition-colors"
+                              className="px-3.5 py-1.5 bg-zinc-900 border border-zinc-850 text-zinc-400 hover:text-white font-mono uppercase tracking-widest text-[9px] rounded-lg cursor-pointer"
                             >
                               Cancel
                             </button>
@@ -482,11 +497,12 @@ export function MediaManager() {
                       </div>
                     )}
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );
