@@ -506,7 +506,7 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
       </div>
 
       {/* ── Subsections according to active selection ── */}
-      <div className="bg-[#09090b] border border-zinc-900 rounded-[28px] p-8 min-h-[450px]">
+      <div className="bg-[#09090b] border border-zinc-900 rounded-[28px] p-8 min-h-112.5">
         
         {/* TAB 1: PRIMARY DETAILS */}
         {activeTab === 'primary' && (
@@ -534,7 +534,7 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
                 <select
                   value={project.category}
                   onChange={e => updateField('category', e.target.value)}
-                  className="w-full px-4 py-3.5 bg-[#121214] border border-zinc-900 rounded-xl text-zinc-200 focus:border-zinc-700 focus:outline-none transition-colors text-xs font-mono cursor-pointer h-[46px]"
+                  className="w-full px-4 py-3.5 bg-[#121214] border border-zinc-900 rounded-xl text-zinc-200 focus:border-zinc-700 focus:outline-none transition-colors text-xs font-mono cursor-pointer h-11.5"
                 >
                   {categories.map(cat => (
                     <option key={cat} value={cat} className="bg-zinc-950">{cat}</option>
@@ -553,7 +553,7 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
                 <select
                   value={project.status}
                   onChange={e => updateField('status', e.target.value)}
-                  className="w-full px-4 py-3.5 bg-[#121214] border border-zinc-900 rounded-xl text-zinc-200 focus:border-zinc-700 focus:outline-none transition-colors text-xs font-mono cursor-pointer h-[46px]"
+                  className="w-full px-4 py-3.5 bg-[#121214] border border-zinc-900 rounded-xl text-zinc-200 focus:border-zinc-700 focus:outline-none transition-colors text-xs font-mono cursor-pointer h-11.5"
                 >
                   <option value="published" className="bg-zinc-950">Published (Visible on site)</option>
                   <option value="draft" className="bg-zinc-950">Draft Mode (Hidden)</option>
@@ -756,13 +756,13 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
             </div>
 
             {/* Separation divider */}
-            <div className="h-[1px] bg-zinc-900/60 my-6" />
+            <div className="h-px bg-zinc-900/60 my-6" />
 
             {/* Gallery Collection Box */}
             <div className="space-y-4">
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-200">PROJECT GRID GALLERY COLLECTION</h3>
-                <p className="text-[10px] text-zinc-500 font-mono mt-1 font-sans">
+                <p className="text-[10px] text-zinc-500 font-mono mt-1">
                   Add, remove, and drag cards to configure display order.
                 </p>
               </div>
@@ -916,7 +916,7 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-900/40 pb-4">
               <div>
                 <h2 className="text-xs font-bold font-mono tracking-widest text-zinc-500 uppercase">SECTION 3: CUSTOM PAGE ASSEMBLY BUILDER</h2>
-                <p className="text-[10px] text-zinc-500 font-mono mt-0.5 font-sans">
+                <p className="text-[10px] text-zinc-500 font-mono mt-0.5">
                   Mix typography nodes, side-by-side splits & asymmetrical spans
                 </p>
               </div>
@@ -1062,7 +1062,7 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
                                 />
 
                                 {url && (
-                                  <div className="relative aspect-video rounded-lg overflow-hidden border border-zinc-900 mt-2 max-w-[180px] bg-black">
+                                  <div className="relative aspect-video rounded-lg overflow-hidden border border-zinc-900 mt-2 max-w-45 bg-black">
                                     {url.includes('/video/') || url.endsWith('.mp4') ? (
                                       <video src={url} className="w-full h-full object-cover" />
                                     ) : (
@@ -1123,7 +1123,7 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
                                   />
 
                                   {url && (
-                                    <div className="relative aspect-video rounded-lg overflow-hidden border border-zinc-900 mt-2 max-w-[180px] bg-black">
+                                    <div className="relative aspect-video rounded-lg overflow-hidden border border-zinc-900 mt-2 max-w-45 bg-black">
                                       {url.includes('/video/') || url.endsWith('.mp4') ? (
                                         <video src={url} className="w-full h-full object-cover" />
                                       ) : (

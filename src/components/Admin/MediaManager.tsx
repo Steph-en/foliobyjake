@@ -301,9 +301,9 @@ export function MediaManager() {
 
           {/* Separation Divider */}
           <div className="flex items-center gap-3 text-[9px] font-mono tracking-widest text-zinc-600 uppercase select-none">
-            <span className="h-[1px] flex-grow bg-zinc-900" />
+            <span className="h-px grow bg-zinc-900" />
             <span>OR REGISTRATION LINK</span>
-            <span className="h-[1px] flex-grow bg-zinc-900" />
+            <span className="h-px grow bg-zinc-900" />
           </div>
 
           {/* Section 2: IMPORT LINK */}
@@ -422,7 +422,7 @@ export function MediaManager() {
                         {isVideo && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/45 transition-colors duration-300">
                             <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center bg-zinc-950/60 backdrop-blur-md">
-                              <span className="w-0 h-0 border-l-[6px] border-y-[4px] border-l-white border-y-transparent ml-0.5" />
+                              <span className="w-0 h-0 border-l-[6px] border-y-4px border-l-white border-y-transparent ml-0.5" />
                             </div>
                           </div>
                         )}
@@ -477,7 +477,7 @@ export function MediaManager() {
                     {/* Standard overlay confirm screen */}
                     {deleteConfirm === asset.id && (
                       <div className="absolute inset-0 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 z-30 rounded-2xl">
-                        <div className="text-center space-y-4 max-w-[200px]">
+                        <div className="text-center space-y-4 max-w-50">
                           <p className="text-zinc-300 text-[10px] font-mono uppercase tracking-wider">Delete "{asset.name}"?</p>
                           <div className="flex gap-2 justify-center">
                             <button
