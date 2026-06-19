@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { smartUpload } from '@/lib/uploadHandler';
+import { smartUpload } from '../../lib/uploadHandler';
 import { Trash2, Upload, Plus, Loader2, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 
 interface Project {

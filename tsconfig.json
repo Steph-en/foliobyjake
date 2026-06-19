@@ -1,6 +1,12 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2022",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "module": "ESNext",
@@ -15,11 +21,6 @@
     "moduleDetection": "force",
     "allowJs": true,
     "jsx": "react-jsx",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
     "allowImportingTsExtensions": true,
     "noEmit": true
   },

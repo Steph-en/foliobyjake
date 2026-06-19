@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { smartUpload, getUploadEnvironmentInfo } from '@/lib/uploadHandler';
+import { smartUpload, getUploadEnvironmentInfo } from '../../lib/uploadHandler';
 import { Trash2, Upload, Link as LinkIcon, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface MediaAsset {
