@@ -386,7 +386,7 @@ export function MediaManager() {
                   >
                     <div>
                       {/* Responsive Frame container */}
-                      <div className="relative aspect-video bg-black rounded-lg overflow-hidden border border-zinc-950 flex items-center justify-center">
+                      <div className="relative min-h-40 max-h-56 bg-black rounded-lg overflow-hidden border border-zinc-950 flex items-center justify-center p-1">
                         {/* Type badge tag on top left */}
                         <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1 font-mono uppercase text-[8px] font-extrabold tracking-widest">
                           {isVideo ? (
@@ -407,14 +407,14 @@ export function MediaManager() {
                             preload="metadata"
                             muted
                             playsInline
-                            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
+                            className="w-full h-full object-contain group-hover:scale-103 transition-transform duration-300"
                           />
                         ) : (
                           <img
                             src={asset.url}
                             alt={asset.name}
                             referrerPolicy="no-referrer"
-                            className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
+                            className="w-full h-full object-contain group-hover:scale-103 transition-transform duration-300"
                           />
                         )}
 

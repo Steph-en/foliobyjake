@@ -819,26 +819,26 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
                         key={idx}
                         className="bg-[#09090b] border border-[#141418] rounded-xl p-2.5 hover:border-zinc-800 transition-all group flex flex-col justify-between"
                       >
-                        <div className="relative aspect-square rounded-lg overflow-hidden bg-black border border-zinc-950 flex items-center justify-center">
+                        <div className="relative min-h-28 max-h-40 rounded-lg overflow-hidden bg-black border border-zinc-950 flex items-center justify-center p-1">
                           {isVideo ? (
                             <video
                               src={url}
                               preload="metadata"
                               muted
                               playsInline
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
                             />
                           ) : (
                             <img
                               src={url}
                               alt={`Item ${idx + 1}`}
                               referrerPolicy="no-referrer"
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
                             />
                           )}
 
                           {/* Mini visual indicator */}
-                          <div className="absolute top-1.5 left-1.5 bg-black/75 px-1.5 py-0.5 rounded text-[8px] font-mono text-zinc-400 border border-zinc-900">
+                          <div className="absolute top-1.5 left-1.5 bg-black/80 px-1.5 py-0.5 rounded text-[8px] font-mono text-zinc-300 border border-zinc-800 backdrop-blur-xs">
                             {isVideo ? 'VIDEO' : 'IMAGE'}
                           </div>
                         </div>
@@ -1062,11 +1062,11 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
                                 />
 
                                 {url && (
-                                  <div className="relative aspect-video rounded-lg overflow-hidden border border-zinc-900 mt-2 max-w-45 bg-black">
+                                  <div className="relative min-h-24 max-h-36 rounded-lg overflow-hidden border border-zinc-900 mt-2 max-w-45 bg-black flex items-center justify-center p-1">
                                     {url.includes('/video/') || url.endsWith('.mp4') ? (
-                                      <video src={url} className="w-full h-full object-cover" />
+                                      <video src={url} className="w-full h-full object-contain" />
                                     ) : (
-                                      <img src={url} alt="Preview" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                      <img src={url} alt="Preview" referrerPolicy="no-referrer" className="w-full h-full object-contain" />
                                     )}
                                   </div>
                                 )}
@@ -1123,11 +1123,11 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
                                   />
 
                                   {url && (
-                                    <div className="relative aspect-video rounded-lg overflow-hidden border border-zinc-900 mt-2 max-w-45 bg-black">
+                                    <div className="relative min-h-24 max-h-36 rounded-lg overflow-hidden border border-zinc-900 mt-2 max-w-45 bg-black flex items-center justify-center p-1">
                                       {url.includes('/video/') || url.endsWith('.mp4') ? (
-                                        <video src={url} className="w-full h-full object-cover" />
+                                        <video src={url} className="w-full h-full object-contain" />
                                       ) : (
-                                        <img src={url} alt="Preview" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                        <img src={url} alt="Preview" referrerPolicy="no-referrer" className="w-full h-full object-contain" />
                                       )}
                                     </div>
                                   )}

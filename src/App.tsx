@@ -191,6 +191,17 @@ function isVideo(url: string) {
   return url.includes('/video/') || /\.(mp4|webm|mov|avi)$/i.test(url);
 }
 
+// Aspect ratio cache map to avoid layout shifts on re-renders/navigation
+export const aspectCache = new Map<string, { ratio: number; orientation: string; label: string }>();
+
+export function getAspectOrientation(ratio: number): { orientation: string; label: string } {
+  if (ratio >= 2.0) return { orientation: 'panoramic', label: 'Panoramic' };
+  if (ratio >= 1.2) return { orientation: 'landscape', label: 'Landscape' };
+  if (ratio >= 0.85) return { orientation: 'square', label: 'Square' };
+  if (ratio >= 0.6) return { orientation: 'portrait', label: 'Portrait' };
+  return { orientation: 'tall', label: 'Tall Portrait' };
+}
+
 // MediaLoader 
 
 interface MediaLoaderProps {
@@ -200,61 +211,288 @@ interface MediaLoaderProps {
   mediaClassName?: string;
   priority?: boolean;
   transforms?: string;
+  aspectRatio?: number;
+  mode?: 'dynamic' | 'cover' | 'contain';
+  showBadge?: boolean;
+  onAspectRatioChange?: (ratio: number, orientation: string, label: string) => void;
 }
 
 const MediaLoader = memo(function MediaLoader({
   src, alt, className, mediaClassName,
   priority = false,
   transforms = 'f_auto,q_auto:good,w_1400',
+  aspectRatio,
+  mode = 'cover',
+  showBadge = false,
+  onAspectRatioChange,
 }: MediaLoaderProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  
+  const cached = aspectCache.get(src);
+  const [detectedAspect, setDetectedAspect] = useState<number | undefined>(aspectRatio || cached?.ratio);
+  const [aspectOrientation, setAspectOrientation] = useState<string | undefined>(cached?.label);
+
   const wrapperRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const inView = useInView(wrapperRef as React.RefObject<Element>, '300px');
-  const shouldLoad = true; // Always load optimized Cloudinary media to eliminate loading-skeleton flicker
   const isVid = isVideo(src);
   const optimizedSrc = isVid ? src : cldImage(src, transforms);
   const lqipSrc = isVid ? '' : cldLqip(src);
 
-  const onLoad = useCallback(() => {
+  const activeAspect = aspectRatio || detectedAspect;
+
+  const onLoad = useCallback((e?: React.SyntheticEvent<HTMLImageElement | HTMLVideoElement>) => {
     setIsLoaded(true);
-    if (isVid) videoRef.current?.play().catch(() => {});
-  }, [isVid]);
+    if (isVid) {
+      const vid = e?.currentTarget as HTMLVideoElement;
+      if (vid && vid.videoWidth && vid.videoHeight) {
+        const ratio = vid.videoWidth / vid.videoHeight;
+        const meta = getAspectOrientation(ratio);
+        aspectCache.set(src, { ratio, orientation: meta.orientation, label: meta.label });
+        setDetectedAspect(ratio);
+        setAspectOrientation(meta.label);
+        if (onAspectRatioChange) onAspectRatioChange(ratio, meta.orientation, meta.label);
+      }
+      videoRef.current?.play().catch(() => {});
+    } else {
+      const img = e?.currentTarget as HTMLImageElement;
+      if (img && img.naturalWidth && img.naturalHeight) {
+        const ratio = img.naturalWidth / img.naturalHeight;
+        const meta = getAspectOrientation(ratio);
+        aspectCache.set(src, { ratio, orientation: meta.orientation, label: meta.label });
+        setDetectedAspect(ratio);
+        setAspectOrientation(meta.label);
+        if (onAspectRatioChange) onAspectRatioChange(ratio, meta.orientation, meta.label);
+      }
+    }
+  }, [isVid, src, onAspectRatioChange]);
 
   const onError = useCallback(() => { setIsLoaded(true); setHasError(true); }, []);
 
+  const containerStyle: React.CSSProperties = {};
+  if (mode === 'dynamic' && activeAspect) {
+    containerStyle.aspectRatio = `${activeAspect}`;
+  } else if (activeAspect && mode !== 'contain') {
+    containerStyle.aspectRatio = `${activeAspect}`;
+  }
+
   return (
-    <div ref={wrapperRef} className={cn('relative w-full h-full overflow-hidden bg-zinc-900', className)}>
-      {!isVid && lqipSrc && !isLoaded && shouldLoad && (
+    <div
+      ref={wrapperRef}
+      style={containerStyle}
+      className={cn(
+        'relative w-full overflow-hidden bg-zinc-900 transition-[aspect-ratio] duration-300',
+        mode === 'dynamic' ? 'h-auto' : 'h-full',
+        className
+      )}
+    >
+      {!isVid && lqipSrc && !isLoaded && (
         <img src={lqipSrc} alt="" aria-hidden="true"
           className="absolute inset-0 w-full h-full object-cover scale-105 blur-sm" />
       )}
-      {(!shouldLoad || !isLoaded) && !hasError && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center" aria-hidden="true">
-          <Skeleton className="w-10 h-10 rounded-full" />
+
+      {!isLoaded && !hasError && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-zinc-900/60 backdrop-blur-xs" aria-hidden="true">
+          <Skeleton className="w-10 h-10 rounded-full opacity-60" />
         </div>
       )}
+
       {hasError && (
         <p role="img" aria-label="Media unavailable"
           className="absolute inset-0 flex items-center justify-center text-zinc-600 text-xs font-mono uppercase tracking-widest">
           Media unavailable
         </p>
       )}
-      {shouldLoad && !hasError && (
+
+      {showBadge && aspectOrientation && (
+        <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none">
+          <span className="bg-black/80 backdrop-blur-md text-white/90 border border-white/10 text-[9px] font-mono uppercase px-2 py-0.5 rounded tracking-widest font-semibold shadow-md">
+            {aspectOrientation} {activeAspect ? `(${activeAspect >= 1 ? (activeAspect).toFixed(2) : (1/activeAspect).toFixed(2)}:1)` : ''}
+          </span>
+        </div>
+      )}
+
+      {!hasError && (
         isVid
           ? <video ref={videoRef} src={optimizedSrc}
-              className={cn('w-full h-full object-cover transition-opacity duration-700', isLoaded ? 'opacity-100' : 'opacity-0', mediaClassName)}
+              className={cn(
+                'w-full h-full transition-opacity duration-700',
+                mode === 'contain' ? 'object-contain' : 'object-cover',
+                isLoaded ? 'opacity-100' : 'opacity-0',
+                mediaClassName
+              )}
               playsInline loop muted preload={priority ? 'auto' : 'metadata'}
               onLoadedData={onLoad} onError={onError} />
           : <img src={optimizedSrc} alt={alt}
-              className={cn('w-full h-full object-cover transition-opacity duration-700', isLoaded ? 'opacity-100' : 'opacity-0', mediaClassName)}
+              className={cn(
+                'w-full h-full transition-opacity duration-700',
+                mode === 'contain' ? 'object-contain' : 'object-cover',
+                isLoaded ? 'opacity-100' : 'opacity-0',
+                mediaClassName
+              )}
               onLoad={onLoad} onError={onError} referrerPolicy="no-referrer"
               loading={priority ? 'eager' : 'lazy'}
               decoding={priority ? 'sync' : 'async'}
               fetchPriority={priority ? 'high' : 'low'} />
       )}
     </div>
+  );
+});
+
+// Dynamic Lightbox Modal
+interface DynamicLightboxModalProps {
+  gallery: string[];
+  currentIndex: number;
+  workName: string;
+  onClose: () => void;
+  onSelectIndex: (index: number) => void;
+  lightboxRef: React.RefObject<HTMLDivElement | null>;
+  reduced: boolean;
+}
+
+const DynamicLightboxModal = memo(function DynamicLightboxModal({
+  gallery,
+  currentIndex,
+  workName,
+  onClose,
+  onSelectIndex,
+  lightboxRef,
+  reduced,
+}: DynamicLightboxModalProps) {
+  const currentSrc = gallery[currentIndex];
+  const cached = aspectCache.get(currentSrc);
+
+  const [aspectMeta, setAspectMeta] = useState<{ ratio: number; orientation: string; label: string } | null>(
+    cached || null
+  );
+
+  useEffect(() => {
+    const fresh = aspectCache.get(currentSrc);
+    if (fresh) {
+      setAspectMeta(fresh);
+    } else {
+      setAspectMeta(null);
+    }
+  }, [currentSrc]);
+
+  const handlePrev = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSelectIndex((currentIndex - 1 + gallery.length) % gallery.length);
+  }, [currentIndex, gallery.length, onSelectIndex]);
+
+  const handleNext = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSelectIndex((currentIndex + 1) % gallery.length);
+  }, [currentIndex, gallery.length, onSelectIndex]);
+
+  const handleAspectChange = useCallback((ratio: number, orientation: string, label: string) => {
+    setAspectMeta({ ratio, orientation, label });
+  }, []);
+
+  const ratio = aspectMeta?.ratio || 1.6;
+
+  return (
+    <motion.div
+      ref={lightboxRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Fullscreen image ${currentIndex + 1} of ${gallery.length} — ${workName}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: reduced ? 0 : 0.25 }}
+      className="fixed inset-0 z-200 bg-black/92 backdrop-blur-2xl flex flex-col items-center justify-between p-4 md:p-8 select-none overflow-hidden"
+    >
+      {/* Background click listener */}
+      <div className="absolute inset-0 z-0" onClick={onClose} aria-hidden="true" />
+
+      {/* Top Header Controls & Info */}
+      <div className="relative z-10 w-full max-w-7xl flex items-center justify-between px-2 pt-2 md:pt-4">
+        <div className="flex items-center gap-3">
+          <span className="bg-white/10 text-white border border-white/15 text-[10px] font-mono uppercase px-3.5 py-1.5 rounded-full font-bold tracking-widest backdrop-blur-md shadow-lg">
+            {currentIndex + 1} / {gallery.length}
+          </span>
+          {aspectMeta && (
+            <span className="bg-white/5 text-zinc-300 border border-white/10 text-[10px] font-mono uppercase px-3.5 py-1.5 rounded-full tracking-widest hidden sm:inline-block backdrop-blur-md">
+              {aspectMeta.label} ({aspectMeta.ratio >= 1 ? `${aspectMeta.ratio.toFixed(2)}:1` : `1:${(1/aspectMeta.ratio).toFixed(2)}`})
+            </span>
+          )}
+        </div>
+
+        <button
+          className="text-white/80 hover:text-white bg-white/10 hover:bg-white/20 border border-white/15 transition-all p-2.5 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-white shadow-lg"
+          onClick={onClose}
+          aria-label="Close lightbox"
+        >
+          <X size={22} aria-hidden="true" />
+        </button>
+      </div>
+
+      {/* Main Lightbox Body with Prev/Next buttons and Resizing Container */}
+      <div className="relative z-10 w-full flex-1 flex items-center justify-center my-auto p-2">
+        {/* Prev Button */}
+        <button
+          className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-30 text-white/90 hover:text-white bg-black/60 hover:bg-black/90 border border-white/15 p-3.5 md:p-4 rounded-full backdrop-blur-md transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-white shadow-2xl hover:scale-108 active:scale-95"
+          onClick={handlePrev}
+          aria-label="Previous image"
+        >
+          <ChevronLeft size={30} aria-hidden="true" />
+        </button>
+
+        {/* Dynamic Modal Frame that resizes based on image intrinsic aspect ratio */}
+        <motion.div
+          layout
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 32,
+            mass: 0.8
+          }}
+          style={{
+            aspectRatio: `${ratio}`,
+          }}
+          className="relative w-auto h-auto max-w-[88vw] md:max-w-[82vw] max-h-[72vh] md:max-h-[76vh] bg-zinc-950 border border-white/15 rounded-2xl overflow-hidden shadow-[0_25px_70px_-15px_rgba(0,0,0,0.95)] flex items-center justify-center p-1.5 md:p-2.5"
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSrc}
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: reduced ? 0 : 0.2, ease: "easeInOut" }}
+              className="w-full h-full relative flex items-center justify-center overflow-hidden rounded-xl bg-black"
+            >
+              <MediaLoader
+                src={currentSrc}
+                alt={`${workName} — image ${currentIndex + 1} of ${gallery.length}`}
+                transforms="f_auto,q_auto:best,w_2000"
+                mode="contain"
+                showBadge={false}
+                onAspectRatioChange={handleAspectChange}
+                className="w-full h-full max-w-full max-h-full object-contain"
+                priority
+              />
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Next Button */}
+        <button
+          className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-30 text-white/90 hover:text-white bg-black/60 hover:bg-black/90 border border-white/15 p-3.5 md:p-4 rounded-full backdrop-blur-md transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-white shadow-2xl hover:scale-108 active:scale-95"
+          onClick={handleNext}
+          aria-label="Next image"
+        >
+          <ChevronRight size={30} aria-hidden="true" />
+        </button>
+      </div>
+
+      {/* Footer Navigation Hints */}
+      <div className="relative z-10 text-center pb-2">
+        <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/50">
+          Use <kbd className="px-1.5 py-0.5 bg-white/10 rounded border border-white/15 text-white/80 font-bold">←</kbd> <kbd className="px-1.5 py-0.5 bg-white/10 rounded border border-white/15 text-white/80 font-bold">→</kbd> to navigate · <kbd className="px-1.5 py-0.5 bg-white/10 rounded border border-white/15 text-white/80 font-bold">ESC</kbd> to close
+        </p>
+      </div>
+    </motion.div>
   );
 });
 
@@ -916,6 +1154,7 @@ function WorkDetail() {
   const triggerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [galleryLayout, setGalleryLayout] = useState<'masonry' | 'dynamic-grid' | 'full-width'>('masonry');
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -1076,12 +1315,12 @@ function WorkDetail() {
                   );
                 } else if (sec.type === 'side-by-side') {
                   return (
-                    <div key={sec.id} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                    <div key={sec.id} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                       {sec.content.images?.map((imgUrl: string, idx: number) => {
                         if (!imgUrl) return null;
                         return (
-                          <div key={idx} className="aspect-4/3 rounded-xl overflow-hidden bg-zinc-900 border border-white/5">
-                            <MediaLoader src={imgUrl} alt={`Case study side detail ${idx + 1}`} className="w-full h-full" mediaClassName="object-cover w-full h-full" />
+                          <div key={idx} className="rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shadow-lg">
+                            <MediaLoader src={imgUrl} alt={`Case study side detail ${idx + 1}`} mode="dynamic" showBadge />
                           </div>
                         );
                       })}
@@ -1091,12 +1330,12 @@ function WorkDetail() {
                   const layout = sec.content.layoutType || 'asymmetric-left';
                   const isLeftDom = layout === 'asymmetric-left';
                   return (
-                    <div key={sec.id} className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
-                      <div className={`${isLeftDom ? 'md:col-span-8 aspect-16/10' : 'md:col-span-4 aspect-3/4'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5`}>
-                        <MediaLoader src={sec.content.images?.[0] || ''} alt="Case study primary segment" className="w-full h-full" mediaClassName="object-cover w-full h-full" />
+                    <div key={sec.id} className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start">
+                      <div className={`${isLeftDom ? 'md:col-span-8' : 'md:col-span-4'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shadow-lg`}>
+                        <MediaLoader src={sec.content.images?.[0] || ''} alt="Case study primary segment" mode="dynamic" showBadge />
                       </div>
-                      <div className={`${isLeftDom ? 'md:col-span-4 aspect-3/4' : 'md:col-span-8 aspect-16/10'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5`}>
-                        <MediaLoader src={sec.content.images?.[1] || ''} alt="Case study supporting segment" className="w-full h-full" mediaClassName="object-cover w-full h-full" />
+                      <div className={`${isLeftDom ? 'md:col-span-4' : 'md:col-span-8'} rounded-xl overflow-hidden bg-zinc-900 border border-white/5 shadow-lg`}>
+                        <MediaLoader src={sec.content.images?.[1] || ''} alt="Case study supporting segment" mode="dynamic" showBadge />
                       </div>
                     </div>
                   );
@@ -1107,107 +1346,175 @@ function WorkDetail() {
           </section>
         )}
 
-        {/* Gallery */}
+        {/* Dynamic Portfolio Gallery */}
         <section className="py-24 px-6 bg-zinc-950 overflow-hidden" aria-labelledby="gallery-heading"
           style={{ contentVisibility: 'auto', containIntrinsicSize: '0 4000px' } as React.CSSProperties}>
           <div className="max-w-450 mx-auto">
-            <div className="mb-16 md:mb-24">
-              <h2 id="gallery-heading" className="text-4xl md:text-7xl uppercase tracking-tighter font-display leading-none">Selected Works</h2>
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-6">
-                <p className="text-xs font-mono uppercase tracking-widest opacity-40">Gallery / {work.gallery.length} items</p>
-                <p className="text-[10px] font-mono uppercase tracking-widest opacity-40 hidden md:block">Press Enter or click to view full screen</p>
+            <div className="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
+              <div>
+                <h2 id="gallery-heading" className="text-4xl md:text-7xl uppercase tracking-tighter font-display leading-none">Selected Works</h2>
+                <p className="text-xs font-mono uppercase tracking-widest opacity-40 mt-4">
+                  Dynamic Portfolio Gallery / {work.gallery.length} Items
+                </p>
+              </div>
+
+              {/* View Layout Switcher */}
+              <div className="flex items-center gap-2 bg-zinc-900 p-1.5 rounded-full border border-white/10 self-start md:self-auto">
+                <button
+                  onClick={() => setGalleryLayout('masonry')}
+                  className={cn(
+                    'px-4 py-1.5 rounded-full text-[11px] font-mono uppercase tracking-widest transition-all cursor-pointer',
+                    galleryLayout === 'masonry' ? 'bg-white text-black font-bold shadow-lg' : 'text-zinc-400 hover:text-white'
+                  )}
+                >
+                  Masonry
+                </button>
+                <button
+                  onClick={() => setGalleryLayout('dynamic-grid')}
+                  className={cn(
+                    'px-4 py-1.5 rounded-full text-[11px] font-mono uppercase tracking-widest transition-all cursor-pointer',
+                    galleryLayout === 'dynamic-grid' ? 'bg-white text-black font-bold shadow-lg' : 'text-zinc-400 hover:text-white'
+                  )}
+                >
+                  Dynamic Grid
+                </button>
+                <button
+                  onClick={() => setGalleryLayout('full-width')}
+                  className={cn(
+                    'px-4 py-1.5 rounded-full text-[11px] font-mono uppercase tracking-widest transition-all cursor-pointer',
+                    galleryLayout === 'full-width' ? 'bg-white text-black font-bold shadow-lg' : 'text-zinc-400 hover:text-white'
+                  )}
+                >
+                  Full Width
+                </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 lg:gap-16 grid-flow-dense">
-              {work.gallery.map((src, index) => {
-                const mod = index % 8;
-                const isFullWidth = mod === 0 || mod === 5;
-                const isMid = mod === 3 || mod === 7;
-                let spanClass = 'w-full overflow-hidden rounded-xl bg-zinc-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-zinc-950';
-                if (mod === 0)       spanClass += ' md:col-span-12 aspect-[16/9] lg:aspect-[21/9]';
-                else if (mod <= 2)   spanClass += ' md:col-span-6 aspect-[4/5] lg:aspect-square';
-                else if (mod === 3)  spanClass += ' md:col-span-8 aspect-[3/2]';
-                else if (mod === 4)  spanClass += ' md:col-span-4 aspect-[2/3] lg:aspect-[3/4]';
-                else if (mod === 5)  spanClass += ' md:col-span-12 aspect-[16/9]';
-                else if (mod === 6)  spanClass += ' md:col-span-4 aspect-[2/3] lg:aspect-[3/4]';
-                else                 spanClass += ' md:col-span-8 aspect-[3/2]';
-
-                const t = isFullWidth ? 'f_auto,q_auto:good,w_1800' : isMid ? 'f_auto,q_auto:good,w_1200' : 'f_auto,q_auto:good,w_800';
-
-                return (
+            {/* MASONRY LAYOUT (Pinterest / Behance Style) */}
+            {galleryLayout === 'masonry' && (
+              <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 md:gap-8 [column-fill:_balance]">
+                {work.gallery.map((src, index) => (
                   <motion.div
                     key={index}
                     ref={el => { triggerRefs.current[index] = el; }}
-                    className={spanClass}
-                    initial={{ opacity: 0, y: 40 }}
+                    className="mb-6 md:mb-8 break-inside-avoid rounded-2xl overflow-hidden bg-zinc-900 border border-white/5 hover:border-white/20 transition-all cursor-pointer group focus:outline-none focus:ring-2 focus:ring-white"
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-100px' }}
-                    transition={{ duration: reduced ? 0 : 0.8, ease: [0.215, 0.61, 0.355, 1], delay: reduced ? 0 : (index % 3) * 0.1 }}
-                    whileHover={{ scale: 0.995 }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    transition={{ duration: reduced ? 0 : 0.6, delay: (index % 4) * 0.08 }}
                     onClick={() => setLightboxIndex(index)}
                     onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLightboxIndex(index); } }}
                     tabIndex={0}
                     role="button"
-                    aria-label={`Open gallery image ${index + 1} of ${work.gallery.length} in full screen`}
+                    aria-label={`Open image ${index + 1} of ${work.gallery.length} in lightbox`}
                   >
-                    <MediaLoader src={src} alt={`${work.name} — gallery image ${index + 1} of ${work.gallery.length}`} transforms={t}
-                      mediaClassName="hover:scale-105 transition-transform duration-1000" />
+                    <MediaLoader
+                      src={src}
+                      alt={`${work.name} — gallery item ${index + 1}`}
+                      mode="dynamic"
+                      showBadge
+                      transforms="f_auto,q_auto:good,w_1200"
+                      mediaClassName="group-hover:scale-103 transition-transform duration-700 ease-out"
+                    />
                   </motion.div>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            )}
+
+            {/* DYNAMIC GRID LAYOUT */}
+            {galleryLayout === 'dynamic-grid' && (
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start">
+                {work.gallery.map((src, index) => {
+                  const cached = aspectCache.get(src);
+                  const ratio = cached?.ratio || 1;
+                  const isPanorama = ratio >= 1.8;
+                  const isPortrait = ratio <= 0.75;
+
+                  let colSpan = 'md:col-span-6 lg:col-span-4';
+                  if (isPanorama) colSpan = 'md:col-span-12';
+                  else if (isPortrait) colSpan = 'md:col-span-6 lg:col-span-3';
+
+                  return (
+                    <motion.div
+                      key={index}
+                      ref={el => { triggerRefs.current[index] = el; }}
+                      className={cn(
+                        colSpan,
+                        'rounded-2xl overflow-hidden bg-zinc-900 border border-white/5 hover:border-white/20 transition-all cursor-pointer group focus:outline-none focus:ring-2 focus:ring-white'
+                      )}
+                      initial={{ opacity: 0, y: 30 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: '-50px' }}
+                      transition={{ duration: reduced ? 0 : 0.6 }}
+                      onClick={() => setLightboxIndex(index)}
+                      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLightboxIndex(index); } }}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Open image ${index + 1} of ${work.gallery.length}`}
+                    >
+                      <MediaLoader
+                        src={src}
+                        alt={`${work.name} — gallery item ${index + 1}`}
+                        mode="dynamic"
+                        showBadge
+                        transforms="f_auto,q_auto:good,w_1600"
+                        mediaClassName="group-hover:scale-103 transition-transform duration-700 ease-out"
+                      />
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* FULL WIDTH SHOWCASE */}
+            {galleryLayout === 'full-width' && (
+              <div className="space-y-12 md:space-y-16 max-w-5xl mx-auto">
+                {work.gallery.map((src, index) => (
+                  <motion.div
+                    key={index}
+                    ref={el => { triggerRefs.current[index] = el; }}
+                    className="rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 hover:border-white/30 transition-all cursor-pointer group focus:outline-none focus:ring-2 focus:ring-white shadow-2xl"
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    transition={{ duration: reduced ? 0 : 0.8 }}
+                    onClick={() => setLightboxIndex(index)}
+                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLightboxIndex(index); } }}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`Open image ${index + 1} of ${work.gallery.length}`}
+                  >
+                    <MediaLoader
+                      src={src}
+                      alt={`${work.name} — gallery item ${index + 1}`}
+                      mode="dynamic"
+                      showBadge
+                      transforms="f_auto,q_auto:best,w_2000"
+                      mediaClassName="group-hover:scale-102 transition-transform duration-700 ease-out"
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
-        {/* Lightbox */}
+      {/* Lightbox */}
         <AnimatePresence>
           {lightboxIndex !== null && (
-            <motion.div
-              ref={lightboxRef}
-              role="dialog" aria-modal="true"
-              aria-label={`Fullscreen image ${lightboxIndex + 1} of ${work.gallery.length} — ${work.name}`}
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-200 bg-black/98 flex items-center justify-center p-4 md:p-12"
-            >
-              <div className="absolute inset-0" onClick={() => setLightboxIndex(null)} aria-hidden="true" />
-
-              <button
-                className="absolute top-8 right-8 text-white hover:text-zinc-400 z-210 p-2 focus:outline-none focus:ring-2 focus:ring-white rounded-full"
-                onClick={() => { setLightboxIndex(null); triggerRefs.current[lightboxIndex]?.focus(); }}
-                aria-label="Close lightbox"
-              ><X size={32} aria-hidden="true" /></button>
-
-              <button
-                className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white hover:text-zinc-400 z-210 p-4 bg-black/20 rounded-full backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white"
-                onClick={e => { e.stopPropagation(); setLightboxIndex(p => p !== null ? (p - 1 + work.gallery.length) % work.gallery.length : null); }}
-                aria-label="Previous image"
-              ><ChevronLeft size={40} aria-hidden="true" /></button>
-
-              <button
-                className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white hover:text-zinc-400 z-210 p-4 bg-black/20 rounded-full backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white"
-                onClick={e => { e.stopPropagation(); setLightboxIndex(p => p !== null ? (p + 1) % work.gallery.length : null); }}
-                aria-label="Next image"
-              ><ChevronRight size={40} aria-hidden="true" /></button>
-
-              <div className="relative w-full max-w-[95vw] md:max-w-7xl max-h-[95vh] md:max-h-[85vh] p-2 md:p-8 flex flex-col items-center justify-center mx-auto">
-                <motion.div key={`lb-${lightboxIndex}`}
-                  initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                  transition={{ duration: reduced ? 0 : 0.3 }}
-                  className="flex-1 w-full md:h-[85vh] flex items-center justify-center"
-                >
-                  <MediaLoader src={work.gallery[lightboxIndex]}
-                    alt={`${work.name} — image ${lightboxIndex + 1} of ${work.gallery.length}`}
-                    transforms="f_auto,q_auto:best,w_2000"
-                    className="w-auto h-auto max-w-full md:max-w-7xl max-h-full object-contain rounded-lg shadow-2xl"
-                    priority />
-                </motion.div>
-                <p role="status" aria-live="polite" aria-atomic="true"
-                  className="mt-4 text-xs font-mono uppercase tracking-widest opacity-60">
-                  {lightboxIndex + 1} / {work.gallery.length}
-                </p>
-              </div>
-            </motion.div>
+            <DynamicLightboxModal
+              gallery={work.gallery}
+              currentIndex={lightboxIndex}
+              workName={work.name}
+              onClose={() => {
+                const idx = lightboxIndex;
+                setLightboxIndex(null);
+                triggerRefs.current[idx]?.focus();
+              }}
+              onSelectIndex={(index) => setLightboxIndex(index)}
+              lightboxRef={lightboxRef}
+              reduced={reduced}
+            />
           )}
         </AnimatePresence>
 
