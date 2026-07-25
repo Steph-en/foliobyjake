@@ -227,19 +227,6 @@ export default function Dashboard({ onNavigateToTab }: DashboardProps) {
                 </div>
               </button>
 
-              <button
-                onClick={() => onNavigateToTab('media')}
-                className="flex items-center gap-3 p-4 bg-zinc-900 border border-zinc-800 rounded-xl text-left hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-1 focus:ring-white"
-              >
-                <div className="h-8 w-8 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0">
-                  <ImageIcon size={16} className="text-zinc-300" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-white">Assets Library</h4>
-                  <p className="text-[10px] text-zinc-500 font-mono">Browse copies and file links</p>
-                </div>
-              </button>
-
               <a
                 href="/"
                 target="_blank"

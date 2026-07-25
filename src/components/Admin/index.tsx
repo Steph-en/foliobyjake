@@ -37,7 +37,7 @@ export default function AdminIndex() {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={16} /> },
     { id: 'projects', label: 'Works Catalog', icon: <FolderKanban size={16} /> },
-    { id: 'media', label: 'Assets Media', icon: <Images size={16} /> },
+    // { id: 'media', label: 'Assets Media', icon: <Images size={16} /> },
     { id: 'categories', label: 'Categories', icon: <Layers size={16} /> },
   ];
 

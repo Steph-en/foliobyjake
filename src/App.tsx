@@ -304,14 +304,6 @@ const MediaLoader = memo(function MediaLoader({
         </p>
       )}
 
-      {showBadge && aspectOrientation && (
-        <div className="absolute top-2.5 left-2.5 z-20 pointer-events-none">
-          <span className="bg-black/80 backdrop-blur-md text-white/90 border border-white/10 text-[9px] font-mono uppercase px-2 py-0.5 rounded tracking-widest font-semibold shadow-md">
-            {aspectOrientation} {activeAspect ? `(${activeAspect >= 1 ? (activeAspect).toFixed(2) : (1/activeAspect).toFixed(2)}:1)` : ''}
-          </span>
-        </div>
-      )}
-
       {!hasError && (
         isVid
           ? <video ref={videoRef} src={optimizedSrc}
