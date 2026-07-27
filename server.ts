@@ -68,6 +68,7 @@ app.use((req, res, next) => {
 // ── Filesystem Paths ──
 const DB_DIR = path.join(process.cwd(), "data");
 const DB_FILE = path.join(DB_DIR, "db.json");
+const TMP_DB_FILE = path.join("/tmp", "db.json");
 const UPLOADS_DIR = path.join(process.cwd(), "uploads");
 
 // ── Directory Creation (skip on Vercel) ──
@@ -402,24 +403,48 @@ interface LocalDatabase {
 }
 
 // ── Database Initialization ──
-let db: LocalDatabase = {
-  projects: INITIAL_WORKS,
-  categories: INITIAL_CATEGORIES,
-  media: INITIAL_MEDIA,
-  contactsCount: 14
-};
-
-// Load from file (local/Gemini only)
-if (!IS_VERCEL && fs.existsSync(DB_FILE)) {
-  try {
-    const rawData = fs.readFileSync(DB_FILE, "utf-8");
-    if (rawData && rawData.trim()) {
-      db = JSON.parse(rawData);
+function loadDb(): LocalDatabase {
+  let rawData = "";
+  if (fs.existsSync(DB_FILE)) {
+    try {
+      rawData = fs.readFileSync(DB_FILE, "utf-8");
+    } catch (err) {
+      console.warn("Could not read DB_FILE:", err);
     }
-  } catch (err) {
-    console.warn("Failed to read db.json, using defaults:", err);
   }
+  if (!rawData && fs.existsSync(TMP_DB_FILE)) {
+    try {
+      rawData = fs.readFileSync(TMP_DB_FILE, "utf-8");
+    } catch (err) {
+      console.warn("Could not read TMP_DB_FILE:", err);
+    }
+  }
+
+  if (rawData && rawData.trim()) {
+    try {
+      const parsed = JSON.parse(rawData);
+      if (parsed && typeof parsed === "object") {
+        return {
+          projects: Array.isArray(parsed.projects) ? parsed.projects : INITIAL_WORKS,
+          categories: Array.isArray(parsed.categories) ? parsed.categories : INITIAL_CATEGORIES,
+          media: Array.isArray(parsed.media) ? parsed.media : INITIAL_MEDIA,
+          contactsCount: typeof parsed.contactsCount === "number" ? parsed.contactsCount : 14
+        };
+      }
+    } catch (err) {
+      console.warn("Failed to parse saved db.json:", err);
+    }
+  }
+
+  return {
+    projects: INITIAL_WORKS,
+    categories: INITIAL_CATEGORIES,
+    media: INITIAL_MEDIA,
+    contactsCount: 14
+  };
 }
+
+let db: LocalDatabase = loadDb();
 
 // Safety checks
 if (!db || typeof db !== "object") {
@@ -437,20 +462,60 @@ if (typeof db.contactsCount !== "number") db.contactsCount = 14;
 
 // ── Save Database Function ──
 function saveDb() {
-  // Skip persistence on Vercel
-  if (IS_VERCEL) {
-    console.log("ℹ Vercel: Changes exist only in memory (lost on restart)");
-    return;
-  }
-  
+  const jsonStr = JSON.stringify(db, null, 2);
+  let saved = false;
+
   try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+    if (!fs.existsSync(DB_DIR)) {
+      fs.mkdirSync(DB_DIR, { recursive: true });
+    }
+    fs.writeFileSync(DB_FILE, jsonStr);
+    saved = true;
   } catch (err) {
-    console.warn("Unable to write db.json: changes won't persist.", err);
+    console.warn("Unable to write data/db.json:", err);
+  }
+
+  if (!saved) {
+    try {
+      fs.writeFileSync(TMP_DB_FILE, jsonStr);
+      console.log("✓ Saved database backup to /tmp/db.json");
+    } catch (err) {
+      console.warn("Unable to write /tmp/db.json:", err);
+    }
   }
 }
 
 // ───── API ROUTES ─────
+
+// Full DB Synchronization Route (allows client state restoration)
+app.post("/api/sync", (req, res) => {
+  const { projects, categories, media } = req.body;
+  let updated = false;
+
+  if (Array.isArray(projects)) {
+    db.projects = projects;
+    updated = true;
+  }
+  if (Array.isArray(categories)) {
+    db.categories = categories;
+    updated = true;
+  }
+  if (Array.isArray(media)) {
+    db.media = media;
+    updated = true;
+  }
+
+  if (updated) {
+    saveDb();
+  }
+
+  res.json({
+    success: true,
+    projects: db.projects,
+    categories: db.categories,
+    media: db.media
+  });
+});
 
 // Auth Mock login
 app.post("/api/auth/login", (req, res) => {

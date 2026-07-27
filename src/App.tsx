@@ -656,7 +656,7 @@ function Home() {
     api.getProjects().then(projs => {
       if (Array.isArray(projs)) {
         const published = projs.filter(p => p.status === 'published');
-        if (active && published.length > 0) {
+        if (active) {
           setWorks(published);
         }
       } else {

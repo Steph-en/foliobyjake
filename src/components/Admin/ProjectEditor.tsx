@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { api } from '../../lib/api';
 import { smartUpload } from '../../lib/uploadHandler';
 import { 
   Trash2, 
@@ -379,30 +380,23 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
     setState(prev => ({ ...prev, saving: true, error: '' }));
 
     try {
-      const method = projectId ? 'PUT' : 'POST';
-      const endpoint = projectId ? `/api/projects/${projectId}` : '/api/projects';
-
-      const response = await fetch(endpoint, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(project)
-      });
-
-      if (response.ok) {
-        const savedProject = await response.json();
-        setState(prev => ({
-          ...prev,
-          success: `✓ Project ${projectId ? 'updated' : 'created'} successfully`
-        }));
-
-        if (onSave) {
-          onSave(savedProject);
-        }
-
-        setTimeout(() => setState(prev => ({ ...prev, success: '' })), 2500);
+      let savedProject;
+      if (projectId) {
+        savedProject = await api.updateProject(projectId, project);
       } else {
-        throw new Error('Failed to save project records to server');
+        savedProject = await api.createProject(project);
       }
+
+      setState(prev => ({
+        ...prev,
+        success: `✓ Project ${projectId ? 'updated' : 'created'} successfully`
+      }));
+
+      if (onSave) {
+        onSave(savedProject);
+      }
+
+      setTimeout(() => setState(prev => ({ ...prev, success: '' })), 2500);
     } catch (err) {
       setState(prev => ({
         ...prev,

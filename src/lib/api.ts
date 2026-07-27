@@ -65,6 +65,47 @@ client.interceptors.response.use(
   }
 );
 
+// Local storage helper keys & logic
+const STORAGE_PROJECTS_KEY = 'jake_portfolio_projects_v2';
+
+const getLocalProjects = (): Project[] | null => {
+  try {
+    const raw = localStorage.getItem(STORAGE_PROJECTS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {
+    console.warn('Failed to read local projects:', e);
+  }
+  return null;
+};
+
+const saveLocalProjects = (projects: Project[]) => {
+  try {
+    localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+  } catch (e) {
+    console.warn('Failed to save local projects:', e);
+  }
+};
+
+const areProjectsEqual = (a: Project[], b: Project[]): boolean => {
+  if (a.length !== b.length) return false;
+  const bMap = new Map(b.map(p => [p.id, p]));
+  for (const itemA of a) {
+    const itemB = bMap.get(itemA.id);
+    if (!itemB) return false;
+    if (
+      itemA.status !== itemB.status ||
+      itemA.name !== itemB.name ||
+      JSON.stringify(itemA.gallery) !== JSON.stringify(itemB.gallery)
+    ) {
+      return false;
+    }
+  }
+  return true;
+};
+
 export const api = {
   // Authentication
   login: async (username: string, password: string): Promise<{ success: boolean; token?: string; message?: string }> => {
@@ -99,11 +140,48 @@ export const api = {
 
   // Projects
   getProjects: async (isAdmin = false): Promise<Project[]> => {
-    const { data } = await client.get('/projects', { params: { view: isAdmin ? 'admin' : undefined } });
-    if (!Array.isArray(data)) {
-      throw new Error(data?.error?.message || 'Invalid server response: projects list is not an array.');
+    try {
+      const { data } = await client.get('/projects', { params: { view: 'admin' } });
+      if (Array.isArray(data)) {
+        const localProjs = getLocalProjects();
+        let finalProjects = data;
+
+        if (localProjs && localProjs.length > 0) {
+          if (!areProjectsEqual(data, localProjs)) {
+            console.log('[API Client] Server project state differs from local storage. Syncing client state to server...');
+            try {
+              const syncRes = await client.post('/sync', { projects: localProjs });
+              if (syncRes.data && Array.isArray(syncRes.data.projects)) {
+                finalProjects = syncRes.data.projects;
+              } else {
+                finalProjects = localProjs;
+              }
+            } catch (syncErr) {
+              console.warn('[API Client] Sync failed, using local storage state:', syncErr);
+              finalProjects = localProjs;
+            }
+          }
+        }
+
+        saveLocalProjects(finalProjects);
+
+        if (isAdmin) {
+          return finalProjects;
+        } else {
+          return finalProjects.filter(p => p.status === 'published');
+        }
+      } else {
+        throw new Error('Invalid server response: projects list is not an array.');
+      }
+    } catch (err) {
+      console.warn('[API Client] getProjects error, falling back to local storage:', err);
+      const localProjs = getLocalProjects();
+      if (localProjs) {
+        if (isAdmin) return localProjs;
+        return localProjs.filter(p => p.status === 'published');
+      }
+      throw err;
     }
-    return data;
   },
   getProject: async (id: number, incrementView = false): Promise<Project> => {
     const { data } = await client.get(`/projects/${id}`, { params: { increment: incrementView ? 'true' : undefined } });
@@ -111,18 +189,30 @@ export const api = {
   },
   createProject: async (project: Partial<Project>): Promise<Project> => {
     const { data } = await client.post('/projects', project);
+    const local = getLocalProjects() || [];
+    const updated = [data, ...local.filter(p => p.id !== data.id)];
+    saveLocalProjects(updated);
     return data;
   },
   updateProject: async (id: number, project: Partial<Project>): Promise<Project> => {
     const { data } = await client.put(`/projects/${id}`, project);
+    const local = getLocalProjects() || [];
+    const updated = local.map(p => (p.id === id ? data : p));
+    saveLocalProjects(updated);
     return data;
   },
   duplicateProject: async (id: number): Promise<Project> => {
     const { data } = await client.post(`/projects/${id}/duplicate`);
+    const local = getLocalProjects() || [];
+    const updated = [data, ...local];
+    saveLocalProjects(updated);
     return data;
   },
   deleteProject: async (id: number): Promise<{ success: boolean }> => {
     const { data } = await client.delete(`/projects/${id}`);
+    const local = getLocalProjects() || [];
+    const updated = local.filter(p => p.id !== id);
+    saveLocalProjects(updated);
     return data;
   },
 
