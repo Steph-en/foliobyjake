@@ -632,9 +632,37 @@ app.post("/api/projects", (req, res) => {
     createdAt: new Date().toISOString()
   };
 
-  db.projects.push(newProj);
+  db.projects.unshift(newProj);
   saveDb();
   res.status(201).json(newProj);
+});
+
+// Reorder Projects Endpoint
+app.post("/api/projects/reorder", (req, res) => {
+  const { orderedIds } = req.body;
+  if (!Array.isArray(orderedIds)) {
+    return res.status(400).json({ error: "orderedIds array required" });
+  }
+
+  const idMap = new Map(db.projects.map(p => [p.id, p]));
+  const reordered: Project[] = [];
+
+  for (const id of orderedIds) {
+    const numericId = Number(id);
+    if (idMap.has(numericId)) {
+      reordered.push(idMap.get(numericId)!);
+      idMap.delete(numericId);
+    }
+  }
+
+  // Append any projects not mentioned in orderedIds
+  for (const remaining of idMap.values()) {
+    reordered.push(remaining);
+  }
+
+  db.projects = reordered;
+  saveDb();
+  res.json({ success: true, projects: db.projects });
 });
 
 app.put("/api/projects/:id", (req, res) => {
@@ -671,7 +699,7 @@ app.post("/api/projects/:id/duplicate", (req, res) => {
     createdAt: new Date().toISOString()
   };
 
-  db.projects.push(duplicateProj);
+  db.projects.unshift(duplicateProj);
   saveDb();
   res.status(201).json(duplicateProj);
 });

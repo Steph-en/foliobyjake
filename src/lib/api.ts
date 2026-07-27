@@ -215,6 +215,32 @@ export const api = {
     saveLocalProjects(updated);
     return data;
   },
+  reorderProjects: async (orderedIds: number[]): Promise<Project[]> => {
+    try {
+      const { data } = await client.post('/projects/reorder', { orderedIds });
+      const newProjs = Array.isArray(data?.projects) ? data.projects : (Array.isArray(data) ? data : null);
+      if (newProjs) {
+        saveLocalProjects(newProjs);
+        return newProjs;
+      }
+    } catch (err) {
+      console.warn('[API Client] reorderProjects server call failed, falling back to local reorder:', err);
+    }
+    const local = getLocalProjects() || [];
+    const map = new Map(local.map(p => [p.id, p]));
+    const reordered: Project[] = [];
+    for (const id of orderedIds) {
+      if (map.has(id)) {
+        reordered.push(map.get(id)!);
+        map.delete(id);
+      }
+    }
+    for (const p of map.values()) {
+      reordered.push(p);
+    }
+    saveLocalProjects(reordered);
+    return reordered;
+  },
 
   // Media
   getMedia: async (): Promise<MediaAsset[]> => {

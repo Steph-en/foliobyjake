@@ -3,10 +3,12 @@ import { api } from '../../lib/api';
 import { Project, ProjectStatus, Category } from '../../types';
 import {
   Search, Eye, Edit, Trash2, Copy, ExternalLink, Filter,
-  Layers, ChevronDown, CheckSquare, Square, AlertCircle, RefreshCw, Film
+  Layers, ChevronDown, CheckSquare, Square, AlertCircle, RefreshCw, Film,
+  ArrowUp, ArrowDown, ArrowUpDown, ListOrdered
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ConfirmModal from './ConfirmModal';
+import ReorderModal from './ReorderModal';
 
 interface ProjectTableProps {
   onEditProject: (id: number) => void;
@@ -22,7 +24,10 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'name' | 'views' | 'date'>('date');
+  const [sortBy, setSortBy] = useState<'custom' | 'name' | 'views' | 'date'>('custom');
+
+  // Reorder Modal State
+  const [isReorderModalOpen, setIsReorderModalOpen] = useState<boolean>(false);
 
   // Selection
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -68,6 +73,31 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
       fetchData();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  // Reordering Handler
+  const handleSaveReorder = async (reorderedProjects: Project[]) => {
+    setProjects(reorderedProjects);
+    await api.reorderProjects(reorderedProjects.map(p => p.id));
+  };
+
+  const handleInlineMove = async (id: number, direction: 'up' | 'down') => {
+    const idx = projects.findIndex(p => p.id === id);
+    if (idx === -1) return;
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= projects.length) return;
+
+    const updated = [...projects];
+    const temp = updated[idx];
+    updated[idx] = updated[targetIdx];
+    updated[targetIdx] = temp;
+
+    setProjects(updated);
+    try {
+      await api.reorderProjects(updated.map(p => p.id));
+    } catch (err) {
+      console.error('Failed to inline reorder:', err);
     }
   };
 
@@ -125,6 +155,7 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
       return matchSearch && matchStatus && matchCategory;
     })
     .sort((a, b) => {
+      if (sortBy === 'custom') return 0; // Maintain original array order
       if (sortBy === 'name') return a.name.localeCompare(b.name);
       if (sortBy === 'views') return (b.views || 0) - (a.views || 0);
       // Date fallback
@@ -144,18 +175,27 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
   return (
     <div className="space-y-8 animate-fade-in text-zinc-200 font-sans">
       
-      {/* Title & Add Controls */}
+      {/* Title & Add/Reorder Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-zinc-900">
         <div>
           <h2 className="text-2xl uppercase tracking-tight font-display">PROJECT LEOPARD CATALOG</h2>
-          <p className="text-xs text-zinc-500 mt-1 font-mono">Create, duplicate, bulk compile, and edit project directories</p>
+          <p className="text-xs text-zinc-500 mt-1 font-mono">Create, duplicate, rearrange, bulk compile, and edit project directories</p>
         </div>
-        <button
-          onClick={onAddNewProject}
-          className="px-6 py-3 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors flex items-center gap-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-white"
-        >
-          Add New Project
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => setIsReorderModalOpen(true)}
+            className="px-5 py-3 bg-zinc-900 border border-zinc-800 text-white text-xs font-bold uppercase tracking-wider hover:bg-zinc-800 hover:border-zinc-700 transition-all flex items-center gap-2 rounded-xl cursor-pointer"
+          >
+            <ListOrdered size={15} />
+            <span>Rearrange Order</span>
+          </button>
+          <button
+            onClick={onAddNewProject}
+            className="px-6 py-3 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors flex items-center gap-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-white cursor-pointer"
+          >
+            Add New Project
+          </button>
+        </div>
       </div>
 
       {/* Grid Filter Actions bar */}
@@ -207,12 +247,13 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
 
           {/* Sort selection */}
           <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5">
-            <span className="text-xs text-zinc-500 font-mono">Sort:</span>
+            <ArrowUpDown size={12} className="text-zinc-500" />
             <select
               value={sortBy}
               onChange={(e: any) => setSortBy(e.target.value)}
-              className="bg-transparent text-xs text-zinc-200 outline-none pr-2"
+              className="bg-transparent text-xs text-zinc-200 outline-none pr-2 font-mono"
             >
+              <option value="custom" className="bg-zinc-900">Custom Portfolio Order</option>
               <option value="date" className="bg-zinc-900">Date Added</option>
               <option value="name" className="bg-zinc-900">Alpha Name</option>
               <option value="views" className="bg-zinc-900">Views Traffic</option>
@@ -283,6 +324,7 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
                   )}
                 </button>
               </th>
+              {sortBy === 'custom' && <th className="py-4 px-2 w-16">Pos</th>}
               <th className="py-4 px-4">Project Preview</th>
               <th className="py-4 px-4">Specification Attributes</th>
               <th className="py-4 px-4">Status Label</th>
@@ -294,6 +336,10 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
             {processedProjects.map((item) => {
               const isSel = selectedIds.includes(item.id);
               const previewVid = item.previewVideo || item.heroVideo;
+              const globalIdx = projects.findIndex(p => p.id === item.id);
+              const isFirst = globalIdx === 0;
+              const isLast = globalIdx === projects.length - 1;
+
               return (
                 <tr key={item.id} className={`hover:bg-zinc-900/35 transition-colors ${isSel ? 'bg-zinc-900/20' : ''}`}>
                   
@@ -308,12 +354,21 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
                     </button>
                   </td>
 
+                  {/* Position Badge in Custom Mode */}
+                  {sortBy === 'custom' && (
+                    <td className="py-6 px-2 align-middle font-mono text-[11px] text-zinc-500">
+                      <span className="inline-block px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300 font-bold">
+                        #{globalIdx + 1}
+                      </span>
+                    </td>
+                  )}
+
                   {/* Thumbnail and Title cell */}
                   <td className="py-6 px-4">
                     <div className="flex items-center gap-4">
                       
                       {/* Grid preview cell */}
-                      <div className="h-12 w-10 bg-zinc-900 rounded overflow-hidden shrink-0 flex items-center justify-center">
+                      <div className="h-12 w-10 bg-zinc-900 rounded overflow-hidden shrink-0 flex items-center justify-center border border-zinc-800/80">
                         {previewVid ? (
                           <Film size={12} className="text-zinc-600" />
                         ) : item.previewImage || item.heroImage ? (
@@ -372,7 +427,29 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
 
                   {/* Operational interactions */}
                   <td className="py-6 pr-6 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-1.5">
+                      {/* Inline Move Up / Move Down buttons when in Custom Order mode */}
+                      {sortBy === 'custom' && (
+                        <div className="flex items-center gap-0.5 mr-2 pr-2 border-r border-zinc-850">
+                          <button
+                            onClick={() => handleInlineMove(item.id, 'up')}
+                            disabled={isFirst}
+                            className="p-1.5 hover:bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-20 disabled:hover:bg-transparent rounded transition-colors cursor-pointer"
+                            title="Move project up"
+                          >
+                            <ArrowUp size={13} />
+                          </button>
+                          <button
+                            onClick={() => handleInlineMove(item.id, 'down')}
+                            disabled={isLast}
+                            className="p-1.5 hover:bg-zinc-800 text-zinc-400 hover:text-white disabled:opacity-20 disabled:hover:bg-transparent rounded transition-colors cursor-pointer"
+                            title="Move project down"
+                          >
+                            <ArrowDown size={13} />
+                          </button>
+                        </div>
+                      )}
+
                       <button
                         onClick={() => onEditProject(item.id)}
                         className="p-2 hover:bg-zinc-900 text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer"
@@ -383,7 +460,7 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
                       <button
                         onClick={() => handleDuplicate(item.id)}
                         className="p-2 hover:bg-zinc-900 text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer"
-                        title="Duplicate files duplicate"
+                        title="Duplicate project"
                       >
                         <Copy size={14} />
                       </button>
@@ -412,7 +489,7 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
 
             {processedProjects.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-16 text-center font-mono text-zinc-500 uppercase tracking-widest text-[11px]">
+                <td colSpan={sortBy === 'custom' ? 7 : 6} className="py-16 text-center font-mono text-zinc-500 uppercase tracking-widest text-[11px]">
                   No compiled works match the filter parameters.
                 </td>
               </tr>
@@ -420,6 +497,14 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
           </tbody>
         </table>
       </div>
+
+      {/* Reorder Modal */}
+      <ReorderModal
+        isOpen={isReorderModalOpen}
+        onClose={() => setIsReorderModalOpen(false)}
+        projects={projects}
+        onSaveOrder={handleSaveReorder}
+      />
 
       {/* Confirmation Modals */}
       <ConfirmModal
