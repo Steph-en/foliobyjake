@@ -4,7 +4,7 @@ import { Project, ProjectStatus, Category } from '../../types';
 import {
   Search, Eye, Edit, Trash2, Copy, ExternalLink, Filter,
   Layers, ChevronDown, CheckSquare, Square, AlertCircle, RefreshCw, Film,
-  ArrowUp, ArrowDown, ArrowUpDown, ListOrdered
+  ArrowUp, ArrowDown, ArrowUpDown, ListOrdered, Star
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ConfirmModal from './ConfirmModal';
@@ -410,11 +410,27 @@ export default function ProjectTable({ onEditProject, onAddNewProject }: Project
                     }`}>
                       {item.status}
                     </span>
-                    {item.isFeatured && (
-                      <span className="ml-2 inline-flex items-center bg-amber-950/15 border border-amber-900 text-amber-500 text-[8px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded font-bold">
-                        ★ featured
-                      </span>
-                    )}
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const nextFeatured = !item.isFeatured;
+                        setProjects(prev => prev.map(p => p.id === item.id ? { ...p, isFeatured: nextFeatured } : p));
+                        try {
+                          await api.updateProject(item.id, { isFeatured: nextFeatured });
+                        } catch (err) {
+                          console.error('Failed to toggle featured state:', err);
+                        }
+                      }}
+                      title={item.isFeatured ? 'Click to remove from Featured' : 'Click to feature project'}
+                      className={`ml-2 inline-flex items-center gap-1 border text-[8px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded font-bold cursor-pointer transition-all ${
+                        item.isFeatured 
+                          ? 'bg-amber-950/30 border-amber-800 text-amber-400 hover:bg-amber-900/50' 
+                          : 'bg-zinc-900/50 border-zinc-800 text-zinc-500 hover:text-zinc-300 hover:border-zinc-700'
+                      }`}
+                    >
+                      <Star size={10} className={item.isFeatured ? 'fill-amber-400 text-amber-400' : ''} />
+                      <span>{item.isFeatured ? 'Featured' : 'Feature'}</span>
+                    </button>
                   </td>
 
                   {/* Views count display */}

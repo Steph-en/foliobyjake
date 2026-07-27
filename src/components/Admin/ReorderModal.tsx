@@ -179,6 +179,11 @@ export default function ReorderModal({ isOpen, onClose, projects, onSaveOrder }:
                         }`}>
                           {item.status}
                         </span>
+                        {item.isFeatured && (
+                          <span className="text-[8px] font-mono uppercase px-1.5 py-0.2 rounded border bg-amber-950/30 text-amber-400 border-amber-900 font-bold">
+                            ★ Featured
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

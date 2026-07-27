@@ -77,6 +77,7 @@ interface Work {
   client?: string;
   year?: string;
   role?: string;
+  isFeatured?: boolean;
   sections?: any[];
 }
 
@@ -547,6 +548,11 @@ const WorkCard = memo(function WorkCard({ work, onClick }: { work: Work; onClick
               transforms="f_auto,q_auto:good,w_600,c_fill,ar_4:5"
               mediaClassName="grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out"
             />}
+        {work.isFeatured && (
+          <span className="absolute top-3 right-3 z-10 px-2.5 py-1 bg-white text-black font-mono font-bold text-[9px] uppercase tracking-widest rounded-sm shadow-lg">
+            ★ Featured
+          </span>
+        )}
         <div
           className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-500 flex items-center justify-center"
           aria-hidden="true"
@@ -676,8 +682,18 @@ function Home() {
     return () => { active = false; };
   }, []);
 
-  const categories = useMemo(() => Array.from(new Set(works.map(w => w.category))), [works]);
-  const filteredWorks = useMemo(() => works.filter(w => !selectedCategory || w.category === selectedCategory), [selectedCategory, works]);
+  // Sort works so featured projects come first while preserving custom order
+  const sortedWorks = useMemo(() => {
+    return [...works].sort((a, b) => {
+      const aFeat = a.isFeatured ? 1 : 0;
+      const bFeat = b.isFeatured ? 1 : 0;
+      if (aFeat !== bFeat) return bFeat - aFeat;
+      return 0; // preserve relative custom order within groups
+    });
+  }, [works]);
+
+  const categories = useMemo(() => Array.from(new Set(sortedWorks.map(w => w.category))), [sortedWorks]);
+  const filteredWorks = useMemo(() => sortedWorks.filter(w => !selectedCategory || w.category === selectedCategory), [selectedCategory, sortedWorks]);
   const visibleWorks = useMemo(() => isExpanded ? filteredWorks : filteredWorks.slice(0, 6), [isExpanded, filteredWorks]);
 
   const validateEmail = (s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);

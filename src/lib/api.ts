@@ -98,6 +98,7 @@ const areProjectsEqual = (a: Project[], b: Project[]): boolean => {
     if (
       itemA.status !== itemB.status ||
       itemA.name !== itemB.name ||
+      itemA.isFeatured !== itemB.isFeatured ||
       JSON.stringify(itemA.gallery) !== JSON.stringify(itemB.gallery)
     ) {
       return false;
