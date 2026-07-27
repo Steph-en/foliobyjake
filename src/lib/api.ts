@@ -144,32 +144,11 @@ export const api = {
     try {
       const { data } = await client.get('/projects', { params: { view: 'admin' } });
       if (Array.isArray(data)) {
-        const localProjs = getLocalProjects();
-        let finalProjects = data;
-
-        if (localProjs && localProjs.length > 0) {
-          if (!areProjectsEqual(data, localProjs)) {
-            console.log('[API Client] Server project state differs from local storage. Syncing client state to server...');
-            try {
-              const syncRes = await client.post('/sync', { projects: localProjs });
-              if (syncRes.data && Array.isArray(syncRes.data.projects)) {
-                finalProjects = syncRes.data.projects;
-              } else {
-                finalProjects = localProjs;
-              }
-            } catch (syncErr) {
-              console.warn('[API Client] Sync failed, using local storage state:', syncErr);
-              finalProjects = localProjs;
-            }
-          }
-        }
-
-        saveLocalProjects(finalProjects);
-
+        saveLocalProjects(data);
         if (isAdmin) {
-          return finalProjects;
+          return data;
         } else {
-          return finalProjects.filter(p => p.status === 'published');
+          return data.filter(p => p.status === 'published');
         }
       } else {
         throw new Error('Invalid server response: projects list is not an array.');

@@ -649,6 +649,7 @@ function Home() {
   }, []);
 
   const [works, setWorks] = useState<Work[]>(WORKS);
+  const [dbCategories, setDbCategories] = useState<string[]>([]);
   const [apiError, setApiError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -674,6 +675,15 @@ function Home() {
         setApiError(`Server API Error (${status || '500'}): ${msg || 'Failed to fetch resource from server.'}`);
       }
     });
+
+    api.getCategories().then(cats => {
+      if (active && Array.isArray(cats)) {
+        setDbCategories(cats.map(c => c.name));
+      }
+    }).catch(err => {
+      console.warn('Failed to load server categories:', err);
+    });
+
     return () => { active = false; };
   }, []);
 
@@ -687,7 +697,10 @@ function Home() {
     });
   }, [works]);
 
-  const categories = useMemo(() => Array.from(new Set(sortedWorks.map(w => w.category))), [sortedWorks]);
+  const categories = useMemo(() => {
+    const projectCats = sortedWorks.map(w => w.category);
+    return Array.from(new Set([...dbCategories, ...projectCats])).filter(Boolean);
+  }, [dbCategories, sortedWorks]);
   const filteredWorks = useMemo(() => sortedWorks.filter(w => !selectedCategory || w.category === selectedCategory), [selectedCategory, sortedWorks]);
   const visibleWorks = useMemo(() => isExpanded ? filteredWorks : filteredWorks.slice(0, 6), [isExpanded, filteredWorks]);
 

@@ -46,7 +46,8 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Log all incoming requests
 app.use((req, res, next) => {
@@ -554,9 +555,19 @@ app.put("/api/categories/:id", (req, res) => {
   const catIdx = db.categories.findIndex(c => c.id === id);
   if (catIdx === -1) return res.status(404).json({ error: "Category not found" });
 
-  if (name) {
-    db.categories[catIdx].name = name;
-    db.categories[catIdx].slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const oldName = db.categories[catIdx].name;
+
+  if (name && name.trim() && name.trim() !== oldName) {
+    const trimmedName = name.trim();
+    db.categories[catIdx].name = trimmedName;
+    db.categories[catIdx].slug = trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+    // Cascading update: update all projects referencing the old category name
+    db.projects.forEach(p => {
+      if (p.category === oldName) {
+        p.category = trimmedName;
+      }
+    });
   }
 
   saveDb();
@@ -568,7 +579,16 @@ app.delete("/api/categories/:id", (req, res) => {
   const catIdx = db.categories.findIndex(c => c.id === id);
   if (catIdx === -1) return res.status(404).json({ error: "Category not found" });
 
+  const deletedName = db.categories[catIdx].name;
   db.categories.splice(catIdx, 1);
+
+  const fallbackCat = db.categories[0]?.name || "Graphic Design";
+  db.projects.forEach(p => {
+    if (p.category === deletedName) {
+      p.category = fallbackCat;
+    }
+  });
+
   saveDb();
   res.json({ success: true });
 });

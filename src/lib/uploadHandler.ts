@@ -115,6 +115,18 @@ export const uploadToLocal = async (
 };
 
 /**
+ * Convert file to Base64 Data URL as ultimate fallback
+ */
+export const fileToDataUrl = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error('Failed to read file into Data URL'));
+    reader.readAsDataURL(file);
+  });
+};
+
+/**
  * Smart upload handler: auto-selects best method per environment
  */
 export const smartUpload = async (
@@ -122,23 +134,36 @@ export const smartUpload = async (
   displayName: string,
   onProgress?: (percent: number) => void
 ): Promise<{ url: string; name: string; type: 'image' | 'video' }> => {
-  // Force Cloudinary if:
-  // 1. FORCE_CLOUDINARY_UPLOADS env var is true, OR
-  // 2. Running on Vercel (read-only filesystem)
-  if (FORCE_CLOUDINARY || VERCEL) {
-    return uploadToCloudinary(file, displayName, onProgress);
+  const fileType: 'image' | 'video' = file.type.startsWith('video/') ? 'video' : 'image';
+
+  // 1. Try Local Upload first if not on Vercel
+  if (!FORCE_CLOUDINARY && !VERCEL) {
+    try {
+      return await uploadToLocal(file, displayName, onProgress);
+    } catch (localError) {
+      console.warn('Local upload failed, trying Cloudinary:', localError);
+    }
   }
 
-  // For local/Gemini: try local first, fall back to Cloudinary if available
+  // 2. Try Cloudinary
   try {
-    return await uploadToLocal(file, displayName, onProgress);
-  } catch (localError) {
-    console.warn('Local upload failed, falling back to Cloudinary:', localError);
-    try {
-      return await uploadToCloudinary(file, displayName, onProgress);
-    } catch (cloudinaryError) {
-      throw new Error(`All upload methods failed. Local: ${localError}. Cloudinary: ${cloudinaryError}`);
-    }
+    return await uploadToCloudinary(file, displayName, onProgress);
+  } catch (cloudinaryError) {
+    console.warn('Cloudinary upload failed, falling back to Base64 Data URL:', cloudinaryError);
+  }
+
+  // 3. Fallback to Data URL (guarantees upload never fails and works across all clients)
+  try {
+    if (onProgress) onProgress(50);
+    const dataUrl = await fileToDataUrl(file);
+    if (onProgress) onProgress(100);
+    return {
+      url: dataUrl,
+      name: displayName,
+      type: fileType,
+    };
+  } catch (dataUrlErr) {
+    throw new Error('Upload failed: Unable to process file.');
   }
 };
 
