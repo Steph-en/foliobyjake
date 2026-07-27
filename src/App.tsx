@@ -548,11 +548,6 @@ const WorkCard = memo(function WorkCard({ work, onClick }: { work: Work; onClick
               transforms="f_auto,q_auto:good,w_600,c_fill,ar_4:5"
               mediaClassName="grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out"
             />}
-        {work.isFeatured && (
-          <span className="absolute top-3 right-3 z-10 px-2.5 py-1 bg-white text-black font-mono font-bold text-[9px] uppercase tracking-widest rounded-sm shadow-lg">
-            ★ Featured
-          </span>
-        )}
         <div
           className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity duration-500 flex items-center justify-center"
           aria-hidden="true"
