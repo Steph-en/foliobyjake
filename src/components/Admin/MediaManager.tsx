@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { api } from '../../lib/api';
+import { MediaAsset } from '../../types';
 import { smartUpload, getUploadEnvironmentInfo } from '../../lib/uploadHandler';
 import { Trash2, Upload, Link as LinkIcon, Loader2, AlertCircle, CheckCircle, Search, ExternalLink, Image as ImageIcon, Video as VideoIcon } from 'lucide-react';
-
-interface MediaAsset {
-  id: string;
-  url: string;
-  name: string;
-  type: 'image' | 'video';
-  size: string;
-  createdAt: string;
-}
 
 interface UploadState {
   isLoading: boolean;
@@ -39,11 +32,8 @@ export function MediaManager() {
   const fetchMedia = async () => {
     try {
       setMediaLoading(true);
-      const response = await fetch('/api/media');
-      if (response.ok) {
-        const data = await response.json();
-        setMedia(Array.isArray(data) ? data : []);
-      }
+      const data = await api.getMedia();
+      setMedia(data);
     } catch (err) {
       console.error('Failed to fetch media:', err);
       setUploadState(prev => ({
@@ -84,30 +74,21 @@ export function MediaManager() {
       console.log('[MediaManager] Upload successful:', asset);
 
       // Save to backend
-      const response = await fetch('/api/media', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: asset.url,
-          name: asset.name,
-          type: asset.type
-        })
+      const newAsset = await api.uploadMedia({
+        url: asset.url,
+        name: asset.name,
+        type: asset.type
       });
 
-      if (response.ok) {
-        const newAsset = await response.json();
-        setMedia(prev => [newAsset, ...prev]);
-        setSuccessMessage(`✓ ${asset.name} uploaded successfully`);
-        setNameInput('');
-        
-        // Clear success message after 3 seconds
-        setTimeout(() => setSuccessMessage(''), 3000);
+      setMedia(prev => [newAsset, ...prev]);
+      setSuccessMessage(`✓ ${asset.name} uploaded successfully`);
+      setNameInput('');
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(''), 3000);
 
-        // Reset input
-        e.currentTarget.value = '';
-      } else {
-        throw new Error('Failed to save asset to library');
-      }
+      // Reset input
+      e.currentTarget.value = '';
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Upload failed';
       console.error('[MediaManager] Upload error:', err);
@@ -152,27 +133,18 @@ export function MediaManager() {
       const isVideo = /\.(mp4|webm|mov|avi|m3u8)$/i.test(urlInput) || urlInput.includes('/video/');
       const type: 'image' | 'video' = isVideo ? 'video' : 'image';
 
-      const response = await fetch('/api/media', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: urlInput,
-          name: nameInput,
-          type
-        })
+      const newAsset = await api.uploadMedia({
+        url: urlInput,
+        name: nameInput,
+        type
       });
 
-      if (response.ok) {
-        const newAsset = await response.json();
-        setMedia(prev => [newAsset, ...prev]);
-        setSuccessMessage(`✓ ${nameInput} added successfully`);
-        setUrlInput('');
-        setNameInput('');
+      setMedia(prev => [newAsset, ...prev]);
+      setSuccessMessage(`✓ ${nameInput} added successfully`);
+      setUrlInput('');
+      setNameInput('');
 
-        setTimeout(() => setSuccessMessage(''), 3000);
-      } else {
-        throw new Error('Failed to save asset');
-      }
+      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to add URL';
       setUploadState(prev => ({
@@ -190,13 +162,11 @@ export function MediaManager() {
   // ── Handle Delete ──
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/media/${id}`, { method: 'DELETE' });
-      if (response.ok) {
-        setMedia(prev => prev.filter(m => m.id !== id));
-        setDeleteConfirm(null);
-        setSuccessMessage('✓ Asset deleted');
-        setTimeout(() => setSuccessMessage(''), 2000);
-      }
+      await api.deleteMedia(id);
+      setMedia(prev => prev.filter(m => m.id !== id));
+      setDeleteConfirm(null);
+      setSuccessMessage('✓ Asset deleted');
+      setTimeout(() => setSuccessMessage(''), 2000);
     } catch (err) {
       console.error('Delete failed:', err);
       setUploadState(prev => ({

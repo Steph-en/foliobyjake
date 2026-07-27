@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../lib/api';
+import { Project, ProjectStatus, CaseStudySection } from '../../types';
 import { smartUpload } from '../../lib/uploadHandler';
 import { 
   Trash2, 
@@ -17,43 +18,6 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
-
-interface CaseStudySection {
-  id: string;
-  type: 'text' | 'side-by-side' | 'asymmetric-split';
-  content: {
-    textHeader?: string;
-    textBody?: string;
-    images?: string[];
-    layoutType?: 'asymmetric-left' | 'asymmetric-right' | 'equal';
-  };
-  order: number;
-}
-
-interface Project {
-  id: number;
-  name: string;
-  slug: string;
-  category: string;
-  description: string;
-  longDescription: string;
-  client: string;
-  year: string;
-  role: string;
-  previewImage?: string;
-  previewVideo?: string;
-  heroImage?: string;
-  heroVideo?: string;
-  gallery: string[];
-  status: 'draft' | 'published';
-  isFeatured: boolean;
-  views: number;
-  seoTitle?: string;
-  seoDescription?: string;
-  seoKeywords?: string;
-  seoOgImage?: string;
-  sections?: CaseStudySection[];
-}
 
 interface EditorState {
   loading: boolean;
@@ -115,22 +79,37 @@ export function ProjectEditor({ projectId, onSave, onCancel }: Props) {
         setState(prev => ({ ...prev, loading: true }));
 
         // Load categories
-        const catRes = await fetch('/api/categories');
-        if (catRes.ok) {
-          const cats = await catRes.json();
-          setCategories(cats.map((c: any) => c.name));
-        }
+        const cats = await api.getCategories();
+        setCategories(cats.map((c: any) => c.name));
 
         // Load project if editing
         if (projectId) {
-          const projRes = await fetch(`/api/projects/${projectId}`);
-          if (projRes.ok) {
-            const proj = await projRes.json();
-            setProject({
-              ...proj,
-              sections: proj.sections || []
-            });
-          }
+          const proj = await api.getProject(Number(projectId));
+          setProject({
+            id: proj.id,
+            name: proj.name || '',
+            slug: proj.slug || '',
+            category: proj.category || 'Graphic Design',
+            description: proj.description || '',
+            longDescription: proj.longDescription || '',
+            client: proj.client || '',
+            year: proj.year || '',
+            role: proj.role || '',
+            previewImage: proj.previewImage || '',
+            previewVideo: proj.previewVideo || '',
+            heroImage: proj.heroImage || '',
+            heroVideo: proj.heroVideo || '',
+            gallery: proj.gallery || [],
+            status: (proj.status as ProjectStatus) || 'draft',
+            isFeatured: !!proj.isFeatured,
+            views: proj.views || 0,
+            seoTitle: proj.seoTitle || '',
+            seoDescription: proj.seoDescription || '',
+            seoKeywords: proj.seoKeywords || '',
+            seoOgImage: proj.seoOgImage || '',
+            sections: proj.sections || [],
+            createdAt: proj.createdAt || new Date().toISOString()
+          });
         }
       } catch (err) {
         setState(prev => ({
