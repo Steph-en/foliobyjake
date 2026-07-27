@@ -413,37 +413,34 @@ interface LocalDatabase {
 
 // ── Database Initialization ──
 function loadDb(): LocalDatabase {
-  let dbContent = "";
-  let tmpContent = "";
-  let dbMtime = 0;
-  let tmpMtime = 0;
+  let rawData = "";
+  let source = "";
 
+  // 1. Try primary project file data/db.json first
   if (fs.existsSync(DB_FILE)) {
     try {
-      dbMtime = fs.statSync(DB_FILE).mtimeMs;
-      dbContent = fs.readFileSync(DB_FILE, "utf-8");
+      rawData = fs.readFileSync(DB_FILE, "utf-8");
+      source = "data/db.json";
     } catch (err) {
       console.warn("Could not read DB_FILE:", err);
     }
   }
 
-  if (fs.existsSync(TMP_DB_FILE)) {
+  // 2. Fallback to /tmp/db.json if primary is missing or empty
+  if ((!rawData || !rawData.trim()) && fs.existsSync(TMP_DB_FILE)) {
     try {
-      tmpMtime = fs.statSync(TMP_DB_FILE).mtimeMs;
-      tmpContent = fs.readFileSync(TMP_DB_FILE, "utf-8");
+      rawData = fs.readFileSync(TMP_DB_FILE, "utf-8");
+      source = "/tmp/db.json";
     } catch (err) {
       console.warn("Could not read TMP_DB_FILE:", err);
     }
   }
 
-  // Pick the newer file if both exist
-  const rawData = (tmpMtime > dbMtime) ? tmpContent : (dbContent || tmpContent);
-
   if (rawData && rawData.trim()) {
     try {
       const parsed = JSON.parse(rawData);
-      if (parsed && typeof parsed === "object") {
-        console.log(`[Database] Loaded ${parsed.projects?.length || 0} projects and ${parsed.categories?.length || 0} categories.`);
+      if (parsed && typeof parsed === "object" && Array.isArray(parsed.projects)) {
+        console.log(`[Database] Loaded ${parsed.projects.length} projects and ${parsed.categories?.length || 0} categories from ${source}.`);
         return {
           projects: Array.isArray(parsed.projects) ? parsed.projects : INITIAL_WORKS,
           categories: Array.isArray(parsed.categories) ? parsed.categories : INITIAL_CATEGORIES,
@@ -482,28 +479,40 @@ if (!Array.isArray(db.media)) db.media = INITIAL_MEDIA;
 if (typeof db.contactsCount !== "number") db.contactsCount = 14;
 
 // ── Save Database Function ──
-function saveDb() {
+function saveDb(): boolean {
   const jsonStr = JSON.stringify(db, null, 2);
+  let saved = false;
 
-  // Write to primary DB_FILE
+  // 1. Atomic write to primary DB_FILE (data/db.json)
   try {
     if (!fs.existsSync(DB_DIR)) {
       fs.mkdirSync(DB_DIR, { recursive: true });
     }
-    fs.writeFileSync(DB_FILE, jsonStr);
+    const tempFilePath = path.join(DB_DIR, "db.json.tmp");
+    fs.writeFileSync(tempFilePath, jsonStr, "utf-8");
+    fs.renameSync(tempFilePath, DB_FILE);
+    saved = true;
   } catch (err) {
-    console.warn("Unable to write data/db.json:", err);
+    console.error("[Database Error] Unable to write data/db.json:", err);
   }
 
-  // Dual-write to TMP_DB_FILE to guarantee survival across ephemeral runtime environments
+  // 2. Dual-write to TMP_DB_FILE to guarantee survival across container reloads
   try {
-    fs.writeFileSync(TMP_DB_FILE, jsonStr);
+    const tmpDir = path.dirname(TMP_DB_FILE);
+    if (!fs.existsSync(tmpDir)) {
+      fs.mkdirSync(tmpDir, { recursive: true });
+    }
+    fs.writeFileSync(TMP_DB_FILE, jsonStr, "utf-8");
   } catch (err) {
-    console.warn("Unable to write /tmp/db.json:", err);
+    console.error("[Database Error] Unable to write /tmp/db.json:", err);
   }
 
-  console.log(`[Database Saved] Projects: ${db.projects.length} | Categories: ${db.categories.length}`);
+  console.log(`[Database Saved] Projects: ${db.projects.length} | Categories: ${db.categories.length} | Media: ${db.media.length}`);
+  return saved;
 }
+
+// Guarantee data/db.json exists on disk immediately after startup
+saveDb();
 
 // ───── API ROUTES ─────
 
