@@ -655,36 +655,44 @@ function Home() {
   useEffect(() => {
     let active = true;
 
-    api.getProjects().then(projs => {
-      if (Array.isArray(projs)) {
-        const published = projs.filter(p => p.status === 'published');
-        if (active) {
-          setWorks(published);
+    const loadFreshData = () => {
+      api.getProjects().then(projs => {
+        if (Array.isArray(projs)) {
+          const published = projs.filter(p => p.status === 'published');
+          if (active) {
+            setWorks(published);
+          }
+        } else {
+          throw new Error('Invalid server response: projects list is not an array.');
         }
-      } else {
-        throw new Error('Invalid server response: projects list is not an array.');
-      }
-      if (active) {
-        setApiError(null);
-      }
-    }).catch(err => {
-      console.error('Dynamic projects load error:', err);
-      if (active) {
-        const status = err.response?.status;
-        const msg = err.response?.data?.error?.message || err.message;
-        setApiError(`Server API Error (${status || '500'}): ${msg || 'Failed to fetch resource from server.'}`);
-      }
-    });
+        if (active) {
+          setApiError(null);
+        }
+      }).catch(err => {
+        console.error('Dynamic projects load error:', err);
+        if (active) {
+          const status = err.response?.status;
+          const msg = err.response?.data?.error?.message || err.message;
+          setApiError(`Server API Error (${status || '500'}): ${msg || 'Failed to fetch resource from server.'}`);
+        }
+      });
 
-    api.getCategories().then(cats => {
-      if (active && Array.isArray(cats)) {
-        setDbCategories(cats.map(c => c.name));
-      }
-    }).catch(err => {
-      console.warn('Failed to load server categories:', err);
-    });
+      api.getCategories().then(cats => {
+        if (active && Array.isArray(cats)) {
+          setDbCategories(cats.map(c => c.name));
+        }
+      }).catch(err => {
+        console.warn('Failed to load server categories:', err);
+      });
+    };
 
-    return () => { active = false; };
+    loadFreshData();
+
+    window.addEventListener('focus', loadFreshData);
+    return () => {
+      active = false;
+      window.removeEventListener('focus', loadFreshData);
+    };
   }, []);
 
   // Sort works so featured projects come first while preserving custom order

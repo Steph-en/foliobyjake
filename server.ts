@@ -46,6 +46,14 @@ app.use((req, res, next) => {
   }
 });
 
+// Force Cache-Control headers on all API routes so browsers & proxies never serve stale cached data
+app.use("/api", (req, res, next) => {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -405,26 +413,37 @@ interface LocalDatabase {
 
 // ── Database Initialization ──
 function loadDb(): LocalDatabase {
-  let rawData = "";
+  let dbContent = "";
+  let tmpContent = "";
+  let dbMtime = 0;
+  let tmpMtime = 0;
+
   if (fs.existsSync(DB_FILE)) {
     try {
-      rawData = fs.readFileSync(DB_FILE, "utf-8");
+      dbMtime = fs.statSync(DB_FILE).mtimeMs;
+      dbContent = fs.readFileSync(DB_FILE, "utf-8");
     } catch (err) {
       console.warn("Could not read DB_FILE:", err);
     }
   }
-  if (!rawData && fs.existsSync(TMP_DB_FILE)) {
+
+  if (fs.existsSync(TMP_DB_FILE)) {
     try {
-      rawData = fs.readFileSync(TMP_DB_FILE, "utf-8");
+      tmpMtime = fs.statSync(TMP_DB_FILE).mtimeMs;
+      tmpContent = fs.readFileSync(TMP_DB_FILE, "utf-8");
     } catch (err) {
       console.warn("Could not read TMP_DB_FILE:", err);
     }
   }
 
+  // Pick the newer file if both exist
+  const rawData = (tmpMtime > dbMtime) ? tmpContent : (dbContent || tmpContent);
+
   if (rawData && rawData.trim()) {
     try {
       const parsed = JSON.parse(rawData);
       if (parsed && typeof parsed === "object") {
+        console.log(`[Database] Loaded ${parsed.projects?.length || 0} projects and ${parsed.categories?.length || 0} categories.`);
         return {
           projects: Array.isArray(parsed.projects) ? parsed.projects : INITIAL_WORKS,
           categories: Array.isArray(parsed.categories) ? parsed.categories : INITIAL_CATEGORIES,
@@ -437,6 +456,7 @@ function loadDb(): LocalDatabase {
     }
   }
 
+  console.log("[Database] Initializing with default seed data.");
   return {
     projects: INITIAL_WORKS,
     categories: INITIAL_CATEGORIES,
@@ -464,52 +484,31 @@ if (typeof db.contactsCount !== "number") db.contactsCount = 14;
 // ── Save Database Function ──
 function saveDb() {
   const jsonStr = JSON.stringify(db, null, 2);
-  let saved = false;
 
+  // Write to primary DB_FILE
   try {
     if (!fs.existsSync(DB_DIR)) {
       fs.mkdirSync(DB_DIR, { recursive: true });
     }
     fs.writeFileSync(DB_FILE, jsonStr);
-    saved = true;
   } catch (err) {
     console.warn("Unable to write data/db.json:", err);
   }
 
-  if (!saved) {
-    try {
-      fs.writeFileSync(TMP_DB_FILE, jsonStr);
-      console.log("✓ Saved database backup to /tmp/db.json");
-    } catch (err) {
-      console.warn("Unable to write /tmp/db.json:", err);
-    }
+  // Dual-write to TMP_DB_FILE to guarantee survival across ephemeral runtime environments
+  try {
+    fs.writeFileSync(TMP_DB_FILE, jsonStr);
+  } catch (err) {
+    console.warn("Unable to write /tmp/db.json:", err);
   }
+
+  console.log(`[Database Saved] Projects: ${db.projects.length} | Categories: ${db.categories.length}`);
 }
 
 // ───── API ROUTES ─────
 
-// Full DB Synchronization Route (allows client state restoration)
-app.post("/api/sync", (req, res) => {
-  const { projects, categories, media } = req.body;
-  let updated = false;
-
-  if (Array.isArray(projects)) {
-    db.projects = projects;
-    updated = true;
-  }
-  if (Array.isArray(categories)) {
-    db.categories = categories;
-    updated = true;
-  }
-  if (Array.isArray(media)) {
-    db.media = media;
-    updated = true;
-  }
-
-  if (updated) {
-    saveDb();
-  }
-
+// Read-only Sync Endpoint (returns current database state without allowing destructive overwrites)
+app.get("/api/sync", (req, res) => {
   res.json({
     success: true,
     projects: db.projects,

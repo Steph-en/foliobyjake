@@ -90,21 +90,26 @@ export const uploadToLocal = async (
 
     return new Promise((resolve, reject) => {
       xhr.onload = () => {
+        let responseData: any = {};
+        try {
+          responseData = JSON.parse(xhr.responseText);
+        } catch (e) {
+          responseData = { error: xhr.responseText || `HTTP ${xhr.status} ${xhr.statusText}` };
+        }
+
         if (xhr.status >= 200 && xhr.status < 300) {
-          const response = JSON.parse(xhr.responseText);
           resolve({
-            url: response.url,
-            name: response.name,
-            type: response.type,
+            url: responseData.url,
+            name: responseData.name || displayName,
+            type: responseData.type || (file.type.startsWith('video/') ? 'video' : 'image'),
           });
         } else {
-          const errorData = JSON.parse(xhr.responseText);
-          reject(new Error(errorData.error || 'Upload failed'));
+          reject(new Error(responseData.error || responseData.message || `Upload server returned status ${xhr.status}`));
         }
       };
 
-      xhr.onerror = () => reject(new Error('Network error during upload'));
-      xhr.ontimeout = () => reject(new Error('Upload timeout'));
+      xhr.onerror = () => reject(new Error('Network error during upload request to server.'));
+      xhr.ontimeout = () => reject(new Error('Upload request timed out after network delay.'));
 
       xhr.open('POST', '/api/media/upload');
       xhr.send(formData);

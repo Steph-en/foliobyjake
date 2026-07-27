@@ -48,64 +48,17 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
-// Better error handling
+// Response interceptor with detailed error logging
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 404) {
-      console.error(`[API Error] 404 Not Found: ${error.config?.url}`);
-    }
-    if (error.response?.status === 500) {
-      console.error(`[API Error] 500 Server Error: ${error.config?.url}`);
-    }
-    if (!error.response) {
-      console.error(`[API Error] Network Error: ${error.message} for ${error.config?.url}`);
-    }
+    const status = error.response?.status;
+    const url = error.config?.url;
+    const msg = error.response?.data?.error || error.message;
+    console.error(`[API Error] Status ${status} for ${url}:`, msg);
     throw error;
   }
 );
-
-// Local storage helper keys & logic
-const STORAGE_PROJECTS_KEY = 'jake_portfolio_projects_v2';
-
-const getLocalProjects = (): Project[] | null => {
-  try {
-    const raw = localStorage.getItem(STORAGE_PROJECTS_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed;
-    }
-  } catch (e) {
-    console.warn('Failed to read local projects:', e);
-  }
-  return null;
-};
-
-const saveLocalProjects = (projects: Project[]) => {
-  try {
-    localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
-  } catch (e) {
-    console.warn('Failed to save local projects:', e);
-  }
-};
-
-const areProjectsEqual = (a: Project[], b: Project[]): boolean => {
-  if (a.length !== b.length) return false;
-  const bMap = new Map(b.map(p => [p.id, p]));
-  for (const itemA of a) {
-    const itemB = bMap.get(itemA.id);
-    if (!itemB) return false;
-    if (
-      itemA.status !== itemB.status ||
-      itemA.name !== itemB.name ||
-      itemA.isFeatured !== itemB.isFeatured ||
-      JSON.stringify(itemA.gallery) !== JSON.stringify(itemB.gallery)
-    ) {
-      return false;
-    }
-  }
-  return true;
-};
 
 export const api = {
   // Authentication
@@ -120,7 +73,7 @@ export const api = {
 
   // Categories
   getCategories: async (): Promise<Category[]> => {
-    const { data } = await client.get('/categories');
+    const { data } = await client.get(`/categories?_t=${Date.now()}`);
     if (!Array.isArray(data)) {
       throw new Error(data?.error?.message || 'Invalid server response: categories list is not an array.');
     }
@@ -141,90 +94,46 @@ export const api = {
 
   // Projects
   getProjects: async (isAdmin = false): Promise<Project[]> => {
-    try {
-      const { data } = await client.get('/projects', { params: { view: 'admin' } });
-      if (Array.isArray(data)) {
-        saveLocalProjects(data);
-        if (isAdmin) {
-          return data;
-        } else {
-          return data.filter(p => p.status === 'published');
-        }
+    const { data } = await client.get(`/projects?_t=${Date.now()}`, { params: { view: 'admin' } });
+    if (Array.isArray(data)) {
+      if (isAdmin) {
+        return data;
       } else {
-        throw new Error('Invalid server response: projects list is not an array.');
+        return data.filter(p => p.status === 'published');
       }
-    } catch (err) {
-      console.warn('[API Client] getProjects error, falling back to local storage:', err);
-      const localProjs = getLocalProjects();
-      if (localProjs) {
-        if (isAdmin) return localProjs;
-        return localProjs.filter(p => p.status === 'published');
-      }
-      throw err;
+    } else {
+      throw new Error('Invalid server response: projects list is not an array.');
     }
   },
   getProject: async (id: number, incrementView = false): Promise<Project> => {
-    const { data } = await client.get(`/projects/${id}`, { params: { increment: incrementView ? 'true' : undefined } });
+    const { data } = await client.get(`/projects/${id}?_t=${Date.now()}`, { params: { increment: incrementView ? 'true' : undefined } });
     return data;
   },
   createProject: async (project: Partial<Project>): Promise<Project> => {
     const { data } = await client.post('/projects', project);
-    const local = getLocalProjects() || [];
-    const updated = [data, ...local.filter(p => p.id !== data.id)];
-    saveLocalProjects(updated);
     return data;
   },
   updateProject: async (id: number, project: Partial<Project>): Promise<Project> => {
     const { data } = await client.put(`/projects/${id}`, project);
-    const local = getLocalProjects() || [];
-    const updated = local.map(p => (p.id === id ? data : p));
-    saveLocalProjects(updated);
     return data;
   },
   duplicateProject: async (id: number): Promise<Project> => {
     const { data } = await client.post(`/projects/${id}/duplicate`);
-    const local = getLocalProjects() || [];
-    const updated = [data, ...local];
-    saveLocalProjects(updated);
     return data;
   },
   deleteProject: async (id: number): Promise<{ success: boolean }> => {
     const { data } = await client.delete(`/projects/${id}`);
-    const local = getLocalProjects() || [];
-    const updated = local.filter(p => p.id !== id);
-    saveLocalProjects(updated);
     return data;
   },
   reorderProjects: async (orderedIds: number[]): Promise<Project[]> => {
-    try {
-      const { data } = await client.post('/projects/reorder', { orderedIds });
-      const newProjs = Array.isArray(data?.projects) ? data.projects : (Array.isArray(data) ? data : null);
-      if (newProjs) {
-        saveLocalProjects(newProjs);
-        return newProjs;
-      }
-    } catch (err) {
-      console.warn('[API Client] reorderProjects server call failed, falling back to local reorder:', err);
-    }
-    const local = getLocalProjects() || [];
-    const map = new Map(local.map(p => [p.id, p]));
-    const reordered: Project[] = [];
-    for (const id of orderedIds) {
-      if (map.has(id)) {
-        reordered.push(map.get(id)!);
-        map.delete(id);
-      }
-    }
-    for (const p of map.values()) {
-      reordered.push(p);
-    }
-    saveLocalProjects(reordered);
-    return reordered;
+    const { data } = await client.post('/projects/reorder', { orderedIds });
+    const newProjs = Array.isArray(data?.projects) ? data.projects : (Array.isArray(data) ? data : []);
+    return newProjs;
   },
 
   // Media
   getMedia: async (): Promise<MediaAsset[]> => {
-    const { data } = await client.get('/media');
+    const { data } = await client.get(`/media?_t=${Date.now()}`);
     if (!Array.isArray(data)) {
       throw new Error(data?.error?.message || 'Invalid server response: media list is not an array.');
     }
@@ -264,7 +173,7 @@ export const api = {
 
   // Analytics
   getAnalytics: async (): Promise<AnalyticsSummary> => {
-    const { data } = await client.get('/analytics');
+    const { data } = await client.get(`/analytics?_t=${Date.now()}`);
     return data;
   },
 };
