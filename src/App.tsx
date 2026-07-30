@@ -113,6 +113,9 @@ function useSmoothScroll(enabled: boolean) {
       duration: 1.2,
       easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
+      // Without this, Lenis intercepts wheel/touch events globally and prevents
+      // native scrolling inside nested overflow-y-auto containers (e.g. modals).
+      allowNestedScroll: true,
     });
     let rafId: number;
     const raf = (t: number) => { lenis.raf(t); rafId = requestAnimationFrame(raf); };
@@ -592,7 +595,7 @@ function BackToTop() {
 // ModalPoster
 function ModalPoster({ mainImage, mainVideo, name }: { mainImage?: string; mainVideo?: string; name: string }) {
   return (
-    <div className="relative aspect-4/5 lg:aspect-auto overflow-hidden bg-zinc-900">
+    <div className="relative aspect-4/5 lg:aspect-auto lg:h-full overflow-hidden bg-zinc-900">
       {mainVideo
         ? <PreviewVideo embedUrl={mainVideo} name={name} className="w-full h-full" />
         : <MediaLoader src={mainImage || ''} alt={`${name} — project preview`} priority
@@ -992,7 +995,9 @@ function Home() {
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                className="relative w-full max-w-6xl max-h-[90vh] bg-zinc-950 rounded-2xl overflow-y-auto grid grid-cols-1 lg:grid-cols-2 shadow-2xl"
+                data-lenis-prevent
+                style={{ overscrollBehavior: 'contain' }}
+                className="relative w-full max-w-6xl max-h-[90vh] lg:h-[85vh] bg-zinc-950 rounded-2xl shadow-2xl grid grid-cols-1 lg:grid-cols-2 overflow-y-auto lg:overflow-hidden"
               >
                 <button
                   onClick={() => setSelectedWork(null)}
@@ -1002,22 +1007,22 @@ function Home() {
                   <X size={24} aria-hidden="true" />
                 </button>
 
-                <div className="p-8 pb-4 lg:hidden">
-                  <h2 id="modal-work-title" className="text-3xl uppercase tracking-tighter leading-none">{selectedWork.name}</h2>
-                </div>
-
                 <ModalPoster mainImage={selectedWork.previewImage || selectedWork.image}
                   mainVideo={selectedWork.previewVideo || selectedWork.video} name={selectedWork.name} />
 
-                <div className="p-8 md:p-16 flex flex-col justify-center">
-                  <div className="mb-8 hidden lg:block">
+                <div
+                  className="p-8 md:p-16 flex flex-col lg:h-full lg:overflow-y-auto"
+                  data-lenis-prevent
+                  style={{ overscrollBehavior: 'contain' }}
+                >
+                  <div className="mb-6 md:mb-8">
                     <span className="text-xs font-mono uppercase tracking-[0.3em] text-zinc-500">{selectedWork.category}</span>
-                    <h2 id="modal-work-title" className="text-4xl md:text-7xl mt-4 uppercase tracking-tighter leading-none">{selectedWork.name}</h2>
+                    <h2 id="modal-work-title" className="text-3xl md:text-4xl lg:text-7xl mt-3 md:mt-4 uppercase tracking-tighter leading-none">{selectedWork.name}</h2>
                   </div>
-                  <p className="text-lg md:text-xl opacity-70 leading-relaxed font-light mb-12 hidden lg:block">
+                  <p className="text-base md:text-lg lg:text-xl opacity-70 leading-relaxed font-light mb-8 md:mb-12">
                     {selectedWork.description}
                   </p>
-                  <dl className="hidden lg:flex flex-wrap gap-4 pt-8 border-t border-white/10">
+                  <dl className="flex flex-wrap gap-4 pt-6 md:pt-8 border-t border-white/10">
                     <div className="flex flex-col">
                       <dt className="text-[10px] font-mono uppercase tracking-widest opacity-40 mb-1">Year</dt>
                       <dd className="text-sm uppercase">{selectedWork.year || '2026'}</dd>

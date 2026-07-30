@@ -135,6 +135,8 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
       <motion.div
         ref={modalRef}
         className="fixed top-0 right-0 h-full w-full sm:w-[95vw] md:w-[70vw] lg:w-180 bg-black/98 backdrop-blur-xl border-l border-white/10 z-50 overflow-y-auto"
+        data-lenis-prevent
+        style={{ overscrollBehavior: 'contain' }}
         initial={{ x: '100%' }}
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
@@ -149,7 +151,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
           <X size={24} aria-hidden="true" />
         </button>
 
-        <div className="px-6 sm:px-8 py-12 sm:py-16 md:py-20 h-full flex flex-col">
+        <div className="px-6 sm:px-8 py-12 sm:py-16 md:py-20 min-h-full flex flex-col">
           {/* Section Rule */}
           <div className="contact-section-rule flex items-center gap-5 mb-12 sm:mb-20">
             <span className="text-xs uppercase tracking-[0.2em] font-medium text-zinc-400">Contact</span>
