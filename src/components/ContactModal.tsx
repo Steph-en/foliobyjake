@@ -168,8 +168,8 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
 
             <div className="space-y-7 sm:space-y-9">
               <p className="text-xs uppercase tracking-[0.18em] font-medium text-zinc-400 mb-2">Email</p>
-              <a href="mailto:jakeamponsah2019@gmail.com" className="text-lg sm:text-2xl font-display no-underline hover:text-zinc-300 transition-colors block">
-              jakeamponsah2019@gmail.com
+              <a href="mailto:jake@foliobyjake.com" className="text-lg sm:text-2xl font-display no-underline hover:text-zinc-300 transition-colors block">
+              jake@foliobyjake.com
               </a>
             </div>
           </div>
