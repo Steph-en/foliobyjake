@@ -4,6 +4,7 @@ import fs from "fs";
 import multer from "multer";
 import dotenv from "dotenv";
 import * as db from "./server/db";
+import { sendContactEmail, validateContactPayload } from "./server/mail";
 
 dotenv.config();
 
@@ -266,7 +267,27 @@ app.delete("/api/media/:id", handle(async (req, res) => {
   res.json({ success: true });
 }));
 
-// Contact Counter
+// Contact form — send email via SMTP, then increment analytics
+app.post("/api/contacts", handle(async (req, res) => {
+  const parsed = validateContactPayload(req.body);
+  if (!parsed.ok) {
+    return void res.status(400).json({ success: false, message: parsed.error });
+  }
+
+  try {
+    await sendContactEmail(parsed.data);
+  } catch (err) {
+    console.error("Contact email failed:", err);
+    return void res.status(500).json({
+      success: false,
+      message: "Failed to send message. Please try again.",
+    });
+  }
+
+  const count = await db.incrementContacts();
+  res.json({ success: true, count });
+}));
+
 app.post("/api/contacts/increment", handle(async (req, res) => {
   const count = await db.incrementContacts();
   res.json({ success: true, count });

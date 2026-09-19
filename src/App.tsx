@@ -882,7 +882,7 @@ function Home() {
               <span className="block tracking-normal">AMPONSAH</span>
             </h1>
             <p className="hero-sub mt-8 text-sm md:text-lg max-w-xl mx-auto font-mono uppercase tracking-widest opacity-80">
-              Graphic designer&nbsp;·&nbsp;Digital artist
+              Graphic designer&nbsp;·&nbsp;Creative/Art Director 
             </p>
             <a
               href="#works"
@@ -1059,8 +1059,9 @@ function Home() {
                 & Designer
               </h2>
               <div className="space-y-6 text-lg opacity-80 max-w-lg">
-                <p>Jake Amponsah is a multi-disciplinary designer based in Accra, Ghana. His work lives at the intersection of traditional graphic design and modern digital art.</p>
-                <p>With over 5 years of experience, he has helped brands tell their stories through compelling visuals and immersive digital experiences.</p>
+                <p>Jake Amponsah is a multi-disciplinary graphic designer and creative/art director based in Accra, Ghana. His work lives at the intersection of traditional graphic design and modern digital art, blending bold visual language with a sharp eye for detail.</p>
+                <p>With over 5 years of experience, he has helped brands tell their stories through compelling visuals and immersive digital experiences — from brand identity and campaign design to motion graphics and experiential activations. His approach is rooted in curiosity: understanding a brand's core before shaping how it looks, feels, and moves.
+                Jake's work spans branding, fashion, faith-based projects, and digital art, drawing on culture and craft in equal measure. Whether building a visual identity from scratch or reimagining an existing one, he brings a balance of strategic thinking and creative instinct to every project.</p>
               </div>
               <p className="mt-12 text-xs uppercase tracking-[0.3em] font-bold flex items-center gap-4 group">
                 Portfolio. by Jake
@@ -1147,7 +1148,7 @@ function Home() {
             <h3 className="font-mono text-xs uppercase tracking-widest mb-6 opacity-40">Social</h3>
             <ul className="space-y-4 text-sm uppercase tracking-widest list-none">
               <li>
-                <a href="https://www.instagram.com/bvhiewz/" target="_blank" rel="noopener noreferrer"
+                <a href="https://www.instagram.com/foliobyjake/" target="_blank" rel="noopener noreferrer"
                   aria-label="Instagram (opens in new tab)"
                   className="hover:line-through transition-all focus:outline-none focus:underline">
                   Instagram
@@ -1421,7 +1422,7 @@ function WorkDetail() {
 
             {/* MASONRY LAYOUT (Pinterest / Behance Style) */}
             {galleryLayout === 'masonry' && (
-              <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 md:gap-8 [column-fill:_balance]">
+              <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 md:gap-8 [column-fill:balance]">
                 {work.gallery.map((src, index) => (
                   <motion.div
                     key={index}

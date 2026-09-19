@@ -7,12 +7,12 @@ const getEnv = (key: string): string | undefined => {
 
 const getBaseURL = (): string => {
   const envVal = getEnv('VITE_API_URL');
-  
+
   // If VITE_API_URL is empty or not set, use relative path (recommended for same-origin requests)
   if (!envVal || envVal.trim() === '') {
     return '/api';
   }
-  
+
   const trimmed = envVal.trim().replace(/\/$/, '');
   if (trimmed.endsWith('/api')) {
     return trimmed;
@@ -165,7 +165,16 @@ export const api = {
     return data;
   },
 
-  // Contacts Click Aggregate
+  sendContact: async (payload: {
+    name: string;
+    email: string;
+    service: string;
+    message: string;
+  }): Promise<{ success: boolean; message?: string }> => {
+    const { data } = await client.post('/contacts', payload);
+    return data;
+  },
+
   incrementContactCount: async (): Promise<{ success: boolean }> => {
     const { data } = await client.post('/contacts/increment');
     return data;

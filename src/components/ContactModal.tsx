@@ -4,7 +4,6 @@ import { AnimatePresence } from 'motion/react';
 import { motion } from 'framer-motion';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
-import emailjs from '@emailjs/browser';
 import { api } from '../lib/api';
 
 interface ContactModalProps {
@@ -46,42 +45,24 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+    setErrors(prev => ({ ...prev, submit: '' }));
 
     try {
-      // Initialize EmailJS with your public key
-      emailjs.init('af23tA65sh8fkxJ5G');
+      await api.sendContact({
+        name: formData.name,
+        email: formData.email,
+        service: formData.service,
+        message: formData.message,
+      });
 
-      // Send email using EmailJS
-      // Make sure to replace these with your actual EmailJS service ID and template ID
-      const response = await emailjs.send(
-        'service_lrefqpe', // Your EmailJS Service ID
-        'template_xb95gh6',      // Your EmailJS Template ID
-        {
-          to_email: 'hello@foliobyjake.com',
-          name: formData.name,
-          email: formData.email,
-          project_type: formData.service,
-          message: formData.message,
-          reply_to: formData.email,
-        }
-      );
+      setShowSuccess(true);
+      setFormData({ name: '', email: '', service: '', message: '' });
+      setIsFilled({});
+      fields.forEach(field => setIsActive(prev => ({ ...prev, [field]: false })));
 
-      if (response.status === 200) {
-        setShowSuccess(true);
-        
-        // Increment system analytics contact submissions
-        api.incrementContactCount().catch(err => console.warn('Failed to register contact metric:', err));
-
-        // Reset form after success
-        setFormData({ name: '', email: '', service: '', message: '' });
-        setIsFilled({});
-        fields.forEach(field => setIsActive(prev => ({ ...prev, [field]: false })));
-
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          setShowSuccess(false);
-        }, 5000);
-      }
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 5000);
     } catch (error) {
       console.error('Email sending failed:', error);
       setErrors(prev => ({
@@ -283,6 +264,10 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
                   <div className={`field-underline h-px bg-zinc-300 transition-all duration-300 absolute bottom-0 left-0 w-0 peer-focus:w-full peer-[.active]:w-full origin-left ${isActive.message || isFilled.message ? 'w-full' : 'w-0'}`} />
                   {errors.message && <p className="mt-1 text-xs text-red-400 font-mono uppercase tracking-wider">{errors.message}</p>}
                 </div>
+
+                {errors.submit && (
+                  <p className="text-xs text-red-400 font-mono uppercase tracking-wider">{errors.submit}</p>
+                )}
 
                 {/* Footer */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 pt-4 pb-6 border-t border-white/10">
