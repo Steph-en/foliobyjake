@@ -41,7 +41,7 @@ export default function Dashboard({ onNavigateToTab }: DashboardProps) {
     return (
       <div className="flex flex-col items-center justify-center p-20 gap-4" aria-busy="true">
         <div className="animate-spin rounded-full h-8 w-8 border-4 border-white border-t-transparent" />
-        <p className="text-xs font-mono tracking-widest text-zinc-500 uppercase">Aggregating project telemetries...</p>
+        <p className="text-xs font-mono tracking-widest text-zinc-500 uppercase">Loading analytics...</p>
       </div>
     );
   }
@@ -199,7 +199,7 @@ export default function Dashboard({ onNavigateToTab }: DashboardProps) {
         {/* Quick Actions Panel */}
         <div className="lg:col-span-2 bg-zinc-950 border border-zinc-900 rounded-2xl p-6 flex flex-col justify-between">
           <div>
-            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-6">CMS Control Actions</h3>
+            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-6">Quick Actions</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
                 onClick={() => onNavigateToTab('project-editor')}
@@ -222,7 +222,7 @@ export default function Dashboard({ onNavigateToTab }: DashboardProps) {
                   <Layers size={16} className="text-zinc-300" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-white">Categories CRUD</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-white">Manage Categories</h4>
                   <p className="text-[10px] text-zinc-500 font-mono">Set catalog classifications</p>
                 </div>
               </button>
@@ -233,7 +233,7 @@ export default function Dashboard({ onNavigateToTab }: DashboardProps) {
                 rel="noreferrer"
                 className="flex items-center gap-3 p-4 bg-zinc-900 border border-zinc-800 rounded-xl text-left hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-1 focus:ring-white"
               >
-                <div className="h-8 w-8 rounded-lg bg-zinc-850 flex items-center justify-center shrink-0">
+                <div className="h-8 w-8 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0">
                   <ExternalLink size={16} className="text-zinc-400" />
                 </div>
                 <div>
@@ -243,8 +243,8 @@ export default function Dashboard({ onNavigateToTab }: DashboardProps) {
               </a>
             </div>
           </div>
-          <div className="border-t border-zinc-900/50 pt-4 mt-6 flex justify-between items-center text-[10px] font-mono text-zinc-650">
-            <span>Server-side aggregations computed successfully.</span>
+          <div className="border-t border-zinc-900/50 pt-4 mt-6 flex justify-between items-center text-[10px] font-mono text-zinc-500">
+            <span>Analytics updated in real time.</span>
             <span>Accra, Ghana</span>
           </div>
         </div>

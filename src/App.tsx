@@ -15,6 +15,7 @@ import {
   ChevronLeft, ChevronRight, ArrowUp, Menu,
 } from 'lucide-react';
 import ContactModal from './components/ContactModal';
+import InteractiveHeroTitle from './components/InteractiveHeroTitle';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   BrowserRouter, Routes, Route, Link,
@@ -740,7 +741,7 @@ function Home() {
       .from('.nav-item', { opacity: 0, y: -20, stagger: 0.1, duration: 0.8 }, '-=0.4');
 
     gsap.timeline({ delay: 3 })
-      .from('.hero-title span', { y: 100, opacity: 0, duration: 1, stagger: 0.1, ease: 'power4.out' })
+      .from('.hero-title .hero-line', { y: 100, opacity: 0, duration: 1, stagger: 0.1, ease: 'power4.out' })
       .from('.hero-sub', { opacity: 0, y: 20, duration: 0.8 }, '-=0.5')
       .from('.hero-btn', { scale: 0.8, opacity: 0, duration: 0.5 }, '-=0.3');
 
@@ -877,11 +878,8 @@ function Home() {
             <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black" />
           </div>
           <div className="relative z-10 w-full px-6">
-            <h1 className="hero-title font-jake text-[clamp(3rem,15vw,12rem)] leading-[0.85] flex flex-col items-center overflow-x-visible">
-              <span className="block">JAKE</span>
-              <span className="block tracking-normal">AMPONSAH</span>
-            </h1>
-            <p className="hero-sub mt-8 text-sm md:text-lg max-w-xl mx-auto font-mono uppercase tracking-widest opacity-80">
+            <InteractiveHeroTitle />
+            <p className="hero-sub mt-8 text-[10px] sm:text-xs md:text-sm lg:text-lg max-w-xl mx-auto font-mono uppercase tracking-wider sm:tracking-widest opacity-80 whitespace-nowrap">
               Graphic designer&nbsp;·&nbsp;Creative/Art Director 
             </p>
             <a

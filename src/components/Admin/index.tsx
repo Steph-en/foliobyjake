@@ -64,7 +64,7 @@ export default function AdminIndex() {
           </div>
           <div>
             <span className="text-[10px] font-mono tracking-widest text-zinc-500 uppercase">Jake Amponsah</span>
-            <h1 className="text-sm font-display tracking-tight font-bold text-white uppercase">Portfol CMS</h1>
+            <h1 className="text-sm font-display tracking-tight font-bold text-white uppercase">Admin Portal</h1>
           </div>
         </div>
 
@@ -116,7 +116,7 @@ export default function AdminIndex() {
       <div className="lg:hidden fixed top-0 left-0 w-full bg-zinc-950/90 backdrop-blur-md border-b border-zinc-900 h-16 px-6 z-50 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Shield size={16} className="text-white" />
-          <span className="text-xs font-bold tracking-widest uppercase text-white font-mono">CMS Panel</span>
+          <span className="text-xs font-bold tracking-widest uppercase text-white font-mono">Admin Portal</span>
         </div>
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}

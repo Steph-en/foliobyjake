@@ -31,7 +31,11 @@ function requireEnv(name: string): string {
   return value;
 }
 
-export function validateContactPayload(body: unknown): { ok: true; data: ContactPayload } | { ok: false; error: string } {
+export type ValidationResult =
+  | { ok: true; data: ContactPayload; error?: undefined }
+  | { ok: false; error: string; data?: undefined };
+
+export function validateContactPayload(body: unknown): ValidationResult {
   if (!body || typeof body !== "object") {
     return { ok: false, error: "Invalid request body" };
   }

@@ -24,11 +24,11 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         localStorage.setItem('admin_token', res.token);
         onLoginSuccess(res.token);
       } else {
-        setError(res.message || 'Invalid username or password. If this error persists, check server console for 500 crashes.');
+        setError(res.message || 'Invalid username or password.');
       }
     } catch (err: any) {
-      console.error('Login dynamic error:', err);
-      setError(`Server connection error: ${err.message || 'Check if API URL is reachable.'}`);
+      console.error('Login error:', err);
+      setError('Unable to connect. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -46,8 +46,8 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         
         <div className="text-center mb-8">
           <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-zinc-500">Jake Amponsah Admin</span>
-          <h1 className="text-3xl font-display tracking-tighter mt-2 uppercase">CMS CONTROL PORTAL</h1>
-          <p className="text-xs text-zinc-400 mt-2 font-mono">Log in to manage portfolio content securely.</p>
+          <h1 className="text-3xl font-display tracking-tighter mt-2 uppercase">ADMIN PORTAL</h1>
+          <p className="text-xs text-zinc-400 mt-2 font-mono">Log in to manage portfolio content.</p>
         </div>
 
         {error && (
@@ -58,7 +58,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           >
             <ShieldAlert size={16} className="shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold uppercase block text-red-500 mb-1">⛔ System Error</span>
+              <span className="font-bold uppercase block text-red-500 mb-1">Sign In Error</span>
               <span>{error}</span>
             </div>
           </motion.div>

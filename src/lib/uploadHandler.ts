@@ -19,7 +19,7 @@ export const uploadToCloudinary = async (
 ): Promise<{ url: string; name: string; type: 'image' | 'video' }> => {
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('folder', 'portfolio-cms');
+  formData.append('folder', 'portfolio-media');
   formData.append('public_id', displayName.replace(/\s+/g, '-').toLowerCase());
   formData.append('resource_type', 'auto'); // auto-detect image or video
   formData.append('upload_preset', 'portfolio_uploads'); // Requires preset configured in Cloudinary

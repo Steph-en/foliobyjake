@@ -271,17 +271,19 @@ app.delete("/api/media/:id", handle(async (req, res) => {
 app.post("/api/contacts", handle(async (req, res) => {
   const parsed = validateContactPayload(req.body);
   if (!parsed.ok) {
-    return void res.status(400).json({ success: false, message: parsed.error });
+    res.status(400).json({ success: false, message: parsed.error });
+    return;
   }
 
   try {
     await sendContactEmail(parsed.data);
   } catch (err) {
     console.error("Contact email failed:", err);
-    return void res.status(500).json({
+    res.status(500).json({
       success: false,
       message: "Failed to send message. Please try again.",
     });
+    return;
   }
 
   const count = await db.incrementContacts();

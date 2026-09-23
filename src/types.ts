@@ -1,5 +1,5 @@
 /**
- * Shared Type Definitions for Jake Amponsah Portfolio & Admin CMS
+ * Shared Type Definitions for Jake Amponsah Portfolio & Admin Portal
  */
 
 export interface Category {
